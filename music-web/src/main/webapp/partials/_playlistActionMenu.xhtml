@@ -1,0 +1,11 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <div class="playlist-actions">
+        <h:form>
+            <h:commandButton value="🎵 Yeni Şarkı Ekle" action="#{playlistBean.openSearchModal()}" class="btn-secondary" />
+            <h:commandButton value="🔗 Listeyi Paylaş" action="#{playlistBean.generateShareLink(currentPlaylist.id)}" class="btn-primary" />
+        </h:form>
+        <h:outputText value="Bağlantı: #{playlistBean.generatedShareLink}" rendered="#{not empty playlistBean.generatedShareLink}" class="share-link-box" />
+    </div>
+</ui:composition>

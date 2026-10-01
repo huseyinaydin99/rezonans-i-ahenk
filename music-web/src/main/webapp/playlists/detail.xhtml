@@ -1,0 +1,29 @@
+<ui:composition template="/layouts/main.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    
+    <ui:define name="title">Çalma Listesi: #{currentPlaylist.name}</ui:define>
+    
+    <ui:define name="content">
+        <div class="playlist-header">
+            <h2>#{currentPlaylist.name}</h2>
+            <!-- DRY prensibiyle action menüsü dışarıdan yükleniyor -->
+            <ui:include src="/partials/_playlistActionMenu.xhtml" />
+        </div>
+        
+        <div class="playlist-songs">
+            <c:forEach items="#{currentPlaylist.songs}" var="song">
+                <div class="playlist-song-row">
+                    <ui:include src="/partials/_songCard.xhtml">
+                        <ui:param name="song" value="#{song}" />
+                    </ui:include>
+                    <h:form>
+                        <h:commandButton value="❌ Kaldır" action="#{playlistBean.removeSong(currentPlaylist.id, song.id)}" class="btn-danger" />
+                    </h:form>
+                </div>
+            </c:forEach>
+        </div>
+    </ui:define>
+</ui:composition>
