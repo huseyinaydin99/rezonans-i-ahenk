@@ -1,0 +1,71 @@
+/* 
+    Müzik Platformu Ana Stil Dosyası 
+    Modern, koyu (dark mode) odaklı ve şık UI
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;600;700&display=swap');
+
+:root {
+    --bg-main: #121212;
+    --bg-secondary: #181818;
+    --text-primary: #ffffff;
+    --text-muted: #b3b3b3;
+    --accent-color: #1db954; /* Spotify Yeşili */
+    --border-color: #282828;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Hanken Grotesk', sans-serif;
+    margin: 0;
+    padding-bottom: 100px; /* Global Player Alanı */
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Kart Tasarımları */
+.card {
+    background-color: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 10px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.4);
+}
+
+.card-title {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Buton Özelleştirmeleri */
+.btn-primary, .btn-success {
+    background-color: var(--accent-color) !important;
+    border: none !important;
+    border-radius: 20px !important;
+    font-weight: bold;
+    padding: 10px 20px;
+    color: #fff;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover, .btn-success:hover {
+    background-color: #1ed760 !important; /* Daha parlak yeşil */
+}
+
+/* Navbar */
+.navbar-custom {
+    background-color: rgba(0,0,0,0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+}
+.navbar-custom .nav-link {
+    color: var(--text-primary) !important;
+    font-weight: 600;
+}
+.navbar-custom .nav-link:hover {
+    color: var(--accent-color) !important;
+}

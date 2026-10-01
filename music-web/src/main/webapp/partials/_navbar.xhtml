@@ -1,10 +1,24 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <nav class="navbar">
-        <div class="logo">🎵 MusicPlatform</div>
-        <ul class="nav-links">
-            <li><a href="/songs/index.xhtml">Keşfet</a></li>
-            <li><a href="/playlists/index.xhtml">Listelerim</a></li>
-        </ul>
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+        <div class="container">
+            <h:link outcome="/index.xhtml" styleClass="navbar-brand">
+                <i class="fa-solid fa-compact-disc" style="color: #1db954;"></i> Rezonans-ı Ahenk
+            </h:link>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <h:link outcome="/songs/index.xhtml" value="Keşfet" styleClass="nav-link"/>
+                    </li>
+                    <li class="nav-item">
+                        <h:link outcome="/admin/itunes.xhtml" value="Kütüphane" styleClass="nav-link"/>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </nav>
 </ui:composition>
