@@ -1,0 +1,28 @@
+<ui:composition template="/layouts/main.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    
+    <ui:define name="title">Tür Ekle (Admin)</ui:define>
+    
+    <ui:define name="content">
+        <div class="admin-container" style="max-width: 600px; margin: 0 auto; padding: 2rem;">
+            <h2>🎸 Yeni Müzik Türü Ekle</h2>
+            
+            <h:outputText value="#{genreBean.systemMessage}" class="alert alert-success d-block" rendered="#{not empty genreBean.systemMessage}" />
+            
+            <h:form>
+                <div class="form-group mb-3">
+                    <label>Tür Adı (Örn: Rock, Jazz, Pop)</label>
+                    <h:inputText value="#{genreBean.newGenreName}" class="form-control" />
+                </div>
+                <div class="form-group mb-3">
+                    <label>Görsel URL</label>
+                    <h:inputText value="#{genreBean.newGenreImageUrl}" class="form-control" />
+                </div>
+                
+                <h:commandButton action="#{genreBean.createGenre}" value="Türü Kaydet" class="btn btn-primary" style="width: 100%; font-weight: bold;" />
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

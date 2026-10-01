@@ -1,0 +1,38 @@
+<ui:composition template="/layouts/main.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    
+    <!-- URL parametresinden genreId alıp Bean'i tetikler -->
+    <f:metadata>
+        <f:viewParam name="genreId" value="#{genreBean.currentGenreId}" />
+        <f:viewAction action="#{genreBean.loadSongsForGenre}" />
+    </f:metadata>
+    
+    <ui:define name="title">Kategori Detayı</ui:define>
+    
+    <ui:define name="content">
+        <div class="genre-detail-container" style="padding: 2rem;">
+            <h2>Kategori Şarkıları</h2>
+            <p>Bu türe ait tüm müzikler aşağıda listelenmektedir.</p>
+
+            <c:choose>
+                <c:when test="#{empty genreBean.categorySongs}">
+                    <p class="text-muted">Bu kategoride henüz bir şarkı bulunmuyor.</p>
+                </c:when>
+                <c:otherwise>
+                    <div class="song-grid">
+                        <c:forEach items="#{genreBean.categorySongs}" var="song">
+                            <!-- Sıfır kod tekrarı: Önceden kurguladığımız partial'ı çağırıyoruz -->
+                            <ui:include src="/partials/_songCard.xhtml">
+                                <ui:param name="song" value="#{song}" />
+                            </ui:include>
+                        </c:forEach>
+                    </div>
+                </c:otherwise>
+            </c:choose>
+        </div>
+    </ui:define>
+</ui:composition>
