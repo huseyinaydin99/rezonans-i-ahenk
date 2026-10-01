@@ -1,0 +1,22 @@
+<ui:composition template="/layouts/main.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="title">Şarkılar - Keşfet</ui:define>
+
+    <ui:define name="content">
+        <h2>Öne Çıkan Şarkılar</h2>
+        <div class="song-grid">
+            <!-- Normalde Managed Bean'den gelen liste iterate edilir, partial ile render edilir -->
+            <!-- Örnek Gösterim: Kod tekrarı olmadan songCard partial çağrılır -->
+            <c:forEach items="#{songBean.topSongs}" var="currentSong">
+                <ui:include src="/partials/_songCard.xhtml">
+                    <ui:param name="song" value="#{currentSong}" />
+                </ui:include>
+            </c:forEach>
+        </div>
+    </ui:define>
+
+</ui:composition>
