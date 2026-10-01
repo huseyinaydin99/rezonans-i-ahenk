@@ -9,3 +9,4 @@ scripts/create_domain.sh
 /music-infrastructure/target/
 /music-domain/target/
 /music-application/target/
+.DS_Store

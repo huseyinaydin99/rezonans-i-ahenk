@@ -1,0 +1,61 @@
+<ui:composition template="/layouts/main.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    
+    <ui:define name="title">Arama Keşfi</ui:define>
+    
+    <ui:define name="content">
+        <div class="search-container" style="max-width: 900px; margin: 0 auto; padding: 2rem;">
+            <h2>🔍 Müzik Evreninde Ara</h2>
+            
+            <h:form class="search-form" style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                <h:inputText value="#{searchBean.query}" class="form-control" style="flex: 1; padding: 10px; font-size: 1.2rem;" placeholder="Şarkı, sanatçı veya çalma listesi ara..." />
+                <h:commandButton action="#{searchBean.executeSearch}" value="Ara" class="btn btn-primary" style="padding: 10px 20px; font-weight: bold;" />
+            </h:form>
+
+            <c:if test="#{searchBean.hasSearched}">
+                <div class="search-results-grid">
+                    
+                    <!-- Şarkılar Sonuçları -->
+                    <section class="result-section">
+                        <h3>🎵 Şarkılar</h3>
+                        <c:choose>
+                            <c:when test="#{empty searchBean.searchResults.songs}">
+                                <p class="text-muted">Eşleşen şarkı bulunamadı.</p>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="song-grid">
+                                    <c:forEach items="#{searchBean.searchResults.songs}" var="song">
+                                        <ui:include src="/partials/_songCard.xhtml">
+                                            <ui:param name="song" value="#{song}" />
+                                        </ui:include>
+                                    </c:forEach>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+                    </section>
+
+                    <!-- Sanatçılar Sonuçları -->
+                    <section class="result-section" style="margin-top: 2rem;">
+                        <h3>🎤 Sanatçılar</h3>
+                        <c:if test="#{empty searchBean.searchResults.artists}">
+                            <p class="text-muted">Eşleşen sanatçı bulunamadı.</p>
+                        </c:if>
+                        <!-- Sanatçı listeleme modüler komponenti eklenecek -->
+                    </section>
+
+                    <!-- Çalma Listeleri Sonuçları -->
+                    <section class="result-section" style="margin-top: 2rem;">
+                        <h3>📑 Çalma Listeleri</h3>
+                        <c:if test="#{empty searchBean.searchResults.playlists}">
+                            <p class="text-muted">Eşleşen çalma listesi bulunamadı.</p>
+                        </c:if>
+                    </section>
+                    
+                </div>
+            </c:if>
+        </div>
+    </ui:define>
+</ui:composition>
