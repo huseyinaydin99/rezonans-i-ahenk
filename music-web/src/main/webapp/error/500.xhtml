@@ -1,0 +1,14 @@
+<ui:composition template="/layouts/main.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:define name="title">Sunucu Hatası</ui:define>
+    <ui:define name="content">
+        <div class="error-container" style="text-align: center; margin-top: 5rem;">
+            <h1 style="font-size: 6rem; color: #6c757d;">500</h1>
+            <h2>Sistemde Kısa Devre</h2>
+            <p>Arka planda beklenmedik bir sistem arızası meydana geldi. Mühendislerimiz bu uyumsuz akordu düzeltmek için çalışıyor.</p>
+            <h:link outcome="/songs/index.xhtml" value="Ana Sayfaya Dön" class="btn btn-secondary mt-3" />
+        </div>
+    </ui:define>
+</ui:composition>

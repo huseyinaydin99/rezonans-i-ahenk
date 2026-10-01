@@ -1,0 +1,14 @@
+<ui:composition template="/layouts/main.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:define name="title">Erişim Reddedildi</ui:define>
+    <ui:define name="content">
+        <div class="error-container" style="text-align: center; margin-top: 5rem;">
+            <h1 style="font-size: 6rem; color: #dc3545;">403</h1>
+            <h2>Erişim Reddedildi</h2>
+            <p>Bu içeriği görüntülemek veya bu işlemi yapmak için gerekli yetkilere (veya abonelik paketine) sahip değilsiniz.</p>
+            <h:link outcome="/songs/index.xhtml" value="Ana Sayfaya Dön" class="btn btn-primary mt-3" />
+        </div>
+    </ui:define>
+</ui:composition>
