@@ -3,3 +3,9 @@
 banking-application/.DS_Store
 scripts/create_domain.sh
 /scripts/
+/music-web/target/
+/music-shared-kernel/target/
+/music-persistence/target/
+/music-infrastructure/target/
+/music-domain/target/
+/music-application/target/

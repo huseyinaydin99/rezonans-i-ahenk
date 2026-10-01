@@ -10,19 +10,19 @@
     <artifactId>enterprise-java-template</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
-    <name>Banking Credit System - Enterprise Java Template</name>
+    <name>Music Platform - Enterprise Java Template</name>
     <description>
         Clean Architecture tabanlı kurumsal bankacılık/kredi sistemi.
         Spring Framework 6 + Hibernate 6 + Jakarta EE 10 + Oracle Database.
     </description>
 
     <modules>
-        <module>banking-shared-kernel</module>
-        <module>banking-domain</module>
-        <module>banking-application</module>
-        <module>banking-infrastructure</module>
-        <module>banking-persistence</module>
-        <module>banking-web</module>
+        <module>music-shared-kernel</module>
+        <module>music-domain</module>
+        <module>music-application</module>
+        <module>music-infrastructure</module>
+        <module>music-persistence</module>
+        <module>music-web</module>
     </modules>
 
     <properties>
@@ -100,27 +100,27 @@
             
             <dependency>
                 <groupId>tr.com.huseyinaydin</groupId>
-                <artifactId>banking-shared-kernel</artifactId>
+                <artifactId>music-shared-kernel</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>tr.com.huseyinaydin</groupId>
-                <artifactId>banking-domain</artifactId>
+                <artifactId>music-domain</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>tr.com.huseyinaydin</groupId>
-                <artifactId>banking-application</artifactId>
+                <artifactId>music-application</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>tr.com.huseyinaydin</groupId>
-                <artifactId>banking-infrastructure</artifactId>
+                <artifactId>music-infrastructure</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>tr.com.huseyinaydin</groupId>
-                <artifactId>banking-persistence</artifactId>
+                <artifactId>music-persistence</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
