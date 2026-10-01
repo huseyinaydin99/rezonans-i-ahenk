@@ -1,13 +1,17 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <!-- Parametre olarak 'song' nesnesi bekleniyor -->
-    <div class="song-card">
-        <img src="#{song.coverImageUrl}" alt="Cover" class="song-img" />
-        <div class="song-info">
-            <h5 class="song-title">#{song.title}</h5>
-            <span class="song-tier">#{song.tier}</span>
-        </div>
-        <button class="play-btn">▶ Oynat</button>
+
+    <div class="song-card" style="border: 1px solid #333; border-radius: 8px; padding: 15px; background: #1e1e1e; text-align: center;">
+        <img src="#{song.coverImageUrl}" alt="Cover" style="width: 100%; border-radius: 4px;" />
+        <h4 style="margin: 10px 0 5px 0;">#{song.title}</h4>
+        
+        <h:form>
+            <!-- Sadece Global Player'ı render eden AJAX destekli oynatma butonu -->
+            <h:commandLink action="#{playerBean.playSong(song)}" value="▶ Oynat" styleClass="btn btn-success" style="display: block; padding: 10px; background: #1db954; color: #fff; text-decoration: none; border-radius: 20px; font-weight: bold; margin-top: 10px;">
+                <f:ajax execute="@this" render=":globalPlayerPanel" />
+            </h:commandLink>
+        </h:form>
     </div>
 </ui:composition>

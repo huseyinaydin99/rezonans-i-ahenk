@@ -4,26 +4,22 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <h:head>
     <title><ui:insert name="title">Music Platform</ui:insert></title>
-    <!-- CSS and Scripts here -->
+    <!-- CSS & JS Kütüphaneleri -->
 </h:head>
-<h:body>
-    <div id="app-container">
-        <!-- Reusable Navbar Partial -->
-        <ui:include src="/partials/_navbar.xhtml" />
-        
-        <div class="content-wrapper">
-            <!-- Reusable Sidebar Partial -->
-            <ui:include src="/partials/_sidebar.xhtml" />
-            
-            <main class="main-content">
-                <ui:insert name="content">
-                    Main Content Here
-                </ui:insert>
-            </main>
-        </div>
-        
-        <!-- Reusable Footer Partial -->
-        <ui:include src="/partials/_footer.xhtml" />
+<h:body style="margin: 0; padding-bottom: 100px; background-color: #121212; color: #fff;">
+    
+    <!-- Navbar -->
+    <ui:include src="/partials/_navbar.xhtml" />
+
+    <!-- Dinamik İçerik -->
+    <div class="main-content" style="padding: 20px;">
+        <ui:insert name="content">
+            Ana İçerik
+        </ui:insert>
     </div>
+
+    <!-- Kalıcı Global Müzik Çalar (Spotify Tarzı) -->
+    <ui:include src="/partials/_globalPlayer.xhtml" />
+
 </h:body>
 </html>
