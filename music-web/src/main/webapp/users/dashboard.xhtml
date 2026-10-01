@@ -6,6 +6,19 @@
     <ui:define name="title">Profilim</ui:define>
     <ui:define name="content">
         <div class="dashboard-grid">
+            
+            <!-- Yeni Eklenen ML Tavsiye Bölümü -->
+            <section class="recommendations">
+                <h3>✨ Sizin İçin Önerilenler</h3>
+                <div class="song-grid">
+                    <c:forEach items="#{userDashboardBean.recommendedSongs}" var="recSong">
+                        <ui:include src="/partials/_songCard.xhtml">
+                            <ui:param name="song" value="#{recSong}" />
+                        </ui:include>
+                    </c:forEach>
+                </div>
+            </section>
+
             <section class="liked-songs">
                 <h3>Beğendiğim Şarkılar</h3>
                 <c:forEach items="#{userDashboardBean.likedSongs}" var="song">
@@ -14,6 +27,7 @@
                     </ui:include>
                 </c:forEach>
             </section>
+            
             <section class="listening-history">
                 <h3>Dinleme Geçmişim</h3>
                 <c:forEach items="#{userDashboardBean.recentHistory}" var="historyItem">
