@@ -1,0 +1,27 @@
+<ui:composition template="/layouts/main.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <ui:define name="title">Profilim</ui:define>
+    <ui:define name="content">
+        <div class="dashboard-grid">
+            <section class="liked-songs">
+                <h3>Beğendiğim Şarkılar</h3>
+                <c:forEach items="#{userDashboardBean.likedSongs}" var="song">
+                    <ui:include src="/partials/_songCard.xhtml">
+                        <ui:param name="song" value="#{song}" />
+                    </ui:include>
+                </c:forEach>
+            </section>
+            <section class="listening-history">
+                <h3>Dinleme Geçmişim</h3>
+                <c:forEach items="#{userDashboardBean.recentHistory}" var="historyItem">
+                    <ui:include src="/partials/_historyItem.xhtml">
+                        <ui:param name="item" value="#{historyItem}" />
+                    </ui:include>
+                </c:forEach>
+            </section>
+        </div>
+    </ui:define>
+</ui:composition>
