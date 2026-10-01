@@ -1,0 +1,50 @@
+<ui:composition template="/layouts/main.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    
+    <ui:define name="title">iTunes Global Kütüphane</ui:define>
+    
+    <ui:define name="content">
+        <div class="itunes-container" style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
+            <h2>🌍 Küresel iTunes Entegrasyonu</h2>
+            <p>Dünyanın en büyük müzik kütüphanesinde arama yapın ve dilediğiniz şarkıyı tek tıkla platformumuza aktarın.</p>
+            
+            <h:form class="search-form" style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <h:inputText value="#{itunesBean.searchTerm}" class="form-control" style="flex: 1; padding: 12px; font-size: 1.2rem;" placeholder="Şarkı, sanatçı veya albüm ara..." />
+                <h:commandButton action="#{itunesBean.search}" value="iTunes'ta Ara" class="btn btn-dark" style="padding: 12px 24px; font-weight: bold; background-color: #000; color: #fff;" />
+            </h:form>
+
+            <c:if test="#{itunesBean.hasSearched}">
+                <div class="itunes-results" style="margin-top: 3rem;">
+                    <h3>🎧 Arama Sonuçları</h3>
+                    
+                    <c:choose>
+                        <c:when test="#{empty itunesBean.searchResults}">
+                            <p class="alert alert-warning mt-2">iTunes üzerinde bu kriterlere uygun sonuç bulunamadı.</p>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="song-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2rem; margin-top: 1.5rem;">
+                                <c:forEach items="#{itunesBean.searchResults}" var="track">
+                                    <div class="card" style="border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                        <img src="#{track.artworkUrl100}" alt="Cover" style="width: 100%; height: auto;" />
+                                        <div class="card-body" style="padding: 1rem;">
+                                            <h5 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">#{track.trackName}</h5>
+                                            <p style="margin: 0 0 1rem 0; color: #666;">#{track.artistName}</p>
+                                            <audio controls="controls" src="#{track.previewUrl}" style="width: 100%; height: 35px;"></audio>
+                                            
+                                            <h:form style="margin-top: 1rem;">
+                                                <h:commandButton action="#{itunesBean.importTrack(track)}" value="Kütüphaneye Ekle" class="btn btn-success" style="width: 100%;" />
+                                            </h:form>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </c:if>
+        </div>
+    </ui:define>
+</ui:composition>
