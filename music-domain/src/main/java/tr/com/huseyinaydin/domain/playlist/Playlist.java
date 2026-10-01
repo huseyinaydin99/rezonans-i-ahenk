@@ -1,49 +1,26 @@
 package tr.com.huseyinaydin.domain.playlist;
 
-import tr.com.huseyinaydin.domain.common.Entity;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
-public class Playlist extends Entity<UUID> {
+// Saf (Pure) Domain Entity
+public class Playlist {
+    private UUID id;
     private String name;
-    private UUID userId;
-    private List<PlaylistSong> playlistSongs;
+    private String description;
+    private UUID ownerId;
 
-    protected Playlist() {
-        super();
-    }
+    protected Playlist() {}
 
-    public Playlist(String name, UUID userId) {
-        super();
+    public Playlist(String name, String description, UUID ownerId) {
         this.id = UUID.randomUUID();
         this.name = name;
-        this.userId = userId;
-        this.playlistSongs = new ArrayList<>();
+        this.description = description;
+        this.ownerId = ownerId;
     }
 
-    public void addSong(UUID songId) {
-        boolean exists = playlistSongs.stream().anyMatch(ps -> ps.getSongId().equals(songId));
-        if (!exists) {
-            playlistSongs.add(new PlaylistSong(this.id, songId));
-        }
-    }
-
-    public void removeSong(UUID songId) {
-        playlistSongs.removeIf(ps -> ps.getSongId().equals(songId));
-    }
-
-    public void rename(String newName) {
-        if (newName == null || newName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Playlist name cannot be empty");
-        }
-        this.name = newName;
-    }
-
+    // Getters
+    public UUID getId() { return id; }
     public String getName() { return name; }
-    public UUID getUserId() { return userId; }
-    public List<PlaylistSong> getPlaylistSongs() { 
-        return Collections.unmodifiableList(playlistSongs); 
-    }
+    public String getDescription() { return description; }
+    public UUID getOwnerId() { return ownerId; }
 }

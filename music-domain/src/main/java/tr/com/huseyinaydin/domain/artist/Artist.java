@@ -1,47 +1,29 @@
 package tr.com.huseyinaydin.domain.artist;
 
-import tr.com.huseyinaydin.domain.common.Entity;
 import java.util.UUID;
 
-public class Artist extends Entity<UUID> {
+// Saf (Pure) Domain Entity
+public class Artist {
+    private UUID id;
     private String name;
-    private String imageUrl;
     private String bio;
-    private long monthlyListeners;
-    private boolean isVerified;
+    private String profileImageUrl;
+    private long followerCount;
 
-    protected Artist() {
-        super();
-    }
+    protected Artist() {}
 
-    public Artist(String name, String imageUrl, String bio) {
-        super();
+    public Artist(String name, String bio, String profileImageUrl) {
         this.id = UUID.randomUUID();
         this.name = name;
-        this.imageUrl = imageUrl;
         this.bio = bio;
-        this.monthlyListeners = 0;
-        this.isVerified = false;
+        this.profileImageUrl = profileImageUrl;
+        this.followerCount = 0;
     }
 
-    public void verify() {
-        this.isVerified = true;
-    }
-
-    public void updateProfile(String name, String imageUrl, String bio) {
-        this.name = name;
-        this.imageUrl = imageUrl;
-        this.bio = bio;
-    }
-
-    public void updateMonthlyListeners(long count) {
-        if (count < 0) throw new IllegalArgumentException("Listeners count cannot be negative");
-        this.monthlyListeners = count;
-    }
-
+    // Getters
+    public UUID getId() { return id; }
     public String getName() { return name; }
-    public String getImageUrl() { return imageUrl; }
     public String getBio() { return bio; }
-    public long getMonthlyListeners() { return monthlyListeners; }
-    public boolean isVerified() { return isVerified; }
+    public String getProfileImageUrl() { return profileImageUrl; }
+    public long getFollowerCount() { return followerCount; }
 }
