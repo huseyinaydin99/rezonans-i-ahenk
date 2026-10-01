@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="https://jakarta.ee/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence/orm https://jakarta.ee/xml/ns/persistence/orm_3_1.xsd"
+                 version="3.1">
+    
+    <entity class="tr.com.huseyinaydin.domain.song.Song" name="Song">
+        <table name="songs"/>
+        <attributes>
+            <basic name="title">
+                <column name="title" nullable="false"/>
+            </basic>
+            <basic name="coverImageUrl">
+                <column name="cover_image_url"/>
+            </basic>
+            <basic name="audioUrl">
+                <column name="audio_url" nullable="false"/>
+            </basic>
+            <basic name="duration">
+                <column name="duration_seconds" nullable="false"/>
+                <!-- You would map Duration to long using an AttributeConverter in a real app, keeping simple here -->
+            </basic>
+            <basic name="playCount">
+                <column name="play_count" nullable="false"/>
+            </basic>
+            <basic name="tier">
+                <column name="tier" nullable="false"/>
+                <enumerated>STRING</enumerated>
+            </basic>
+            <basic name="releaseDate">
+                <column name="release_date" nullable="false"/>
+            </basic>
+            <basic name="artistId">
+                <column name="artist_id" nullable="false"/>
+            </basic>
+            <basic name="genreId">
+                <column name="genre_id" nullable="false"/>
+            </basic>
+        </attributes>
+    </entity>
+</entity-mappings>
