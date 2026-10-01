@@ -2,7 +2,6 @@ package tr.com.huseyinaydin.domain.artist;
 
 import java.util.UUID;
 
-// Saf (Pure) Domain Entity
 public class Artist {
     private UUID id;
     private String name;
@@ -12,18 +11,32 @@ public class Artist {
 
     protected Artist() {}
 
-    public Artist(String name, String bio, String profileImageUrl) {
-        this.id = UUID.randomUUID();
-        this.name = name;
-        this.bio = bio;
-        this.profileImageUrl = profileImageUrl;
+    private Artist(Builder builder) {
+        this.id = builder.id != null ? builder.id : UUID.randomUUID();
+        this.name = builder.name;
+        this.bio = builder.bio;
+        this.profileImageUrl = builder.profileImageUrl;
         this.followerCount = 0;
     }
 
-    // Getters
-    public UUID getId() { return id; }
-    public String getName() { return name; }
-    public String getBio() { return bio; }
-    public String getProfileImageUrl() { return profileImageUrl; }
-    public long getFollowerCount() { return followerCount; }
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private UUID id;
+        private String name;
+        private String bio;
+        private String profileImageUrl;
+
+        public Builder id(UUID id) { this.id = id; return this; }
+        public Builder name(String name) { this.name = name; return this; }
+        public Builder bio(String bio) { this.bio = bio; return this; }
+        public Builder profileImageUrl(String profileImageUrl) { this.profileImageUrl = profileImageUrl; return this; }
+
+        public Artist build() {
+            if (name == null) throw new IllegalStateException("Sanatçı adı zorunludur!");
+            return new Artist(this);
+        }
+    }
 }

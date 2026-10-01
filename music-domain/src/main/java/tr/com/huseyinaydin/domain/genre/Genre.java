@@ -2,7 +2,6 @@ package tr.com.huseyinaydin.domain.genre;
 
 import java.util.UUID;
 
-// Saf (Pure) Domain Entity
 public class Genre {
     private UUID id;
     private String name;
@@ -10,14 +9,27 @@ public class Genre {
 
     protected Genre() {}
 
-    public Genre(String name, String imageUrl) {
-        this.id = UUID.randomUUID();
-        this.name = name;
-        this.imageUrl = imageUrl;
+    private Genre(Builder builder) {
+        this.id = builder.id != null ? builder.id : UUID.randomUUID();
+        this.name = builder.name;
+        this.imageUrl = builder.imageUrl;
     }
 
-    // Getters
-    public UUID getId() { return id; }
-    public String getName() { return name; }
-    public String getImageUrl() { return imageUrl; }
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private UUID id;
+        private String name;
+        private String imageUrl;
+
+        public Builder name(String name) { this.name = name; return this; }
+        public Builder imageUrl(String imageUrl) { this.imageUrl = imageUrl; return this; }
+
+        public Genre build() {
+            if (name == null) throw new IllegalStateException("Tür adı zorunlu!");
+            return new Genre(this);
+        }
+    }
 }
