@@ -1,0 +1,25 @@
+<ui:composition template="/layouts/main.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    
+    <ui:define name="title">Yönetim Paneli - Toplu Veri Aktarımı</ui:define>
+    
+    <ui:define name="content">
+        <div class="admin-container">
+            <h2>🎵 Şarkı Toplu Aktarım (CSV Import)</h2>
+            <p>Binlerce şarkıyı tek seferde sisteme yüklemek için virgülle ayrılmış (CSV) verilerinizi aşağıya yapıştırın.</p>
+            <p><small>Format: Başlık, AudioUrl, SaniyeCinsindenSüre, Tier(BASIC/PREMIUM), ArtistId, GenreId</small></p>
+            
+            <h:form>
+                <div class="form-group">
+                    <h:inputTextarea value="#{importBean.csvData}" rows="10" class="form-control" style="width: 100%; font-family: monospace;" />
+                </div>
+                
+                <h:commandButton action="#{importBean.processImport}" value="🚀 Verileri Yükle" class="btn btn-primary mt-2" />
+                
+                <h:outputText value="#{importBean.importMessage}" class="alert alert-success mt-2 d-block" rendered="#{not empty importBean.importMessage}" />
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>
