@@ -1,0 +1,48 @@
+<ui:composition template="/layouts/main.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    
+    <ui:define name="title">Abonelik Yükseltme</ui:define>
+    
+    <ui:define name="content">
+        <div class="pricing-container" style="text-align: center; max-width: 800px; margin: 0 auto;">
+            <h2>💎 Premium Müzik Deneyimine Geçin</h2>
+            <p>Reklamsız dinleyin, her yerden ulaşın ve en yüksek ses kalitesinin tadını çıkarın.</p>
+            
+            <h:outputText value="#{membershipBean.systemMessage}" class="alert #{membershipBean.upgradeSuccess ? 'alert-success' : 'alert-danger'} d-block mt-3" rendered="#{not empty membershipBean.systemMessage}" />
+
+            <div class="pricing-grid" style="display: flex; gap: 2rem; margin-top: 3rem; justify-content: center;">
+                
+                <!-- Premium Plan -->
+                <div class="pricing-card" style="flex: 1; padding: 2rem; border: 2px solid #007bff; border-radius: 12px; background: #f8f9fa;">
+                    <h3 style="color: #007bff;">Premium Paket</h3>
+                    <h2>29.99 ₺ <small>/ ay</small></h2>
+                    <ul style="list-style: none; padding: 0; margin: 1.5rem 0; text-align: left;">
+                        <li>✔️ Reklamsız Müzik</li>
+                        <li>✔️ Yüksek Ses Kalitesi</li>
+                        <li>✔️ Özel Çalma Listeleri</li>
+                    </ul>
+                    <h:form>
+                        <h:commandButton action="#{membershipBean.processUpgrade('PREMIUM')}" value="Premium'a Yükselt" class="btn btn-primary" style="width: 100%; padding: 10px; font-weight: bold;" />
+                    </h:form>
+                </div>
+
+                <!-- Elite Plan -->
+                <div class="pricing-card" style="flex: 1; padding: 2rem; border: 2px solid #ffc107; border-radius: 12px; background: #fffdf5;">
+                    <h3 style="color: #ffc107;">Elit Paket</h3>
+                    <h2>49.99 ₺ <small>/ ay</small></h2>
+                    <ul style="list-style: none; padding: 0; margin: 1.5rem 0; text-align: left;">
+                        <li>✔️ Premium'un Tüm Özellikleri</li>
+                        <li>✔️ Kayıpsız (Hi-Fi) Ses</li>
+                        <li>✔️ Konser Biletlerinde Öncelik</li>
+                    </ul>
+                    <h:form>
+                        <h:commandButton action="#{membershipBean.processUpgrade('ELIT')}" value="Elit'e Yükselt" class="btn btn-warning" style="width: 100%; padding: 10px; font-weight: bold; background-color: #ffc107; border: none; color: #000;" />
+                    </h:form>
+                </div>
+                
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
