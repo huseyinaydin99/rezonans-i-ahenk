@@ -60,4 +60,45 @@
         </attributes>
     </entity>
 
+    <!-- APPUSER MAPPING -->
+    <entity class="user.AppUser" name="AppUser">
+        <table name="app_users"/>
+        <attributes>
+            <id name="id"><column name="id" column-definition="UUID"/></id>
+            <basic name="username"><column name="username" nullable="false" length="100"/></basic>
+            <basic name="email"><column name="email" nullable="false" length="255" unique="true"/></basic>
+            <basic name="passwordHash"><column name="password_hash" nullable="false" length="500"/></basic>
+            <basic name="bio"><column name="bio" length="1000"/></basic>
+            <basic name="profileImageUrl"><column name="profile_image_url" length="500"/></basic>
+            <basic name="tier">
+                <column name="membership_tier" nullable="false"/>
+                <enumerated>STRING</enumerated>
+            </basic>
+            <basic name="registeredAt"><column name="registered_at" nullable="false"/></basic>
+        </attributes>
+    </entity>
+
+    <!-- SONGLIKE MAPPING -->
+    <entity class="interaction.SongLike" name="SongLike">
+        <table name="song_likes"/>
+        <attributes>
+            <id name="id"><column name="id" column-definition="UUID"/></id>
+            <basic name="userId"><column name="user_id" nullable="false" column-definition="UUID"/></basic>
+            <basic name="songId"><column name="song_id" nullable="false" column-definition="UUID"/></basic>
+            <basic name="likedAt"><column name="liked_at" nullable="false"/></basic>
+        </attributes>
+    </entity>
+
+    <!-- LISTENING HISTORY MAPPING -->
+    <entity class="interaction.ListeningHistory" name="ListeningHistory">
+        <table name="listening_histories"/>
+        <attributes>
+            <id name="id"><column name="id" column-definition="UUID"/></id>
+            <basic name="userId"><column name="user_id" nullable="false" column-definition="UUID"/></basic>
+            <basic name="songId"><column name="song_id" nullable="false" column-definition="UUID"/></basic>
+            <basic name="listenDurationSeconds"><column name="listen_duration_seconds" nullable="false"/></basic>
+            <basic name="listenedAt"><column name="listened_at" nullable="false"/></basic>
+        </attributes>
+    </entity>
+
 </entity-mappings>

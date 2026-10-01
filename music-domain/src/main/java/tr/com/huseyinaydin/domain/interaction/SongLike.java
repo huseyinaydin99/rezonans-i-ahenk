@@ -1,27 +1,26 @@
 package tr.com.huseyinaydin.domain.interaction;
 
-import tr.com.huseyinaydin.domain.common.Entity;
-import java.time.LocalDateTime;
 import java.util.UUID;
+import java.time.LocalDateTime;
 
-public class SongLike extends Entity<UUID> {
+// Saf (Pure) Domain Entity
+public class SongLike {
+    private UUID id;
     private UUID userId;
     private UUID songId;
-    private LocalDateTime likedDate;
+    private LocalDateTime likedAt;
 
-    protected SongLike() {
-        super();
-    }
+    protected SongLike() {}
 
     public SongLike(UUID userId, UUID songId) {
-        super();
         this.id = UUID.randomUUID();
         this.userId = userId;
         this.songId = songId;
-        this.likedDate = LocalDateTime.now();
+        this.likedAt = LocalDateTime.now();
     }
 
+    public UUID getId() { return id; }
     public UUID getUserId() { return userId; }
     public UUID getSongId() { return songId; }
-    public LocalDateTime getLikedDate() { return likedDate; }
+    public LocalDateTime getLikedAt() { return likedAt; }
 }
