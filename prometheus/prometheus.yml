@@ -1,0 +1,9 @@
+global:
+  scrape_interval: 10s # Verileri 10 saniyede bir kazı
+  evaluation_interval: 10s
+
+scrape_configs:
+  - job_name: 'music_platform_backend'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8080'] # Spring Boot uygulamasının koştuğu adres
