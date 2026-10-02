@@ -2,6 +2,7 @@ package tr.com.huseyinaydin.infrastructure.external;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -20,30 +21,42 @@ public class ItunesServiceProxy implements IItunesService {
             HazelcastInstance hazelcastInstance) {
         
         this.realService = realService;
-        // Mevcut Hazelcast dağıtık önbelleğinden iTunes sorguları için özel map alınıyor
         this.proxyCache = hazelcastInstance.getMap("itunes-proxy-cache");
     }
 
+    /**
+     * @CircuitBreaker anotasyonu ile iTunes API çökerse sistemi kilitlemek yerine 
+     * 'itunesFallback' metoduna yönlendirerek hatayı tolere ediyoruz.
+     */
     @Override
+    @CircuitBreaker(name = "itunesApi", fallbackMethod = "itunesFallback")
     public ItunesResponseDto searchMusic(String term, int limit) {
         String cacheKey = term.toLowerCase().trim() + "_" + limit;
 
-        // 1. Önce vekil (Proxy) kendi belleğini kontrol eder
         if (proxyCache.containsKey(cacheKey)) {
-            System.out.println("[PROXY VEKİL] İstek dış dünyaya çıkmadı! Veri doğrudan Hazelcast önbelleğinden (Cache Hit) dönülüyor. Arama: " + term);
+            System.out.println("[PROXY VEKİL] İstek Hazelcast önbelleğinden dönülüyor...");
             return proxyCache.get(cacheKey);
         }
 
-        // 2. Eğer veri bellekte yoksa, Proxy isteği gerçek servise (Real Subject) delege eder
-        System.out.println("[PROXY VEKİL] Veri bellekte bulunamadı. İstek gerçek iTunes API'sine delege ediliyor...");
+        System.out.println("[PROXY VEKİL] İstek gerçek iTunes API'sine delege ediliyor...");
         ItunesResponseDto response = realService.searchMusic(term, limit);
 
-        // 3. Gerçek servisten dönen sonucu gelecekteki istekler için önbelleğe alır
         if (response != null && response.resultCount() > 0) {
-            System.out.println("[PROXY VEKİL] Gerçek servisten gelen yanıt belleğe kaydedildi.");
             proxyCache.put(cacheKey, response);
         }
 
         return response;
+    }
+
+    /**
+     * FALLBACK (B Planı) Metodu: Devre kesici (Circuit Breaker) AÇIK (Open) konuma geldiğinde 
+     * yani karşı sunucu yanıt vermediğinde bizzat burası çalışır.
+     */
+    public ItunesResponseDto itunesFallback(String term, int limit, Throwable t) {
+        System.err.println("[DEVRE KESİCİ AÇIK - FALLBACK] Dış iTunes API'si çöktü veya ulaşılamıyor! Hata: " + t.getMessage());
+        System.out.println("-> Uygulamanın çökmesi engellendi. Kullanıcıya boş (veya varsayılan) bir yanıt dönülüyor...");
+        
+        // Hata fırlatmak yerine sistemi ayakta tutacak varsayılan bir veri dönüyoruz.
+        return new ItunesResponseDto(0, java.util.Collections.emptyList());
     }
 }
