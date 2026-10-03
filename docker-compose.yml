@@ -116,3 +116,13 @@ volumes:
       /usr/bin/mc anonymous set download myminio/music-audio-bucket;
       /usr/bin/mc anonymous set download myminio/music-image-bucket;
       "
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.1.1
+    container_name: music_keycloak
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    command: start-dev
+    ports:
+      - "8081:8080"
