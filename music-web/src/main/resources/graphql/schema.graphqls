@@ -1,0 +1,42 @@
+type Query {
+    # Belirli bir şarkıyı ID'ye göre getirir
+    getSongById(id: ID!): Song
+    
+    # Elasticsearch altyapısını kullanarak metin araması yapar
+    searchSongs(keyword: String!): [Song]
+    
+    # Sanatçı profilini ve şarkılarını getirir
+    getArtistById(id: ID!): Artist
+}
+
+type Mutation {
+    # Yeni bir çalma listesi oluşturur
+    createPlaylist(name: String!, description: String!): Playlist
+}
+
+# Şarkı Tipi
+type Song {
+    id: ID!
+    title: String!
+    audioUrl: String!
+    coverImageUrl: String
+    tier: String!
+    durationSeconds: Int!
+    artist: Artist
+}
+
+# Sanatçı Tipi
+type Artist {
+    id: ID!
+    name: String!
+    bio: String
+    profileImageUrl: String
+    followerCount: Int!
+}
+
+# Çalma Listesi Tipi
+type Playlist {
+    id: ID!
+    name: String!
+    description: String
+}
