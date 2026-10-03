@@ -148,3 +148,29 @@ volumes:
     ports:
       - "16686:16686" # UI
       - "9411:9411"   # Zipkin API port (Spring Boot sends spans here)
+
+  spark-master:
+    image: bitnami/spark:3.4.1
+    container_name: music_spark_master
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    ports:
+      - "8082:8080" # Web UI
+      - "7077:7077" # Master Port
+
+  spark-worker:
+    image: bitnami/spark:3.4.1
+    container_name: music_spark_worker
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_WORKER_CORES=1
+    ports:
+      - "8083:8081"
