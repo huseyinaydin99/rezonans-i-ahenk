@@ -139,3 +139,12 @@ volumes:
       - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
       - HEAP_NEWSIZE=256M
       - MAX_HEAP_SIZE=512M
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.45
+    container_name: music_jaeger
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+    ports:
+      - "16686:16686" # UI
+      - "9411:9411"   # Zipkin API port (Spring Boot sends spans here)
