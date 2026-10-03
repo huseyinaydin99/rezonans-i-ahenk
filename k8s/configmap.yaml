@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: music-platform-config
+  namespace: default
+data:
+  SPRING_PROFILES_ACTIVE: "production"
+  KAFKA_BOOTSTRAP_SERVERS: "music-kafka:9092"
+  CASSANDRA_CONTACT_POINTS: "music-cassandra"
+  ELASTICSEARCH_URIS: "http://music-elasticsearch:9200"
+  MINIO_URL: "http://music-minio:9000"
+  JAEGER_ENDPOINT: "http://music-jaeger:9411/api/v2/spans"

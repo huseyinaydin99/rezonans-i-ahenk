@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: music-core-deployment
+  namespace: default
+  labels:
+    app: music-core
+spec:
+  replicas: 3 # Yüksek erişilebilirlik (High Availability) için 3 kopya (Pod) çalıştırır
+  selector:
+    matchLabels:
+      app: music-core
+  template:
+    metadata:
+      labels:
+        app: music-core
+    spec:
+      containers:
+      - name: music-core-container
+        image: huseyinaydin/music-platform:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080 # REST, GraphQL ve Gateway
+        - containerPort: 9090 # gRPC
+        envFrom:
+        - configMapRef:
+            name: music-platform-config
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
