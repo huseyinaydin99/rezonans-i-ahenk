@@ -126,3 +126,16 @@ volumes:
     command: start-dev
     ports:
       - "8081:8080"
+
+  cassandra:
+    image: cassandra:4.1.1
+    container_name: music_cassandra
+    ports:
+      - "9042:9042"
+    environment:
+      - CASSANDRA_CLUSTER_NAME=MusicCluster
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_RACK=rack1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - HEAP_NEWSIZE=256M
+      - MAX_HEAP_SIZE=512M
