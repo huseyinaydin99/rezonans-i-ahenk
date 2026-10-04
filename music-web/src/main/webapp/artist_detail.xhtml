@@ -135,7 +135,14 @@
                                                     <f:ajax execute="@this" render=":playlistModalContent" />
                                                 </h:commandLink>
                                             </h:form>
-                                            <h:form styleClass="d-inline me-2"><h:commandLink styleClass="btn btn-sm btn-link text-secondary"><i class="fa-regular fa-heart"></i></h:commandLink></h:form>
+                                            <h:form styleClass="d-inline me-2">
+                                                <h:panelGroup id="artistLikeBtnGroup">
+                                                    <h:commandLink action="#{likeBean.toggleFavorite(song.id.toString())}" styleClass="btn btn-sm btn-link text-secondary">
+                                                        <i class="#{likeBean.isSongLiked(song.id.toString()) ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart'}" style="font-size: 16px;"></i>
+                                                        <f:ajax execute="@this" render="artistLikeBtnGroup" />
+                                                    </h:commandLink>
+                                                </h:panelGroup>
+                                            </h:form>
                                             
                                             <h:form>
                                                 <h:commandLink action="#{playerBean.playSong(song)}" styleClass="btn btn-sm btn-info rounded-circle">

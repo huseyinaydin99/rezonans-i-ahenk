@@ -19,16 +19,22 @@
                 </h:form>
 
                 <div>
+                    <!-- YENİ: Global Beğeni (Like) Butonu -->
                     <h:form styleClass="d-inline">
-                        <h:commandLink styleClass="btn btn-outline-secondary btn-sm rounded-circle text-muted ms-2" title="Beğen">
-                            <i class="fa-regular fa-heart"></i>
-                        </h:commandLink>
+                        <h:panelGroup id="likeBtnGroup">
+                            <h:commandLink action="#{likeBean.toggleFavorite(song.id.toString())}" 
+                                           styleClass="btn btn-outline-secondary btn-sm rounded-circle ms-2 shadow-sm border-0 bg-dark" 
+                                           title="Beğen">
+                                <i class="#{likeBean.isSongLiked(song.id.toString()) ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart text-muted'}"></i>
+                                <f:ajax execute="@this" render="likeBtnGroup" />
+                            </h:commandLink>
+                        </h:panelGroup>
                     </h:form>
                     
-                    <!-- YENİ: Çalma Listesine Ekle Butonu -->
+                    <!-- Çalma Listesine Ekle Butonu -->
                     <h:form styleClass="d-inline">
                         <h:commandLink action="#{playlistBean.prepareAddSong(song.id.toString(), song.title)}"
-                                       styleClass="btn btn-outline-secondary btn-sm rounded-circle text-muted ms-2" 
+                                       styleClass="btn btn-outline-secondary btn-sm rounded-circle text-muted ms-2 shadow-sm border-0 bg-dark" 
                                        title="Çalma Listesine Ekle"
                                        onclick="setTimeout(openPlaylistModal, 300);">
                             <i class="fa-solid fa-folder-plus"></i>
@@ -43,5 +49,6 @@
     <style>
         .song-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.5) !important; border-color: #0dcaf0 !important; }
         .song-card:hover .btn-info { background-color: #fff; color: #000; border-color: #fff; }
+        .song-card:hover .bg-dark.btn-outline-secondary { background-color: rgba(255,255,255,0.1) !important; }
     </style>
 </ui:composition>
