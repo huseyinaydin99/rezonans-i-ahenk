@@ -1,11 +1,95 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <div class="playlist-actions">
-        <h:form>
-            <h:commandButton value="🎵 Yeni Şarkı Ekle" action="#{playlistBean.openSearchModal()}" class="btn-secondary" />
-            <h:commandButton value="🔗 Listeyi Paylaş" action="#{playlistBean.generateShareLink(currentPlaylist.id)}" class="btn-primary" />
-        </h:form>
-        <h:outputText value="Bağlantı: #{playlistBean.generatedShareLink}" rendered="#{not empty playlistBean.generatedShareLink}" class="share-link-box" />
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <!-- Global Playlist Modal: Her sayfadan erişilebilen, şarkı ekleme arayüzü -->
+    <div class="modal fade" id="playlistAddModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white border-secondary shadow-lg rounded-4" style="background: rgba(30,30,40,0.95) !important; backdrop-filter: blur(10px);">
+                
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title fw-bold">
+                        <i class="fa-solid fa-list-ul me-2 text-info"></i>Çalma Listesine Ekle
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"
+                            onclick="document.getElementById('hiddenResetBtn').click();"></button>
+                </div>
+                
+                <!-- Sadece bu panel güncellenecek -->
+                <h:panelGroup id="playlistModalContent" layout="block" class="modal-body">
+                    
+                    <!-- Seçili Şarkı Başlığı -->
+                    <c:if test="#{not empty playlistBean.selectedSongTitle}">
+                        <div class="alert bg-black border-secondary mb-3 d-flex align-items-center">
+                            <i class="fa-solid fa-music text-secondary me-3 fa-2x"></i>
+                            <div>
+                                <small class="text-secondary d-block">Şu Şarkı Ekleniyor:</small>
+                                <strong class="text-white">#{playlistBean.selectedSongTitle}</strong>
+                            </div>
+                        </div>
+                    </c:if>
+
+                    <!-- Başarı Mesajı -->
+                    <c:if test="#{not empty playlistBean.successMessage}">
+                        <div class="alert alert-success fw-bold text-center">
+                            <i class="fa-solid fa-check-circle me-2"></i>#{playlistBean.successMessage}
+                        </div>
+                    </c:if>
+
+                    <h:form id="playlistAddForm">
+                        <p class="text-secondary mb-2 fw-bold">Bir liste seçin:</p>
+                        
+                        <c:choose>
+                            <c:when test="#{empty playlistBean.userPlaylists}">
+                                <div class="text-center py-4 text-muted">
+                                    <i class="fa-regular fa-folder-open fa-2x mb-2"></i>
+                                    <p>Henüz bir çalma listeniz yok.</p>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="list-group list-group-flush border border-secondary rounded">
+                                    <c:forEach items="#{playlistBean.userPlaylists}" var="pl">
+                                        <div class="list-group-item bg-transparent text-white border-secondary d-flex justify-content-between align-items-center py-3 list-hover-fx">
+                                            <div>
+                                                <i class="fa-solid fa-compact-disc text-secondary me-2"></i>
+                                                <span class="fw-bold">#{pl.name}</span>
+                                            </div>
+                                            <h:commandLink action="#{playlistBean.addSelectedSongToPlaylist(pl.id)}" styleClass="btn btn-sm btn-outline-info rounded-pill px-3">
+                                                Ekle
+                                                <!-- Modal içeriğini AJAX ile güncelle ki başarı mesajı görünsün -->
+                                                <f:ajax execute="@this" render=":playlistModalContent" />
+                                            </h:commandLink>
+                                        </div>
+                                    </c:forEach>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+                    </h:form>
+                </h:panelGroup>
+
+                <!-- Gizli form: Modal kapanırken veriyi sıfırlar -->
+                <h:form style="display:none;">
+                    <h:commandButton id="hiddenResetBtn" action="#{playlistBean.resetAction()}">
+                        <f:ajax execute="@this" render=":playlistModalContent" />
+                    </h:commandButton>
+                </h:form>
+                
+            </div>
+        </div>
     </div>
+    
+    <style>
+        .list-hover-fx { transition: background 0.2s; }
+        .list-hover-fx:hover { background: rgba(255,255,255,0.05) !important; }
+    </style>
+    
+    <!-- Modalı tetiklemek için global JavaScript fonksiyonu -->
+    <script>
+        function openPlaylistModal() {
+            var modal = new bootstrap.Modal(document.getElementById('playlistAddModal'));
+            modal.show();
+        }
+    </script>
 </ui:composition>

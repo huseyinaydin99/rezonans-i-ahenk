@@ -3,15 +3,45 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <div class="song-card" style="border: 1px solid #333; border-radius: 8px; padding: 15px; background: #1e1e1e; text-align: center;">
-        <img src="#{song.coverImageUrl}" alt="Cover" style="width: 100%; border-radius: 4px;" />
-        <h4 style="margin: 10px 0 5px 0;">#{song.title}</h4>
+    <div class="song-card card h-100 bg-dark text-white shadow-sm border border-secondary" style="border-radius: 12px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;">
+        <img src="#{song.coverImageUrl}" class="card-img-top" alt="#{song.title}" style="height: 180px; object-fit: cover;" />
         
-        <h:form>
-            <!-- Sadece Global Player'ı render eden AJAX destekli oynatma butonu -->
-            <h:commandLink action="#{playerBean.playSong(song)}" value="▶ Oynat" styleClass="btn btn-success" style="display: block; padding: 10px; background: #1db954; color: #fff; text-decoration: none; border-radius: 20px; font-weight: bold; margin-top: 10px;">
-                <f:ajax execute="@this" render=":globalPlayerPanel" />
-            </h:commandLink>
-        </h:form>
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title fw-bold text-truncate" title="#{song.title}">#{song.title}</h5>
+            
+            <div class="mt-auto d-flex justify-content-between align-items-center">
+                <!-- Şarkı Çalma Butonu -->
+                <h:form class="d-inline">
+                    <h:commandLink action="#{playerBean.playSong(song)}" styleClass="btn btn-info btn-sm rounded-circle d-flex align-items-center justify-content-center shadow" style="width: 36px; height: 36px;">
+                        <i class="fa-solid fa-play text-dark"></i>
+                        <f:ajax execute="@this" render=":globalPlayerPanel" />
+                    </h:commandLink>
+                </h:form>
+
+                <div>
+                    <h:form styleClass="d-inline">
+                        <h:commandLink styleClass="btn btn-outline-secondary btn-sm rounded-circle text-muted ms-2" title="Beğen">
+                            <i class="fa-regular fa-heart"></i>
+                        </h:commandLink>
+                    </h:form>
+                    
+                    <!-- YENİ: Çalma Listesine Ekle Butonu -->
+                    <h:form styleClass="d-inline">
+                        <h:commandLink action="#{playlistBean.prepareAddSong(song.id.toString(), song.title)}"
+                                       styleClass="btn btn-outline-secondary btn-sm rounded-circle text-muted ms-2" 
+                                       title="Çalma Listesine Ekle"
+                                       onclick="setTimeout(openPlaylistModal, 300);">
+                            <i class="fa-solid fa-folder-plus"></i>
+                            <f:ajax execute="@this" render=":playlistModalContent" />
+                        </h:commandLink>
+                    </h:form>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <style>
+        .song-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.5) !important; border-color: #0dcaf0 !important; }
+        .song-card:hover .btn-info { background-color: #fff; color: #000; border-color: #fff; }
+    </style>
 </ui:composition>

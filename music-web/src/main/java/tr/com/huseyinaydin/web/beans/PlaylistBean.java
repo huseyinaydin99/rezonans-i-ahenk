@@ -20,6 +20,11 @@ public class PlaylistBean implements Serializable {
     private String newPlaylistName;
     private String newPlaylistDescription;
     private List<PlaylistDetailDto> userPlaylists;
+    
+    // YENİ: Global çalma listesi ekleme akışı için geçici değişkenler
+    private String selectedSongId;
+    private String selectedSongTitle;
+    private String successMessage;
 
     public void loadPlaylists() {
         this.userPlaylists = playlistService.getUserPlaylists("current-user-id");
@@ -34,7 +39,6 @@ public class PlaylistBean implements Serializable {
             
             playlistService.createPlaylist(dto);
             
-            // Formu temizle ve listeyi yenile
             this.newPlaylistName = "";
             this.newPlaylistDescription = "";
             loadPlaylists();
@@ -43,10 +47,29 @@ public class PlaylistBean implements Serializable {
         }
     }
 
-    public void addMockSongToPlaylist(String playlistId) {
-        playlistService.addSongToPlaylist(playlistId, "mock-song-id-123");
-        loadPlaylists();
-        System.out.println("[JSF AJAX] Şarkı başarıyla listeye eklendi.");
+    // Modal açılırken o anki şarkının bilgilerini Bean'e aktarır
+    public void prepareAddSong(String songId, String songTitle) {
+        this.selectedSongId = songId;
+        this.selectedSongTitle = songTitle;
+        this.successMessage = null;
+        loadPlaylists(); // Kullanıcının listelerini güncel getir
+        System.out.println("[JSF AJAX] Modal hazırlandı. Seçilen Şarkı: " + songTitle);
+    }
+
+    // Asenkron olarak seçilen şarkıyı belirtilen listeye ekler
+    public void addSelectedSongToPlaylist(String playlistId) {
+        if (selectedSongId != null && playlistId != null) {
+            playlistService.addSongToPlaylist(playlistId, selectedSongId);
+            this.successMessage = "Şarkı başarıyla listeye eklendi!";
+            System.out.println("[JSF AJAX] '" + selectedSongTitle + "' şarkısı listeye eklendi.");
+        }
+    }
+
+    // Modal kapatılırken durumu sıfırlar
+    public void resetAction() {
+        this.selectedSongId = null;
+        this.selectedSongTitle = null;
+        this.successMessage = null;
     }
 
     // Getters & Setters
@@ -55,4 +78,8 @@ public class PlaylistBean implements Serializable {
     public String getNewPlaylistDescription() { return newPlaylistDescription; }
     public void setNewPlaylistDescription(String newPlaylistDescription) { this.newPlaylistDescription = newPlaylistDescription; }
     public List<PlaylistDetailDto> getUserPlaylists() { return userPlaylists; }
+    
+    public String getSelectedSongId() { return selectedSongId; }
+    public String getSelectedSongTitle() { return selectedSongTitle; }
+    public String getSuccessMessage() { return successMessage; }
 }
