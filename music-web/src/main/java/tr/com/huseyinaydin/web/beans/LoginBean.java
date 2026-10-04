@@ -11,6 +11,7 @@ import tr.com.huseyinaydin.sharedkernel.exception.BusinessException;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.io.IOException;
 
 @Named
 @SessionScoped
@@ -57,6 +58,37 @@ public class LoginBean implements Serializable {
             this.success = false;
             this.message = "Sunucu bağlantı hatası.";
         }
+    }
+
+    /**
+     * Güvenli Çıkış (Logout) Akışı
+     * Kullanıcının JSF oturumundaki JWT token'ını ve rollerini temizler, 
+     * ardından Login ekranına yönlendirir.
+     */
+    public void logout() throws IOException {
+        System.out.println("[GİRİŞ SİSTEMİ] Kullanıcı oturumu sonlandırma talebi (Logout) alındı.");
+        
+        FacesContext context = FacesContext.getCurrentInstance();
+        
+        // Session haritasından gizli bilgileri temizle
+        Map<String, Object> sessionMap = context.getExternalContext().getSessionMap();
+        sessionMap.remove("JWT_TOKEN");
+        sessionMap.remove("USER_ROLE");
+        
+        // Bean'in dahili durumunu sıfırla
+        this.isLoggedIn = false;
+        this.loggedInUserRole = null;
+        this.email = null;
+        this.password = null;
+        this.message = null;
+        
+        // Güvenlik: Tüm JSF HTTP oturumunu kökten geçersiz kıl (Invalidate)
+        context.getExternalContext().invalidateSession();
+        
+        System.out.println("-> Oturum (Session) temizlendi. Token silindi.");
+        
+        // Çıkış yapıldıktan sonra Login sayfasına yönlendir
+        context.getExternalContext().redirect(context.getExternalContext().getRequestContextPath() + "/login.xhtml");
     }
 
     // Getters and Setters

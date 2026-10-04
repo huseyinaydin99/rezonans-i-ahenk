@@ -1,23 +1,80 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
-        <div class="container">
-            <h:link outcome="/index.xhtml" styleClass="navbar-brand">
-                <i class="fa-solid fa-compact-disc" style="color: #1db954;"></i> Rezonans-ı Ahenk
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top" style="border-bottom: 1px solid rgba(255, 255, 255, 0.05); background: rgba(14, 14, 18, 0.95) !important; backdrop-filter: blur(10px);">
+        <div class="container-fluid px-4">
+            <h:link outcome="/index.xhtml" styleClass="navbar-brand d-flex align-items-center fw-bold">
+                <i class="fa-solid fa-compact-disc fa-spin-pulse me-2" style="color: #0dcaf0; font-size: 24px;"></i> 
+                <span class="text-white tracking-wider">Rezonans-ı Ahenk</span>
             </h:link>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold">
                     <li class="nav-item">
-                        <h:link outcome="/songs/index.xhtml" value="Keşfet" styleClass="nav-link"/>
+                        <h:link outcome="/index.xhtml" value="Ana Sayfa" styleClass="nav-link px-3"/>
                     </li>
                     <li class="nav-item">
-                        <h:link outcome="/admin/itunes.xhtml" value="Kütüphane" styleClass="nav-link"/>
+                        <h:link outcome="/browse.xhtml" value="Keşfet" styleClass="nav-link px-3"/>
                     </li>
+                    <li class="nav-item">
+                        <h:link outcome="/artists.xhtml" value="Sanatçılar" styleClass="nav-link px-3"/>
+                    </li>
+                    
+                    <c:if test="#{loginBean.isLoggedIn}">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle px-3" href="#" role="button" data-bs-toggle="dropdown">
+                                Kütüphanem
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark bg-dark border-secondary shadow-lg">
+                                <li><h:link outcome="/my_playlists.xhtml" value="Çalma Listelerim" styleClass="dropdown-item"/></li>
+                                <li><h:link outcome="/liked_songs.xhtml" value="Beğendiklerim" styleClass="dropdown-item"/></li>
+                            </ul>
+                        </li>
+                    </c:if>
                 </ul>
+                
+                <h:form id="navAuthForm" class="d-flex align-items-center">
+                    <c:choose>
+                        <c:when test="#{loginBean.isLoggedIn}">
+                            <div class="dropdown">
+                                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle px-3 py-2 rounded-pill border border-secondary" style="background: rgba(255,255,255,0.05);" data-bs-toggle="dropdown">
+                                    <img src="https://ui-avatars.com/api/?name=User&amp;background=0dcaf0&amp;color=fff" alt="User" width="28" height="28" class="rounded-circle me-2"/>
+                                    <strong>Hesabım</strong>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end shadow-lg border-secondary mt-2">
+                                    <li><h:link outcome="/profile.xhtml" styleClass="dropdown-item"><i class="fa-solid fa-user me-2 text-info"></i>Profilim</h:link></li>
+                                    <li><h:link outcome="/checkout.xhtml" styleClass="dropdown-item"><i class="fa-solid fa-crown me-2 text-warning"></i>Premium Yükselt</h:link></li>
+                                    
+                                    <c:if test="#{loginBean.loggedInUserRole == 'ROLE_ARTIST'}">
+                                        <li><h:link outcome="/artist_dashboard.xhtml" styleClass="dropdown-item"><i class="fa-solid fa-microphone me-2 text-success"></i>Sanatçı Portalı</h:link></li>
+                                    </c:if>
+                                    
+                                    <c:if test="#{loginBean.loggedInUserRole == 'ROLE_ADMIN'}">
+                                        <li><h:link outcome="/admin_dashboard.xhtml" styleClass="dropdown-item"><i class="fa-solid fa-shield-halved me-2 text-danger"></i>Yönetici Paneli</h:link></li>
+                                    </c:if>
+                                    
+                                    <li><hr class="dropdown-divider border-secondary"/></li>
+                                    <li>
+                                        <!-- GÜVENLİ ÇIKIŞ (LOGOUT) BUTONU -->
+                                        <h:commandLink action="#{loginBean.logout}" styleClass="dropdown-item text-danger fw-bold">
+                                            <i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Güvenli Çıkış Yap
+                                        </h:commandLink>
+                                    </li>
+                                </ul>
+                            </div>
+                        </c:when>
+                        
+                        <c:otherwise>
+                            <h:link outcome="/register.xhtml" styleClass="btn btn-outline-light rounded-pill px-4 me-2 fw-bold">Kayıt Ol</h:link>
+                            <h:link outcome="/login.xhtml" styleClass="btn btn-info text-dark rounded-pill px-4 fw-bold shadow-sm">Giriş Yap</h:link>
+                        </c:otherwise>
+                    </c:choose>
+                </h:form>
             </div>
         </div>
     </nav>
