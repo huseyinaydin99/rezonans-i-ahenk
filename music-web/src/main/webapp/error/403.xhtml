@@ -1,14 +1,98 @@
-<ui:composition template="/layouts/main.xhtml"
-                xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <ui:define name="title">Erişim Reddedildi</ui:define>
-    <ui:define name="content">
-        <div class="error-container" style="text-align: center; margin-top: 5rem;">
-            <h1 style="font-size: 6rem; color: #dc3545;">403</h1>
-            <h2>Erişim Reddedildi</h2>
-            <p>Bu içeriği görüntülemek veya bu işlemi yapmak için gerekli yetkilere (veya abonelik paketine) sahip değilsiniz.</p>
-            <h:link outcome="/songs/index.xhtml" value="Ana Sayfaya Dön" class="btn btn-primary mt-3" />
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+    <title>Erişim Reddedildi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <style>
+        body {
+            background-color: #0078D7;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .bsod-container {
+            max-width: 800px;
+            padding: 40px;
+        }
+        .sad-face {
+            font-size: 100px;
+            margin-bottom: 30px;
+            font-family: Arial, sans-serif;
+        }
+        .error-title {
+            font-size: 32px;
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+        .progress-text {
+            font-size: 20px;
+            margin-bottom: 40px;
+        }
+        .qr-section {
+            display: flex;
+            align-items: center;
+            margin-top: 40px;
+        }
+        .qr-placeholder {
+            width: 100px;
+            height: 100px;
+            background: #fff;
+            padding: 10px;
+            margin-right: 20px;
+        }
+        .details {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .nav-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            border: 2px solid #fff;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+        .nav-btn:hover {
+            background: #fff;
+            color: #0078D7;
+        }
+    </style>
+</h:head>
+<h:body>
+    <div class="bsod-container">
+        <div class="sad-face">:(</div>
+        <div class="error-title">
+            Rezonans-ı Ahenk bu sayfaya girmenizi engelledi ve yeniden başlatılmasına gerek yok. 
+            Sadece yetkileriniz (Role/Tier) bu kısıtlı bölgeye girmek için yeterli değil.
         </div>
-    </ui:define>
-</ui:composition>
+        <div class="progress-text">
+            Tamamlanma yüzdesi: %403 tamamlandı.
+        </div>
+        
+        <div class="qr-section">
+            <div class="qr-placeholder">
+                <!-- Basit bir karekod simülasyonu -->
+                <svg viewBox="0 0 100 100" fill="#000"><rect width="100" height="100" fill="#fff"/><rect x="10" y="10" width="30" height="30"/><rect x="60" y="10" width="30" height="30"/><rect x="10" y="60" width="30" height="30"/><rect x="50" y="50" width="10" height="10"/><rect x="70" y="60" width="20" height="20"/></svg>
+            </div>
+            <div class="details">
+                Bu hata hakkında daha fazla bilgi edinmek için, şu adresi ziyaret edebilirsiniz:<br/>
+                <strong>https://rezonans-i-ahenk.com/help/premium-upgrade</strong><br/><br/>
+                Destek birimini ararsanız şu bilgileri iletin:<br/>
+                Durdurma Kodu: <strong>ACCESS_DENIED_ROLE_VIOLATION</strong><br/>
+                Sorunlu Modül: <strong>AdminPanel.sys</strong> veya <strong>EliteTier.dll</strong>
+            </div>
+        </div>
+        
+        <a href="#{request.contextPath}/index.xhtml" class="nav-btn">Ana Sayfaya Güvenli Modda Dön</a>
+    </div>
+</h:body>
+</html>
