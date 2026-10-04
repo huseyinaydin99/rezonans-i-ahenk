@@ -4,62 +4,88 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
-    <style>
-        .global-player-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 90px;
-            background-color: #181818; /* Koyu tema */
-            color: white;
-            border-top: 1px solid #282828;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 9999;
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.5);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .gp-left { display: flex; align-items: center; width: 30%; }
-        .gp-left img { width: 60px; height: 60px; border-radius: 4px; margin-right: 15px; }
-        .gp-info h4 { margin: 0 0 5px 0; font-size: 14px; color: #fff; }
-        .gp-info p { margin: 0; font-size: 12px; color: #b3b3b3; }
-        .gp-center { flex: 1; display: flex; justify-content: center; align-items: center; }
-        .gp-center audio { width: 100%; max-width: 600px; outline: none; }
-        .gp-right { width: 30%; display: flex; justify-content: flex-end; }
-    </style>
+    <h:outputStylesheet library="css" name="player.css" />
+    <h:outputScript library="js" name="player.js" target="body" />
 
+    <!--
+        Kalıcı Global Müzik Çalar
+        - Kuyruk ve aktif şarkı PlayerBean'de (oturum), saniye konumu ve ses seviyesi player.js'te (localStorage).
+        - İleri/geri geçişleri JSF AJAX ile yalnızca bu paneli yeniden çizer.
+        - Oynatma durumu /api/v1/playback/heartbeat üzerinden Kafka'ya akar.
+    -->
     <h:panelGroup id="globalPlayerPanel" layout="block">
         <c:if test="#{playerBean.currentSong != null}">
-            <div class="global-player-bar">
-                
-                <div class="gp-left">
-                    <img src="#{playerBean.currentSong.coverImageUrl}" alt="Cover" />
-                    <div class="gp-info">
-                        <h4>#{playerBean.currentSong.title}</h4>
-                        <p>ID: #{playerBean.currentSong.artistId}</p>
+            <div class="rz-player"
+                 id="rzPlayer"
+                 data-song-id="#{playerBean.currentSong.id}"
+                 data-duration="#{playerBean.currentSong.durationSeconds}"
+                 data-user-id="#{sessionScope.USER_ID}"
+                 data-token="#{sessionScope.JWT_TOKEN}"
+                 data-heartbeat-url="#{request.contextPath}/api/v1/playback/heartbeat">
+
+                <!-- Sol: Şarkı bilgisi -->
+                <div class="rz-player__meta">
+                    <img class="rz-player__cover" src="#{playerBean.currentSong.coverImageUrl}" alt="Kapak" />
+                    <div class="rz-player__info">
+                        <span class="rz-player__title" title="#{playerBean.currentSong.title}">#{playerBean.currentSong.title}</span>
+                        <span class="rz-player__tier">#{playerBean.currentSong.tier}</span>
                     </div>
                 </div>
 
-                <div class="gp-center">
-                    <audio id="mainAudioPlayer" controls="controls" autoplay="autoplay">
-                        <source src="#{playerBean.currentSong.audioUrl}" type="audio/mpeg" />
-                        Tarayıcınız ses elemanını desteklemiyor.
-                    </audio>
+                <!-- Orta: Kontroller ve ilerleme çubuğu -->
+                <div class="rz-player__center">
+                    <h:form id="playerNavForm" styleClass="rz-player__controls">
+                        <h:commandLink id="prevBtn" action="#{playerBean.previous}"
+                                       styleClass="rz-btn" disabled="#{not playerBean.hasPrevious()}"
+                                       onclick="RezonansPlayer.reportSkip();" title="Önceki">
+                            <i class="fa-solid fa-backward-step"></i>
+                            <f:ajax render=":globalPlayerPanel" />
+                        </h:commandLink>
+
+                        <button type="button" class="rz-btn rz-btn--primary" data-action="toggle" title="Oynat / Duraklat (Boşluk)">
+                            <i class="fa-solid fa-play"></i>
+                        </button>
+
+                        <h:commandLink id="nextBtn" action="#{playerBean.next}"
+                                       styleClass="rz-btn" disabled="#{not playerBean.hasNext()}"
+                                       onclick="RezonansPlayer.reportSkip();" title="Sonraki">
+                            <i class="fa-solid fa-forward-step"></i>
+                            <f:ajax render=":globalPlayerPanel" />
+                        </h:commandLink>
+
+                        <!-- Şarkı bittiğinde JS bu gizli butonu tetikler -->
+                        <h:commandLink id="autoNextBtn" action="#{playerBean.next}"
+                                       styleClass="d-none" rendered="#{playerBean.hasNext()}">
+                            <f:ajax render=":globalPlayerPanel" />
+                        </h:commandLink>
+                    </h:form>
+
+                    <div class="rz-player__progress">
+                        <span class="rz-time" data-role="current">0:00</span>
+                        <input type="range" class="rz-range rz-range--seek" data-role="seek"
+                               min="0" max="100" step="0.1" value="0" aria-label="Şarkı konumu" />
+                        <span class="rz-time" data-role="total">0:00</span>
+                    </div>
                 </div>
 
-                <div class="gp-right">
-                    <!-- Volume controls or secondary actions could go here -->
+                <!-- Sağ: Ses -->
+                <div class="rz-player__right">
+                    <button type="button" class="rz-btn" data-action="mute" title="Sessiz (M)">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <input type="range" class="rz-range rz-range--volume" data-role="volume"
+                           min="0" max="1" step="0.01" value="0.8" aria-label="Ses seviyesi" />
                 </div>
+
+                <audio id="rzAudio" preload="auto">
+                    <source src="#{playerBean.currentSong.audioUrl}" type="audio/mpeg" />
+                </audio>
             </div>
-            
-            <!-- AJAX tabanlı sayfa geçişlerinde müziğin devam etmesi için JS Hook -->
+
+            <!-- AJAX ile panel yeniden çizildiğinde oynatıcıyı yeni şarkıyla yeniden bağlar -->
             <script>
-                // Bu script, JSF (veya PrimeFaces) AJAX güncellemelerinde DOM yenilense bile
-                // Audio nesnesinin durumunu korumak için tasarlanmış mock bir köprüdür.
-                console.log("Global Müzik Çalar Devrede: " + "#{playerBean.currentSong.title}");
+                if (window.RezonansPlayer) { window.RezonansPlayer.mount(); }
+                else { document.addEventListener("DOMContentLoaded", function () { window.RezonansPlayer.mount(); }); }
             </script>
         </c:if>
     </h:panelGroup>
