@@ -1,7 +1,7 @@
 package tr.com.huseyinaydin.web.jsf;
 
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.inject.Named;
+import org.springframework.web.context.annotation.RequestScope;
+import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 import tr.com.huseyinaydin.application.cqrs.Mediator;
 import tr.com.huseyinaydin.application.itunes.queries.SearchItunesQuery;
@@ -9,8 +9,8 @@ import tr.com.huseyinaydin.application.itunes.dtos.ItunesResponseDto;
 import tr.com.huseyinaydin.application.itunes.dtos.ItunesTrackDto;
 import java.util.List;
 
-@Named
-@RequestScoped
+@Component
+@RequestScope
 public class ItunesBean {
 
     @Autowired
@@ -22,7 +22,7 @@ public class ItunesBean {
 
     public void search() {
         if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-            ItunesResponseDto response = mediator.send(new SearchItunesQuery(searchTerm, 12));
+            ItunesResponseDto response = mediator.query(new SearchItunesQuery(searchTerm, 12));
             if (response != null && response.results() != null) {
                 this.searchResults = response.results();
             }

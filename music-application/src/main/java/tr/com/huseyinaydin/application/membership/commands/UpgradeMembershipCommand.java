@@ -20,7 +20,7 @@ public record UpgradeMembershipCommand(UUID userId, String targetTierName, Strin
             MembershipTier currentTier = MembershipTier.BASIC; 
             
             if (currentTier.ordinal() >= targetTier.ordinal()) {
-                throw new BusinessException("Zaten bu pakete veya daha üst bir pakete sahipsiniz.");
+                throw new BusinessException("ERR", "Zaten bu pakete veya daha üst bir pakete sahipsiniz.");
             }
 
             // Simulating Payment Gateway Integration
@@ -28,7 +28,7 @@ public record UpgradeMembershipCommand(UUID userId, String targetTierName, Strin
             boolean paymentSuccess = true; // Simulated
 
             if (!paymentSuccess) {
-                throw new BusinessException("Ödeme işlemi başarısız oldu. Lütfen tekrar deneyin.");
+                throw new BusinessException("ERR", "Ödeme işlemi başarısız oldu. Lütfen tekrar deneyin.");
             }
 
             // user.setMembershipTier(targetTier);

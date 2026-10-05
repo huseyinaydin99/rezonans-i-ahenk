@@ -14,6 +14,6 @@ public class SearchController extends BaseController {
 
     @GetMapping
     public ResponseEntity<GlobalSearchResponse> search(@RequestParam("q") String keyword) {
-        return ResponseEntity.ok(mediator.send(new GlobalSearchQuery(keyword)));
+        return ResponseEntity.ok(mediator.query(new GlobalSearchQuery(keyword)));
     }
 }

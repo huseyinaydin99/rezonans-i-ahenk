@@ -5,7 +5,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class Song {
+public class Song extends tr.com.huseyinaydin.domain.common.BaseEntity<java.util.UUID> {
     private UUID id;
     private String title;
     private String coverImageUrl;
@@ -68,4 +68,14 @@ public class Song {
     // Getters
     public UUID getId() { return id; }
     public String getTitle() { return title; }
+
+    public String getCoverImageUrl() { return coverImageUrl; }
+    public String getAudioUrl() { return audioUrl; }
+    public Duration getDuration() { return duration; }
+    public MembershipTier getTier() { return tier; }
+    public LocalDateTime getReleaseDate() { return releaseDate; }
+    public UUID getArtistId() { return artistId; }
+    public UUID getGenreId() { return genreId; }
+    public long getPlayCount() { return playCount; }
+    public void incrementPlayCount() { this.playCount++; }
 }

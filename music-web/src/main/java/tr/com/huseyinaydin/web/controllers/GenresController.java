@@ -25,6 +25,6 @@ public class GenresController extends BaseController {
 
     @GetMapping("/{id}/songs")
     public ResponseEntity<List<SongResponse>> getSongsByGenre(@PathVariable UUID id) {
-        return ResponseEntity.ok(mediator.send(new GetSongsByGenreQuery(id)));
+        return ResponseEntity.ok(mediator.query(new GetSongsByGenreQuery(id)));
     }
 }

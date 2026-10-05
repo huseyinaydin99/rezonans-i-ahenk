@@ -1,17 +1,16 @@
 package tr.com.huseyinaydin.infrastructure.security;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
-@Component
 @ConfigurationProperties(prefix = "banking.security.token-options")
+@org.springframework.stereotype.Component
 public class TokenOptions {
 
-    private String securityKey;
-    private String issuer;
-    private String audience;
-    private int accessTokenExpiration;
-    private int refreshTokenExpiration;
+    private String securityKey = "this-is-a-very-long-and-secure-secret-key-for-jwt-signing";
+    private String issuer = "music-app";
+    private String audience = "music-app-users";
+    private int accessTokenExpiration = 60;
+    private int refreshTokenExpiration = 1440;
 
     public String getSecurityKey() { return securityKey; }
     public void setSecurityKey(String securityKey) { this.securityKey = securityKey; }

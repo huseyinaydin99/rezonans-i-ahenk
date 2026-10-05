@@ -6,6 +6,7 @@ import tr.com.huseyinaydin.sharedkernel.events.IDomainEvent;
 import tr.com.huseyinaydin.sharedkernel.events.IDomainEventDispatcher;
 
 @Component
+@org.springframework.context.annotation.Primary
 public class SpringDomainEventDispatcher implements IDomainEventDispatcher {
 
     private final ApplicationEventPublisher applicationEventPublisher;

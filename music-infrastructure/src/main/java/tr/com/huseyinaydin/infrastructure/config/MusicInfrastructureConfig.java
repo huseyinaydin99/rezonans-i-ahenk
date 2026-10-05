@@ -1,41 +1,85 @@
 package tr.com.huseyinaydin.infrastructure.config;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.caffeine.CaffeineCacheManager;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import tr.com.huseyinaydin.infrastructure.security.TokenOptions;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-import java.util.concurrent.TimeUnit;
+import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
+
+import io.micrometer.tracing.Tracer;
+import io.micrometer.tracing.propagation.Propagator;
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.TraceContext;
+import io.micrometer.tracing.CurrentTraceContext;
+import io.micrometer.tracing.BaggageInScope;
+import io.micrometer.tracing.BaggageManager;
+import java.util.Map;
+import io.micrometer.tracing.ScopedSpan;
+
+import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringSerializer;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Bean;
+
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @Configuration
-@EnableScheduling
-@EnableConfigurationProperties(TokenOptions.class)
 @EnableCaching
 @ComponentScan(basePackages = "tr.com.huseyinaydin.infrastructure")
+@EnableAspectJAutoProxy
 public class MusicInfrastructureConfig {
+    @Bean(name = "mvcHandlerMappingIntrospector")
+    public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
+        return new HandlerMappingIntrospector();
+    }
+
+    @Bean
+    public RouteLocatorBuilder routeLocatorBuilder(ConfigurableApplicationContext context) {
+        return new RouteLocatorBuilder(context);
+    }
+
+    @Bean
+    public Tracer tracer() {
+        return io.micrometer.tracing.Tracer.NOOP;
+    }
+
+    @Bean
+    public ProducerFactory<String, Object> producerFactory() {
+        Map<String, Object> configProps = new HashMap<>();
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        return new DefaultKafkaProducerFactory<>(configProps);
+    }
+
+    @Bean
+    public KafkaTemplate<String, Object> kafkaTemplate() {
+        return new KafkaTemplate<>(producerFactory());
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    }
 
     @Bean
     public CacheManager cacheManager() {
-        CaffeineCacheManager cacheManager = new CaffeineCacheManager();
-
-        cacheManager.registerCustomCache("creditTypes",
-                Caffeine.newBuilder()
-                        .maximumSize(1000)
-                        .expireAfterWrite(10, TimeUnit.MINUTES)
-                        .build());
-
-        cacheManager.registerCustomCache("customers",
-                Caffeine.newBuilder()
-                        .maximumSize(5000)
-                        .expireAfterWrite(5, TimeUnit.MINUTES)
-                        .build());
-
-        return cacheManager;
+        return new ConcurrentMapCacheManager("queryCache", "referenceDataCache");
     }
+
+
 }

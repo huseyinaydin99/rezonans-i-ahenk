@@ -88,7 +88,7 @@ public class BehaviorConfig {
 
     @Bean
     @Order(9)
-    public TransactionBehavior<?, ?> transactionBehavior(
+    public tr.com.huseyinaydin.application.cqrs.IPipelineBehavior<?, ?> transactionBehavior(
             @Autowired(required = false) PlatformTransactionManager transactionManager) {
         if (transactionManager == null) {
             return new NoOpTransactionBehavior<>();
@@ -100,24 +100,15 @@ public class BehaviorConfig {
 
 
     private static class NoOpCurrentUserService implements ICurrentUserService {
-        @Override public String getCurrentUserId() { return "anonymous"; }
-        @Override public String getCurrentUserEmail() { return null; }
-        @Override public java.util.Set<String> getCurrentUserRoles() { return java.util.Collections.emptySet(); }
-        @Override public boolean hasRole(String role) { return false; }
-        @Override public boolean hasAnyRole(String... roles) { return false; }
-        @Override public java.util.Set<String> getCurrentUserClaims() { return java.util.Collections.emptySet(); }
-        @Override public boolean hasClaim(String claim) { return false; }
-        @Override public boolean hasAnyClaim(String... claims) { return false; }
-        @Override public boolean isAuthenticated() { return false; }
+        public String getCurrentUserId() { return "00000000-0000-0000-0000-000000000000"; }
+        public boolean isAuthenticated() { return false; }
+        public java.util.Set<String> getCurrentUserRoles() { return java.util.Collections.emptySet(); }
+        public tr.com.huseyinaydin.domain.enums.MembershipTier getCurrentUserTier() { return tr.com.huseyinaydin.domain.enums.MembershipTier.BASIC; }
     }
 
-    private static class NoOpTransactionBehavior<TRequest, TResponse>
-            extends TransactionBehavior<TRequest, TResponse> {
-        NoOpTransactionBehavior() { super(null); }
-
+    private static class NoOpTransactionBehavior<TRequest, TResponse> implements tr.com.huseyinaydin.application.cqrs.IPipelineBehavior<TRequest, TResponse> {
         @Override
-        public TResponse handle(TRequest request,
-                tr.com.huseyinaydin.application.cqrs.PipelineDelegate<TResponse> next) {
+        public TResponse handle(TRequest request, tr.com.huseyinaydin.application.cqrs.PipelineDelegate<TResponse> next) {
             return next.proceed();
         }
     }

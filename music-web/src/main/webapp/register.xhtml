@@ -32,6 +32,13 @@
                             <h:outputText value="#{registerBean.message}" 
                                           styleClass="alert #{registerBean.success ? 'alert-success' : 'alert-danger'} d-block mb-3 fw-bold" 
                                           rendered="#{not empty registerBean.message}" />
+                            <h:panelGroup rendered="#{registerBean.success}">
+                                <script>
+                                    setTimeout(function() {
+                                        window.location.href = 'login.xhtml';
+                                    }, 2000);
+                                </script>
+                            </h:panelGroup>
                         </h:panelGroup>
 
                         <div class="mb-3">
@@ -63,7 +70,7 @@
                     </h:form>
                     
                     <div class="text-center mt-4">
-                        <small class="text-light">Zaten hesabın var mı? <a href="#" class="text-info text-decoration-none fw-bold">Giriş Yap</a></small>
+                        <small class="text-light">Zaten hesabın var mı? <a href="login.xhtml" class="text-info text-decoration-none fw-bold">Giriş Yap</a></small>
                     </div>
                 </div>
             </div>

@@ -17,7 +17,7 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 # Run Stage
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 COPY --from=builder /build/music-web/target/*.war app.war
 EXPOSE 8080

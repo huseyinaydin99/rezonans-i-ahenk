@@ -15,12 +15,16 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.core.env.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
 @org.springframework.context.annotation.ComponentScan(basePackages = "tr.com.huseyinaydin.persistence")
+@org.springframework.transaction.annotation.EnableTransactionManagement
 public class PersistenceConfig {
+
 
     @Autowired
     public void setApplicationContext(org.springframework.context.ApplicationContext context) {
@@ -31,17 +35,16 @@ public class PersistenceConfig {
     @Autowired
     private Environment env;
 
-    @Value("${spring.datasource.url}")
+    @Value("${spring.datasource.url:jdbc:h2:mem:musicdb;DB_CLOSE_DELAY=-1}")
     private String dbUrl;
 
-    @Value("${spring.datasource.username}")
+    @Value("${spring.datasource.username:sa}")
     private String dbUsername;
 
-    @Value("${spring.datasource.password}")
+    @Value("${spring.datasource.password:password}")
     private String dbPassword;
 
     @Bean
-    @Profile({"dev", "test"})
     public DataSource devDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.h2.Driver");
@@ -71,6 +74,11 @@ public class PersistenceConfig {
         config.setMaxLifetime(1_800_000);
         config.setConnectionTestQuery("SELECT 1 FROM DUAL");
         return new HikariDataSource(config);
+    }
+
+    @Bean
+    public EntityManager entityManager(EntityManagerFactory entityManagerFactory) {
+        return org.springframework.orm.jpa.SharedEntityManagerCreator.createSharedEntityManager(entityManagerFactory);
     }
 
     @Bean

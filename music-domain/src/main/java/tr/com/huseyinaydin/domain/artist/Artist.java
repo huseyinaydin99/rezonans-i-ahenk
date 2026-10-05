@@ -2,7 +2,7 @@ package tr.com.huseyinaydin.domain.artist;
 
 import java.util.UUID;
 
-public class Artist {
+public class Artist extends tr.com.huseyinaydin.domain.common.BaseEntity<java.util.UUID> {
     private UUID id;
     private String name;
     private String bio;
@@ -39,4 +39,8 @@ public class Artist {
             return new Artist(this);
         }
     }
+
+    public String getName() { return name; }
+
+    public UUID getId() { return id; }
 }

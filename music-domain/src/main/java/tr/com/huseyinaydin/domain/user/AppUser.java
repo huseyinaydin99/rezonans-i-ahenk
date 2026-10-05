@@ -56,4 +56,7 @@ public class AppUser {
             return new AppUser(this);
         }
     }
+
+    public MembershipTier getTier() { return tier; }
+    public String getUsername() { return username; }
 }

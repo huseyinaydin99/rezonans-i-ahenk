@@ -19,9 +19,6 @@
             <id name="id">
                 <column name="ID"/>
             </id>
-            <version name="version">
-                <column name="VERSION" nullable="false" column-definition="BIGINT DEFAULT 0"/>
-            </version>
             <basic name="createdDate">
                 <column name="CREATED_DATE" nullable="false" updatable="false"/>
             </basic>
@@ -31,6 +28,9 @@
             <basic name="deletedDate">
                 <column name="DELETED_DATE" nullable="true"/>
             </basic>
+            <version name="version">
+                <column name="VERSION" nullable="false" column-definition="BIGINT DEFAULT 0"/>
+            </version>
         </attributes>
 
     </mapped-superclass>

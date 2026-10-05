@@ -24,7 +24,7 @@ public class ProfileServiceImpl implements IProfileService {
         // 1. Şifre değişimi varsa kontrol et
         if (request.getNewPassword() != null && !request.getNewPassword().isEmpty()) {
             if (request.getCurrentPassword() == null || request.getCurrentPassword().isEmpty()) {
-                throw new BusinessException("Yeni şifre belirlemek için mevcut şifrenizi girmelisiniz!");
+                throw new BusinessException("ERR", "Yeni şifre belirlemek için mevcut şifrenizi girmelisiniz!");
             }
             System.out.println("-> Kullanıcı şifresi güvenli bir şekilde (BCrypt) güncellendi.");
         }

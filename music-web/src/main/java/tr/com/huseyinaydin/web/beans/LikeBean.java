@@ -1,9 +1,9 @@
 package tr.com.huseyinaydin.web.beans;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.SessionScoped;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
+import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.ports.ILikeService;
 import tr.com.huseyinaydin.application.like.dtos.LikeToggleDto;
 
@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-@Named
-@SessionScoped
+@Component
+@SessionScope
 public class LikeBean implements Serializable {
 
-    @Inject
+    @Autowired
     private ILikeService likeService;
 
     // YENİ: Kullanıcının beğendiği tüm şarkıların ID'lerini hafızada (Oturumda) tutar.

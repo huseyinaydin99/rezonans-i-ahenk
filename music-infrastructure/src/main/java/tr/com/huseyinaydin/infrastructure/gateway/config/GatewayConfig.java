@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
  * Mikroservis mimarisinin giriş kapısı olan API Gateway (Ağ Geçidi) Yönlendirme Kuralları.
  */
 @Configuration
+@org.springframework.context.annotation.Profile("gateway")
 public class GatewayConfig {
 
     @Bean

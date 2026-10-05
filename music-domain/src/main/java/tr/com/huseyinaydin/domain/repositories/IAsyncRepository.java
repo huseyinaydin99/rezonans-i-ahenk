@@ -7,7 +7,7 @@ import tr.com.huseyinaydin.sharedkernel.pagination.PaginationRequest;
 import java.util.List;
 import java.util.Optional;
 
-public interface IAsyncRepository<TEntity extends BaseEntity<TId>, TId> {
+public interface IAsyncRepository<TEntity extends tr.com.huseyinaydin.domain.common.BaseEntity<TId>, TId> {
 
     Optional<TEntity> findById(TId id);
 

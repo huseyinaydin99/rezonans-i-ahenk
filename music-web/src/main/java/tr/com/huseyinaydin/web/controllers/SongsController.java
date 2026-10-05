@@ -26,7 +26,7 @@ public class SongsController extends BaseController {
 
     @GetMapping("/{id}")
     public ResponseEntity<SongResponse> getById(@PathVariable UUID id) {
-        SongResponse response = mediator.send(new GetByIdSongQuery(id));
+        SongResponse response = mediator.query(new GetByIdSongQuery(id));
         return ResponseEntity.ok(response);
     }
 }

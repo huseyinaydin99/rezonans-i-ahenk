@@ -15,6 +15,6 @@ public class RecommendationsController extends BaseController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<List<SongResponse>> getRecommendations(@PathVariable UUID userId, @RequestParam(defaultValue = "10") int limit) {
-        return ResponseEntity.ok(mediator.send(new GetRecommendedSongsQuery(userId, limit)));
+        return ResponseEntity.ok(mediator.query(new GetRecommendedSongsQuery(userId, limit)));
     }
 }

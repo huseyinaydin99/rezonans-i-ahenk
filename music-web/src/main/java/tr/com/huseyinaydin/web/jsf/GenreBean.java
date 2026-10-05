@@ -1,7 +1,7 @@
 package tr.com.huseyinaydin.web.jsf;
 
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.inject.Named;
+import org.springframework.web.context.annotation.RequestScope;
+import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 import tr.com.huseyinaydin.application.cqrs.Mediator;
 import tr.com.huseyinaydin.application.genre.commands.CreateGenreCommand;
@@ -11,8 +11,8 @@ import tr.com.huseyinaydin.application.song.dtos.SongResponse;
 import java.util.List;
 import java.util.UUID;
 
-@Named
-@RequestScoped
+@Component
+@RequestScope
 public class GenreBean {
 
     @Autowired
@@ -28,7 +28,7 @@ public class GenreBean {
 
     public void loadSongsForGenre() {
         if (currentGenreId != null) {
-            this.categorySongs = mediator.send(new GetSongsByGenreQuery(currentGenreId));
+            this.categorySongs = mediator.query(new GetSongsByGenreQuery(currentGenreId));
         }
     }
     

@@ -2,7 +2,7 @@ package tr.com.huseyinaydin.domain.playlist;
 
 import java.util.UUID;
 
-public class Playlist {
+public class Playlist extends tr.com.huseyinaydin.domain.common.BaseEntity<java.util.UUID> {
     private UUID id;
     private String name;
     private String description;
@@ -36,4 +36,13 @@ public class Playlist {
             return new Playlist(this);
         }
     }
+
+    public Playlist(String name, UUID userId) {
+        this.id = UUID.randomUUID();
+        this.name = name;
+        this.ownerId = userId;
+    }
+    public UUID getId() { return id; }
+    public String getName() { return name; }
+    public UUID getUserId() { return ownerId; }
 }

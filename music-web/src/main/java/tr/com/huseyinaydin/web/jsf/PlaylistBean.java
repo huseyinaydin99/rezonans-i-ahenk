@@ -1,7 +1,7 @@
 package tr.com.huseyinaydin.web.jsf;
 
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.inject.Named;
+import org.springframework.web.context.annotation.RequestScope;
+import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 import tr.com.huseyinaydin.application.cqrs.Mediator;
 import tr.com.huseyinaydin.application.playlist.commands.AddSongToPlaylistCommand;
@@ -10,8 +10,8 @@ import tr.com.huseyinaydin.application.playlist.commands.SharePlaylistCommand;
 
 import java.util.UUID;
 
-@Named
-@RequestScoped
+@Component("playlistBeanCqrs")
+@RequestScope
 public class PlaylistBean {
     @Autowired
     private Mediator mediator;

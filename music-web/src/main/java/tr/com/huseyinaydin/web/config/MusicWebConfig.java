@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -22,7 +23,7 @@ import java.util.List;
 @Configuration
 
 
-@ComponentScan("tr.com.huseyinaydin.web")
+@ComponentScan(basePackages = "tr.com.huseyinaydin.web", excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class))
 @Import(OpenApiConfig.class)
 public class MusicWebConfig extends org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport {
 

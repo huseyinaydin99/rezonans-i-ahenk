@@ -1,7 +1,7 @@
 package tr.com.huseyinaydin.web.jsf;
 
-import jakarta.enterprise.context.SessionScoped;
-import jakarta.inject.Named;
+import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.song.dtos.SongResponse;
 
 import java.io.Serializable;
@@ -14,8 +14,8 @@ import java.util.List;
  * Sayfalar arasında gezinirken hangi şarkının çaldığı burada korunur;
  * saniye bazlı konum ise istemci tarafında (player.js) saklanır.
  */
-@Named
-@SessionScoped
+@Component
+@SessionScope
 public class PlayerBean implements Serializable {
 
     private final List<SongResponse> queue = new ArrayList<>();

@@ -25,6 +25,7 @@ import java.util.List;
 
 
 @Configuration
+@org.springframework.context.annotation.Profile("openapi")
 @Import({
         SpringDocConfiguration.class,
         SpringDocWebMvcConfiguration.class,

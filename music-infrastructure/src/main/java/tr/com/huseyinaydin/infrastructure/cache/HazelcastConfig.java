@@ -3,6 +3,7 @@ package tr.com.huseyinaydin.infrastructure.cache;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.EvictionConfig;
 import com.hazelcast.config.EvictionPolicy;
+import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.config.MaxSizePolicy;
 import com.hazelcast.core.Hazelcast;
@@ -17,6 +18,9 @@ public class HazelcastConfig {
     public HazelcastInstance hazelcastInstance() {
         Config config = new Config();
         config.setClusterName("music-platform-cluster");
+        JoinConfig join = config.getNetworkConfig().getJoin();
+        join.getMulticastConfig().setEnabled(false);
+        join.getTcpIpConfig().setEnabled(true).addMember("127.0.0.1");
 
         // "cqrs-cache" isimli map (önbellek) için yapılandırma
         MapConfig mapConfig = new MapConfig("cqrs-cache");

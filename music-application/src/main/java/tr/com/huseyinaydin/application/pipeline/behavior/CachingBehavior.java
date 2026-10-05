@@ -29,7 +29,7 @@ public class CachingBehavior<TRequest, TResponse> implements IPipelineBehavior<T
             return next.proceed();
         }
 
-        String cacheName = cacheableRequest.getCacheName();
+        String cacheName = "defaultCache";
         String cacheKey = cacheableRequest.getCacheKey();
 
         Optional<TResponse> cachedResponse = queryCache.get(cacheName, cacheKey);
@@ -41,7 +41,7 @@ public class CachingBehavior<TRequest, TResponse> implements IPipelineBehavior<T
         log.debug("Cache miss for {}::{}", cacheName, cacheKey);
         TResponse response = next.proceed();
         
-        queryCache.put(cacheName, cacheKey, response, cacheableRequest.getTtl());
+        queryCache.put(cacheName, cacheKey, response, java.time.Duration.ofHours(1));
         return response;
     }
 }

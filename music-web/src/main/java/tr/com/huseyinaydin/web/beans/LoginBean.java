@@ -1,9 +1,9 @@
 package tr.com.huseyinaydin.web.beans;
 
-import jakarta.enterprise.context.SessionScoped;
+import org.springframework.web.context.annotation.SessionScope;
 import jakarta.faces.context.FacesContext;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.ports.ILoginService;
 import tr.com.huseyinaydin.application.auth.dtos.LoginRequestDto;
 import tr.com.huseyinaydin.application.auth.dtos.ResponseTokenDto;
@@ -12,12 +12,19 @@ import tr.com.huseyinaydin.sharedkernel.exception.BusinessException;
 import java.io.Serializable;
 import java.util.Map;
 import java.io.IOException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import jakarta.servlet.http.HttpSession;
+import java.util.Collections;
+import java.util.List;
 
-@Named
-@SessionScoped
+@Component
+@SessionScope
 public class LoginBean implements Serializable {
 
-    @Inject
+    @Autowired
     private ILoginService loginService;
 
     private String email;
@@ -47,16 +54,27 @@ public class LoginBean implements Serializable {
             this.isLoggedIn = true;
             this.loggedInUserRole = tokenResponse.getUserRole();
             
+            // Spring Security'ye login olduğunu haber ver!
+            List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(tokenResponse.getUserRole()));
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(req.getEmail(), null, authorities);
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            
+            HttpSession session = (HttpSession) context.getExternalContext().getSession(true);
+            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+            
             this.success = true;
             this.message = "Giriş başarılı! Ana sayfaya yönlendiriliyorsunuz...";
             System.out.println("[JSF AJAX] Token JSF Session havuzuna (Cookie) güvenle şifrelendi.");
+            
+
             
         } catch (BusinessException e) {
             this.success = false;
             this.message = e.getMessage();
         } catch (Exception e) {
+            e.printStackTrace();
             this.success = false;
-            this.message = "Sunucu bağlantı hatası.";
+            this.message = "Sunucu hatası: " + e.toString();
         }
     }
 
@@ -97,7 +115,9 @@ public class LoginBean implements Serializable {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
     public String getMessage() { return message; }
-    public boolean isSuccess() { return success; }
+    public boolean isSuccess() { 
+        return success; 
+    }
     public boolean getIsLoggedIn() { return isLoggedIn; }
     public String getLoggedInUserRole() { return loggedInUserRole; }
 }

@@ -59,7 +59,7 @@ public class GlobalExceptionHandler extends ExceptionHandlerWrapper {
         getWrapped().handle();
     }
 
-    private Throwable getRootCause(Throwable t) {
+    public Throwable getRootCause(Throwable t) {
         Throwable cause = t.getCause();
         while (cause != null && cause != t) {
             t = cause;

@@ -21,7 +21,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-public abstract class JpaRepositoryBase<TEntity extends BaseEntity<TId>, TId>
+public abstract class JpaRepositoryBase<TEntity extends tr.com.huseyinaydin.domain.common.BaseEntity<TId>, TId>
         implements IAsyncRepository<TEntity, TId> {
 
     protected final EntityManager entityManager;

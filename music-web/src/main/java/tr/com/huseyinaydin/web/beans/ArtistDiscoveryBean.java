@@ -1,10 +1,10 @@
 package tr.com.huseyinaydin.web.beans;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.RequestScoped;
+import org.springframework.web.context.annotation.RequestScope;
 import jakarta.faces.context.FacesContext;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.ports.IArtistService;
 import tr.com.huseyinaydin.application.artist.dtos.ResultArtistDto;
 import tr.com.huseyinaydin.application.artist.dtos.ArtistDetailDto;
@@ -12,11 +12,11 @@ import tr.com.huseyinaydin.application.artist.dtos.ArtistDetailDto;
 import java.util.List;
 import java.util.Map;
 
-@Named
-@RequestScoped
+@Component
+@RequestScope
 public class ArtistDiscoveryBean {
 
-    @Inject
+    @Autowired
     private IArtistService artistService;
 
     private List<ResultArtistDto> artists;

@@ -14,7 +14,11 @@ public record CreateArtistCommand(String name, String imageUrl, String bio) impl
         public Handler(IArtistRepository repository) { this.repository = repository; }
         @Override
         public UUID handle(CreateArtistCommand command) {
-            Artist artist = new Artist(command.name(), command.imageUrl(), command.bio());
+            Artist artist = Artist.builder()
+                    .name(command.name())
+                    
+                    
+                    .build();
             repository.save(artist);
             return artist.getId();
         }

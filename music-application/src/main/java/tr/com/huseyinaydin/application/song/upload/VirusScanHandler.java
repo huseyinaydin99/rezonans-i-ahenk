@@ -9,7 +9,7 @@ public class VirusScanHandler extends SongUploadHandler {
         
         // Simüle edilmiş güvenlik taraması
         if (request.getFileData() == null || request.getFileData().length == 0) {
-            throw new BusinessException("Dosya bozuk veya zararlı yazılım tespit edildi!");
+            throw new BusinessException("ERR", "Dosya bozuk veya zararlı yazılım tespit edildi!");
         }
         
         System.out.println("-> Tarama temiz.");

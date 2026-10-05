@@ -1,8 +1,8 @@
 package tr.com.huseyinaydin.web.beans;
 
-import jakarta.enterprise.context.SessionScoped;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
+import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.ports.IPlaylistService;
 import tr.com.huseyinaydin.application.playlist.dtos.CreatePlaylistDto;
 import tr.com.huseyinaydin.application.playlist.dtos.PlaylistDetailDto;
@@ -10,11 +10,11 @@ import tr.com.huseyinaydin.application.playlist.dtos.PlaylistDetailDto;
 import java.io.Serializable;
 import java.util.List;
 
-@Named
-@SessionScoped
+@Component
+@SessionScope
 public class PlaylistBean implements Serializable {
 
-    @Inject
+    @Autowired
     private IPlaylistService playlistService;
 
     private String newPlaylistName;

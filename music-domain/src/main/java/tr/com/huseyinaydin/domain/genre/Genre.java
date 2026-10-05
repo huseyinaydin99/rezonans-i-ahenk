@@ -2,7 +2,7 @@ package tr.com.huseyinaydin.domain.genre;
 
 import java.util.UUID;
 
-public class Genre {
+public class Genre extends tr.com.huseyinaydin.domain.common.BaseEntity<java.util.UUID> {
     private UUID id;
     private String name;
     private String imageUrl;
@@ -32,4 +32,12 @@ public class Genre {
             return new Genre(this);
         }
     }
+
+    public Genre(String name, String description) {
+        this.id = UUID.randomUUID();
+        this.name = name;
+        this.imageUrl = description;
+    }
+    public UUID getId() { return id; }
+    public String getName() { return name; }
 }

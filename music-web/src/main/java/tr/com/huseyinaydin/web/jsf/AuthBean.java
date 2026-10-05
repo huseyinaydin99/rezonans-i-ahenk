@@ -1,13 +1,13 @@
 package tr.com.huseyinaydin.web.jsf;
 
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.inject.Named;
+import org.springframework.web.context.annotation.RequestScope;
+import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 import tr.com.huseyinaydin.application.cqrs.Mediator;
 import tr.com.huseyinaydin.application.auth.commands.RegisterUserCommand;
 
-@Named
-@RequestScoped
+@Component
+@RequestScope
 public class AuthBean {
     @Autowired
     private Mediator mediator;

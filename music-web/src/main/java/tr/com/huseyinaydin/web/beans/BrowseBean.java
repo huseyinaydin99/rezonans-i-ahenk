@@ -1,8 +1,8 @@
 package tr.com.huseyinaydin.web.beans;
 
-import jakarta.enterprise.context.SessionScoped;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
+import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.ports.IGenreService;
 import tr.com.huseyinaydin.application.genre.dtos.GenreBrowseDto;
 import tr.com.huseyinaydin.application.genre.dtos.GenreDetailDto;
@@ -10,11 +10,11 @@ import tr.com.huseyinaydin.application.genre.dtos.GenreDetailDto;
 import java.io.Serializable;
 import java.util.List;
 
-@Named
-@SessionScoped
+@Component
+@SessionScope
 public class BrowseBean implements Serializable {
 
-    @Inject
+    @Autowired
     private IGenreService genreService;
 
     private List<GenreBrowseDto> genres;

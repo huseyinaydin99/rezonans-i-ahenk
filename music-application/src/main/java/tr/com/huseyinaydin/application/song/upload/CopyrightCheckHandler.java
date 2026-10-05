@@ -9,7 +9,7 @@ public class CopyrightCheckHandler extends SongUploadHandler {
         
         // Simüle edilmiş telif hakkı taraması
         if (request.getFileName().toLowerCase().contains("copyrighted")) {
-            throw new BusinessException("Telif hakkı ihlali tespit edildi! Bu şarkıyı yükleyemezsiniz.");
+            throw new BusinessException("ERR", "Telif hakkı ihlali tespit edildi! Bu şarkıyı yükleyemezsiniz.");
         }
         
         System.out.println("-> Telif ihlali bulunmadı. İşlem başarılı.");

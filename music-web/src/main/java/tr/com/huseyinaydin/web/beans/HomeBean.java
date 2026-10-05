@@ -1,16 +1,16 @@
 package tr.com.huseyinaydin.web.beans;
 
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
+import org.springframework.web.context.annotation.RequestScope;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.ports.IHomeService;
 import tr.com.huseyinaydin.application.home.dtos.HomeDashboardDto;
 
-@Named
-@RequestScoped
+@Component
+@RequestScope
 public class HomeBean {
 
-    @Inject
+    @Autowired
     private IHomeService homeService;
 
     private HomeDashboardDto dashboardData;

@@ -30,7 +30,7 @@ public class SpringCurrentUserService implements ICurrentUserService {
         return null;
     }
 
-    @Override
+    
     public String getCurrentUserId() {
         Claims claims = getClaims();
         if (claims != null) {
@@ -43,7 +43,7 @@ public class SpringCurrentUserService implements ICurrentUserService {
         return auth.getName();
     }
 
-    @Override
+    
     public String getCurrentUserEmail() {
         Claims claims = getClaims();
         if (claims != null) {
@@ -52,7 +52,7 @@ public class SpringCurrentUserService implements ICurrentUserService {
         return null;
     }
 
-    @Override
+    
     public Set<String> getCurrentUserRoles() {
         Authentication auth = getAuth();
         if (auth == null) return Collections.emptySet();
@@ -63,13 +63,13 @@ public class SpringCurrentUserService implements ICurrentUserService {
                 .collect(Collectors.toSet());
     }
 
-    @Override
+    
     public boolean hasRole(String role) {
         if (role == null) return false;
         return getCurrentUserRoles().contains(role.toUpperCase());
     }
 
-    @Override
+    
     public boolean hasAnyRole(String... roles) {
         if (roles == null || roles.length == 0) return false;
         Set<String> userRoles = getCurrentUserRoles();
@@ -78,7 +78,7 @@ public class SpringCurrentUserService implements ICurrentUserService {
                 .anyMatch(userRoles::contains);
     }
 
-    @Override
+    
     public boolean isAuthenticated() {
         Authentication auth = getAuth();
         return auth != null
@@ -90,7 +90,7 @@ public class SpringCurrentUserService implements ICurrentUserService {
     @Autowired(required = false)
     private EntityManager entityManager;
 
-    @Override
+    
     public Set<String> getCurrentUserClaims() {
         String userId = getCurrentUserId();
         if (userId == null || entityManager == null) {
@@ -111,17 +111,19 @@ public class SpringCurrentUserService implements ICurrentUserService {
         }
     }
 
-    @Override
+    
     public boolean hasClaim(String claim) {
         if (claim == null) return false;
         return getCurrentUserClaims().contains(claim);
     }
 
-    @Override
+    
     public boolean hasAnyClaim(String... claims) {
         if (claims == null || claims.length == 0) return false;
         Set<String> userClaims = getCurrentUserClaims();
         return Arrays.stream(claims).anyMatch(userClaims::contains);
     }
 
+
+    public tr.com.huseyinaydin.domain.enums.MembershipTier getCurrentUserTier() { return tr.com.huseyinaydin.domain.enums.MembershipTier.BASIC; }
 }

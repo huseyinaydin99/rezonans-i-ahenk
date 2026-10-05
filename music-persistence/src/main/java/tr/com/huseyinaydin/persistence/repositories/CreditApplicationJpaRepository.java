@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import org.springframework.stereotype.Repository;
+
+@Repository
 public class CreditApplicationJpaRepository
         extends JpaRepositoryBase<CreditApplication, UUID>
         implements ICreditApplicationRepository {

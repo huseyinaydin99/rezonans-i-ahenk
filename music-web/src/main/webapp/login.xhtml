@@ -32,6 +32,13 @@
                             <h:outputText value="#{loginBean.message}" 
                                           styleClass="alert #{loginBean.success ? 'alert-success' : 'alert-danger'} d-block mb-4 fw-bold p-2 text-center" 
                                           rendered="#{not empty loginBean.message}" />
+                            <h:panelGroup rendered="#{loginBean.success}">
+                                <script>
+                                    setTimeout(function() {
+                                        window.location.href = 'index.xhtml';
+                                    }, 1500);
+                                </script>
+                            </h:panelGroup>
                         </h:panelGroup>
 
                         <div class="mb-3">

@@ -39,11 +39,11 @@ public class PlaybackTrackingService {
 
     private void validate(ReportPlaybackCommand command) {
         if (command.userId() == null || command.songId() == null || command.state() == null) {
-            throw new BusinessException("Eksik dinleme bildirimi: kullanıcı, şarkı ve durum zorunludur.");
+            throw new BusinessException("ERR", "Eksik dinleme bildirimi: kullanıcı, şarkı ve durum zorunludur.");
         }
         if (command.positionSeconds() < 0 || command.positionSeconds() > MAX_REASONABLE_SECONDS
                 || command.durationSeconds() < 0 || command.durationSeconds() > MAX_REASONABLE_SECONDS) {
-            throw new BusinessException("Geçersiz oynatma süresi bildirildi.");
+            throw new BusinessException("ERR", "Geçersiz oynatma süresi bildirildi.");
         }
     }
 }

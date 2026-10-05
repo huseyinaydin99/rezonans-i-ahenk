@@ -43,16 +43,16 @@ public record CreateSongCommand(
             businessRules.artistMustExist(command.artistId());
             businessRules.genreMustExist(command.genreId());
 
-            Song song = new Song(
-                    command.title(),
-                    command.coverImageUrl(),
-                    command.audioUrl(),
-                    Duration.ofSeconds(command.durationSeconds()),
-                    MembershipTier.valueOf(command.tierName().toUpperCase()),
-                    command.releaseDate(),
-                    command.artistId(),
-                    command.genreId()
-            );
+            Song song = Song.builder()
+                    .title(command.title())
+                    .coverImageUrl(command.coverImageUrl())
+                    .audioUrl(command.audioUrl())
+                    .duration(Duration.ofSeconds(command.durationSeconds()))
+                    .tier(MembershipTier.valueOf(command.tierName().toUpperCase()))
+                    .releaseDate(command.releaseDate())
+                    .artistId(command.artistId())
+                    .genreId(command.genreId())
+                    .build();
 
             songRepository.save(song);
 

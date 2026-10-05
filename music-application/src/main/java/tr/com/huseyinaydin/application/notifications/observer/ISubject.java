@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.application.notifications.observer;
 
+import tr.com.huseyinaydin.domain.song.Song;
+
+
 /**
  * Gözlemcileri (Takipçileri) yönetecek ve bildirim gönderecek Yayıncı arayüzü
  */

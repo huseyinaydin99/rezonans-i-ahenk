@@ -14,6 +14,9 @@ import tr.com.huseyinaydin.sharedkernel.pagination.PaginationRequest;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.stereotype.Repository;
+
+@Repository
 public class CreditTypeJpaRepository
         extends JpaRepositoryBase<CreditType, UUID>
         implements ICreditTypeRepository {

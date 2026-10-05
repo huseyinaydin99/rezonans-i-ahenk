@@ -1,20 +1,20 @@
 package tr.com.huseyinaydin.web.beans;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.SessionScoped;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
+import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.ports.IAdminService;
 import tr.com.huseyinaydin.application.admin.dtos.UserRoleDto;
 
 import java.io.Serializable;
 import java.util.List;
 
-@Named
-@SessionScoped
+@Component
+@SessionScope
 public class AdminBean implements Serializable {
 
-    @Inject
+    @Autowired
     private IAdminService adminService;
 
     private List<UserRoleDto> userList;

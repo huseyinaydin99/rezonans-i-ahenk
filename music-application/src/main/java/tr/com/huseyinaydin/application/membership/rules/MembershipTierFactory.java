@@ -17,7 +17,7 @@ public class MembershipTierFactory {
 
         return switch (tier) {
             case PREMIUM -> new PremiumTierRules();
-            case ELITE -> new EliteTierRules();
+            case ELIT -> new EliteTierRules();
             case BASIC -> new BasicTierRules();
             default -> new BasicTierRules();
         };

@@ -16,6 +16,6 @@ public class ItunesController extends BaseController {
     public ResponseEntity<ItunesResponseDto> searchItunes(
             @RequestParam String term, 
             @RequestParam(defaultValue = "10") int limit) {
-        return ResponseEntity.ok(mediator.send(new SearchItunesQuery(term, limit)));
+        return ResponseEntity.ok(mediator.query(new SearchItunesQuery(term, limit)));
     }
 }

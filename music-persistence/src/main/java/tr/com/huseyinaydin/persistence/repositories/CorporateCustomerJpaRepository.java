@@ -9,6 +9,9 @@ import tr.com.huseyinaydin.domain.repositories.ICorporateCustomerRepository;
 
 import java.util.Optional;
 
+import org.springframework.stereotype.Repository;
+
+@Repository
 public class CorporateCustomerJpaRepository
         extends CustomerRepository<CorporateCustomer>
         implements ICorporateCustomerRepository {

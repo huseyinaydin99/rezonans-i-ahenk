@@ -1,14 +1,14 @@
 package tr.com.huseyinaydin.web.jsf;
 
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.inject.Named;
+import org.springframework.web.context.annotation.RequestScope;
+import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 import tr.com.huseyinaydin.application.cqrs.Mediator;
 import tr.com.huseyinaydin.application.search.queries.GlobalSearchQuery;
 import tr.com.huseyinaydin.application.search.queries.GlobalSearchResponse;
 
-@Named
-@RequestScoped
+@Component
+@RequestScope
 public class SearchBean {
 
     @Autowired
@@ -20,7 +20,7 @@ public class SearchBean {
 
     public void executeSearch() {
         if (query != null && !query.trim().isEmpty()) {
-            this.searchResults = mediator.send(new GlobalSearchQuery(query));
+            this.searchResults = mediator.query(new GlobalSearchQuery(query));
             this.hasSearched = true;
         }
     }

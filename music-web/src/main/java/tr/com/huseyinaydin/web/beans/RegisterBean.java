@@ -1,17 +1,19 @@
 package tr.com.huseyinaydin.web.beans;
 
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
+import org.springframework.web.context.annotation.RequestScope;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.ports.IRegisterService;
 import tr.com.huseyinaydin.application.auth.dtos.RegisterRequestDto;
 import tr.com.huseyinaydin.sharedkernel.exception.BusinessException;
+import jakarta.faces.context.FacesContext;
+import java.io.IOException;
 
-@Named
-@RequestScoped
+@Component
+@RequestScope
 public class RegisterBean {
 
-    @Inject
+    @Autowired
     private IRegisterService registerService;
 
     private String username;
@@ -37,6 +39,12 @@ public class RegisterBean {
             this.success = true;
             this.message = "Aramıza hoş geldiniz! Yönlendiriliyorsunuz...";
             System.out.println("[JSF AJAX] Kayıt formu başarıyla işlendi.");
+            
+            try {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             
         } catch (BusinessException e) {
             this.success = false;

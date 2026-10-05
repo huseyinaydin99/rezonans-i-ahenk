@@ -29,18 +29,13 @@ public class MusicApplicationConfig {
     }
 
     @Bean
+    @org.springframework.context.annotation.Primary
     public Mediator mediator(ApplicationContext context,
                              @Qualifier("bankingAsyncExecutor") Executor asyncExecutor) {
         return new SpringMediator(context, asyncExecutor);
     }
 
-    @Bean
-    public CommandBus commandBus(Mediator mediator) {
-        return mediator;
-    }
+    
 
-    @Bean
-    public QueryBus queryBus(Mediator mediator) {
-        return mediator;
-    }
+    
 }

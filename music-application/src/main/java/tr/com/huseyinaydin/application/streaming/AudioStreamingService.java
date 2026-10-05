@@ -24,7 +24,7 @@ public class AudioStreamingService {
         }
 
         // 3. Eğer kullanıcı Elite ise, saf sesin üzerini "Ekolayzer (Hi-Fi)" kağıdıyla sar
-        if (user.getTier() == MembershipTier.ELITE) {
+        if (user.getTier() == MembershipTier.PREMIUM) {
             stream = new HighResEqualizerDecorator(stream);
         }
 

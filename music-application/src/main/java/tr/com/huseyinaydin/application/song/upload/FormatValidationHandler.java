@@ -8,7 +8,7 @@ public class FormatValidationHandler extends SongUploadHandler {
         System.out.println("[ZİNCİR 1] Format Kontrolü yapılıyor...");
         
         if (!"mp3".equalsIgnoreCase(request.getFormat()) && !"wav".equalsIgnoreCase(request.getFormat())) {
-            throw new BusinessException("Geçersiz dosya formatı! Sadece MP3 ve WAV desteklenir.");
+            throw new BusinessException("ERR", "Geçersiz dosya formatı! Sadece MP3 ve WAV desteklenir.");
         }
         
         System.out.println("-> Format geçerli.");

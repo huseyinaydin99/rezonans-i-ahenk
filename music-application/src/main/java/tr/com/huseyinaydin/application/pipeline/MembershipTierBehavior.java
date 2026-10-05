@@ -9,7 +9,7 @@ import tr.com.huseyinaydin.sharedkernel.exception.AuthorizationException;
 
 @Component
 @Order(2) // Run after basic validation/auth
-public class MembershipTierBehavior implements IPipelineBehavior {
+public class MembershipTierBehavior<TRequest, TResponse> implements IPipelineBehavior<TRequest, TResponse> {
 
     private final ICurrentUserService currentUserService;
 
@@ -18,7 +18,7 @@ public class MembershipTierBehavior implements IPipelineBehavior {
     }
 
     @Override
-    public <TRequest, TResponse> TResponse handle(TRequest request, PipelineDelegate<TResponse> next) {
+    public TResponse handle(TRequest request, PipelineDelegate<TResponse> next) {
         if (request instanceof ITierRestrictedRequest tierRequest) {
             MembershipTier requiredTier = tierRequest.getRequiredTier();
             
@@ -37,6 +37,6 @@ public class MembershipTierBehavior implements IPipelineBehavior {
             }
         }
         
-        return next.handle();
+        return next.proceed();
     }
 }
