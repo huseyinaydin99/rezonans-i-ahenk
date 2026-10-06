@@ -1,0 +1,19 @@
+<div th:fragment="player" id="globalPlayer" class="gp-bar" style="display:none;" data-turbo-permanent xmlns:th="http://www.thymeleaf.org">
+    <div class="gp-inner">
+        <div class="gp-meta">
+            <div class="gp-thumb">&#9834;</div>
+            <div style="min-width:0;">
+                <div id="gp-title" class="gp-title">—</div>
+                <div id="gp-artist" class="gp-artist"></div>
+            </div>
+        </div>
+        <div class="gp-controls">
+            <button class="gp-btn" onclick="player.prev()" title="Önceki">&#9198;</button>
+            <button class="gp-btn gp-btn-main" id="btn-playpause" onclick="player.togglePlayPause()" title="Oynat/Duraklat">&#9208;</button>
+            <button class="gp-btn" onclick="player.next()" title="Sonraki">&#9199;</button>
+            <button class="gp-btn" id="btn-shuffle" onclick="player.toggleShuffle()" title="Karıştır" style="opacity:0.5;">&#128256;</button>
+            <button class="gp-btn" id="btn-repeat" onclick="player.toggleRepeat()" title="Tekrarla" style="opacity:0.5;">&#128257;</button>
+        </div>
+        <audio id="globalAudio" controls="controls"></audio>
+    </div>
+</div>
