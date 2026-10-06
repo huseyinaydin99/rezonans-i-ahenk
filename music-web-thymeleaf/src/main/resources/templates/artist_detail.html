@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<body>
+
+
+    <f:metadata>
+        <f:viewAction action="#{artistDiscoveryBean.loadArtistDetail}" />
+    </f:metadata>
+
+    <div layout:fragment="title">#{artistDiscoveryBean.selectedArtist.name}</div>
+
+    <div layout:fragment="content">
+        <style>
+            .artist-hero {
+                position: relative;
+                height: 350px;
+                border-radius: 16px;
+                overflow: hidden;
+                margin-bottom: 40px;
+                background-color: #1a1a24;
+            }
+            .hero-bg {
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background-size: cover;
+                background-position: center;
+                opacity: 0.3;
+                filter: blur(10px) brightness(0.6);
+            }
+            .hero-content {
+                position: absolute;
+                bottom: 0; left: 0; right: 0;
+                padding: 40px;
+                display: flex;
+                align-items: flex-end;
+                background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            }
+            .hero-avatar {
+                width: 200px;
+                height: 200px;
+                border-radius: 50%;
+                border: 4px solid #fff;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+                margin-right: 30px;
+                object-fit: cover;
+                z-index: 2;
+            }
+            .hero-text { z-index: 2; flex: 1; }
+            .hero-title { font-size: 56px; font-weight: 800; margin: 0; line-height: 1; }
+            .hero-stats { font-size: 16px; color: #ccc; margin-top: 10px; font-weight: 500; }
+            .verified-icon { color: #1da1f2; font-size: 32px; vertical-align: middle; margin-left: 10px; }
+            
+            .btn-play-all {
+                background: #0dcaf0;
+                color: #000;
+                border-radius: 30px;
+                padding: 12px 35px;
+                font-weight: bold;
+                font-size: 16px;
+                border: none;
+                transition: transform 0.2s;
+            }
+            .btn-play-all:hover { transform: scale(1.05); color: #000; background: #fff; }
+        </style>
+
+        <c:if test="#{artistDiscoveryBean.selectedArtist == null}">
+            <div class="alert alert-danger text-center">Sanatçı bulunamadı veya yüklenemedi.</div>
+        </c:if>
+
+        <c:if test="#{artistDiscoveryBean.selectedArtist != null}">
+            <h:link outcome="artists.xhtml" class="text-secondary text-decoration-none fw-bold mb-3 d-inline-block">
+                <i class="fa-solid fa-arrow-left me-2"></i>Tüm Sanatçılara Dön
+            </h:link>
+            
+            <!-- Sanatçı Hero Banner -->
+            <div class="artist-hero">
+                <div class="hero-bg" style="background-image: url('#{artistDiscoveryBean.selectedArtist.imageUrl}');"></div>
+                <div class="hero-content">
+                    <img src="#{artistDiscoveryBean.selectedArtist.imageUrl}" class="hero-avatar" />
+                    <div class="hero-text">
+                        <div class="d-flex align-items-center mb-2">
+                            <c:if test="#{artistDiscoveryBean.selectedArtist.verified}">
+                                <span class="badge bg-primary rounded-pill me-2"><i class="fa-solid fa-check me-1"></i>Doğrulanmış Sanatçı</span>
+                            </c:if>
+                        </div>
+                        <h1 class="hero-title">
+                            #{artistDiscoveryBean.selectedArtist.name}
+                        </h1>
+                        <div class="hero-stats">
+                            <h:outputText value="#{artistDiscoveryBean.selectedArtist.monthlyListeners}">
+                                <f:convertNumber pattern="###,###,###" />
+                            </h:outputText> Aylık Dinleyici
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center mb-4">
+                        <h:form>
+                            <h:commandLink action="#{playerBean.playQueue(artistDiscoveryBean.selectedArtist.popularSongs, 0)}" 
+                                           styleClass="btn-play-all me-3 text-decoration-none">
+                                <i class="fa-solid fa-play me-2"></i>Tümünü Çal
+                                <f:ajax render=":globalPlayerPanel" />
+                            </h:commandLink>
+                        </h:form>
+                        <button class="btn btn-outline-light rounded-pill px-4 fw-bold"><i class="fa-solid fa-user-plus me-2"></i>Takip Et</button>
+                    </div>
+
+                    <h3 class="fw-bold mb-3">Popüler Parçalar</h3>
+                    <c:choose>
+                        <c:when test="#{empty artistDiscoveryBean.selectedArtist.popularSongs}">
+                            <p class="text-muted">Bu sanatçının henüz bir parçası bulunmuyor.</p>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="list-group list-group-flush bg-transparent">
+                                <c:forEach items="#{artistDiscoveryBean.selectedArtist.popularSongs}" var="song" varStatus="loop">
+                                    <div class="list-group-item bg-transparent text-white border-secondary d-flex align-items-center py-3 px-2 rounded hover-bg-dark">
+                                        <span class="text-secondary fw-bold me-3" style="width: 20px; text-align: right;">#{loop.index + 1}</span>
+                                        
+                                        <img src="#{song.coverImageUrl}" width="48" height="48" class="rounded me-3 shadow-sm" />
+                                        
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-0 fw-bold">#{song.title}</h6>
+                                            <span class="badge #{song.tier == 'BASIC' ? 'bg-secondary' : (song.tier == 'ELITE' ? 'bg-danger' : 'bg-warning text-dark')} border mt-1" style="font-size:10px;">#{song.tier}</span>
+                                            <span class="text-secondary ms-3" style="font-size:12px;"><i class="fa-regular fa-clock me-1"></i><h:outputText value="#{song.durationSeconds}" converter="durationConverter" /></span>
+                                        </div>
+                                        
+                                        <div class="d-flex align-items-center">
+                                            <h:form styleClass="d-inline me-2">
+                                                <h:commandLink action="#{playlistBean.prepareAddSong(song.id.toString(), song.title)}" styleClass="btn btn-sm btn-link text-secondary" onclick="setTimeout(openPlaylistModal, 300);">
+                                                    <i class="fa-solid fa-folder-plus"></i>
+                                                    <f:ajax execute="@this" render=":playlistModalContent" />
+                                                </h:commandLink>
+                                            </h:form>
+                                            <h:form styleClass="d-inline me-2">
+                                                <h:panelGroup id="artistLikeBtnGroup">
+                                                    <h:commandLink action="#{likeBean.toggleFavorite(song.id.toString())}" styleClass="btn btn-sm btn-link text-secondary">
+                                                        <i class="#{likeBean.isSongLiked(song.id.toString()) ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart'}" style="font-size: 16px;"></i>
+                                                        <f:ajax execute="@this" render="artistLikeBtnGroup" />
+                                                    </h:commandLink>
+                                                </h:panelGroup>
+                                            </h:form>
+                                            
+                                            <h:form>
+                                                <h:commandLink action="#{playerBean.playSong(song)}" styleClass="btn btn-sm btn-info rounded-circle">
+                                                    <i class="fa-solid fa-play text-dark"></i>
+                                                    <f:ajax render=":globalPlayerPanel" />
+                                                </h:commandLink>
+                                            </h:form>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card bg-dark border-secondary p-4 rounded-4 shadow">
+                        <h5 class="fw-bold mb-3">Hakkında</h5>
+                        <p class="text-light" style="line-height: 1.6;">#{artistDiscoveryBean.selectedArtist.bio}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <style>
+                .hover-bg-dark:hover { background-color: rgba(255,255,255,0.05) !important; }
+            </style>
+        </c:if>
+
+    </div>
+
+
+</body>
+</html>

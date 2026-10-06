@@ -23,6 +23,8 @@
         <module>music-infrastructure</module>
         <module>music-persistence</module>
         <module>music-web</module>
+        <module>music-web-thymeleaf</module>
+
     </modules>
 
     <properties>

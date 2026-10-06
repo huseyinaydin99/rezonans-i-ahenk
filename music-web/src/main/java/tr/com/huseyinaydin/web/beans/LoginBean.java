@@ -51,6 +51,10 @@ public class LoginBean implements Serializable {
             sessionMap.put("JWT_TOKEN", tokenResponse.getAccessToken());
             sessionMap.put("USER_ROLE", tokenResponse.getUserRole());
             
+            // SongController'ın müzik oynatmaya izin vermesi için:
+            sessionMap.put("LOGGED_IN_USER", req.getEmail());
+            sessionMap.put("USER_TIER", "Premium"); // Demo amaçlı varsayılan tier
+            
             this.isLoggedIn = true;
             this.loggedInUserRole = tokenResponse.getUserRole();
             

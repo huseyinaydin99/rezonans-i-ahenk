@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<body>
+
+    <div layout:fragment="title">Sanatçılar</div>
+    <div layout:fragment="content">
+        <div class="al-bg-grid"></div>
+        <div class="al-header">
+            <div>
+                <h2 class="al-heading">Öne Çıkan Sanatçılar</h2>
+                <p class="al-subheading">Retro ızgarada en iyi sanatçıları keşfet</p>
+            </div>
+            <div class="al-search">
+                <span class="material-symbols-outlined">search</span>
+                <input type="text" id="artistSearch" placeholder="Sanatçı ara..." oninput="filterArtists(this.value)" />
+            </div>
+        </div>
+        <div class="al-grid" id="artistGrid">
+            <!-- Mock Data -->
+            <a href="artist-details.xhtml?id=1" class="al-card" data-name="the weeknd">
+                <div class="al-avatar">
+                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&amp;fit=crop&amp;w=200&amp;q=80" alt="The Weeknd" />
+                </div>
+                <div class="al-name">
+                    <span>The Weeknd</span>
+                    <span class="material-symbols-outlined al-verified" style="font-variation-settings: 'FILL' 1;" title="Doğrulanmış">verified</span>
+                </div>
+                <p class="al-listeners">108.450.000 Aylık Dinleyici</p>
+            </a>
+            <a href="artist-details.xhtml?id=1" class="al-card" data-name="ed sheeran">
+                <div class="al-avatar">
+                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&amp;fit=crop&amp;w=200&amp;q=80" alt="Ed Sheeran" />
+                </div>
+                <div class="al-name">
+                    <span>Ed Sheeran</span>
+                    <span class="material-symbols-outlined al-verified" style="font-variation-settings: 'FILL' 1;" title="Doğrulanmış">verified</span>
+                </div>
+                <p class="al-listeners">85.320.000 Aylık Dinleyici</p>
+            </a>
+            <a href="artist-details.xhtml?id=1" class="al-card" data-name="queen">
+                <div class="al-avatar">
+                    <img src="https://images.unsplash.com/photo-1493225457124-a1a2a53b51ee?auto=format&amp;fit=crop&amp;w=200&amp;q=80" alt="Queen" />
+                </div>
+                <div class="al-name">
+                    <span>Queen</span>
+                    <span class="material-symbols-outlined al-verified" style="font-variation-settings: 'FILL' 1;" title="Doğrulanmış">verified</span>
+                </div>
+                <p class="al-listeners">45.120.000 Aylık Dinleyici</p>
+            </a>
+        </div>
+        <p class="al-empty" id="artistEmpty" style="display:none;">Aramanla eşleşen sanatçı bulunamadı.</p>
+    </div>
+    <div layout:fragment="scripts">
+        <script>
+            function filterArtists(query) {
+                const q = query.trim().toLowerCase();
+                const cards = document.querySelectorAll('#artistGrid .al-card');
+                let visibleCount = 0;
+                cards.forEach(card => {
+                    const match = card.getAttribute('data-name').includes(q);
+                    card.style.display = match ? '' : 'none';
+                    if (match) visibleCount++;
+                });
+                const empty = document.getElementById('artistEmpty');
+                if (empty) empty.style.display = visibleCount === 0 ? 'block' : 'none';
+            }
+        </script>
+    </div>
+
+
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+    <script src="https://unpkg.com/@hotwired/turbo@8.0.4/dist/turbo.es2017-umd.js">//]]>
+</script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><ui:insert name="title">Rezonans-ı Ahenk</ui:insert></title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&amp;family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="#{request.contextPath}/resources/css/site.css?v=3" />
+    <link rel="stylesheet" href="#{request.contextPath}/resources/css/soundwave.css?v=3" />
+    <ui:insert name="head" />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js?v=3">//]]>
+</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js?v=3">//]]>
+</script>
+    <script src="#{request.contextPath}/resources/js/site.js?v=3">//]]>
+</script>
+    <script src="#{request.contextPath}/resources/js/notify.js?v=3">//]]>
+</script>
+    <script src="#{request.contextPath}/resources/js/playlist-add.js?v=3">//]]>
+</script>
+    <script src="#{request.contextPath}/resources/js/like.js?v=3">//]]>
+</script>
+    <script src="#{request.contextPath}/resources/js/player.js?v=3">//]]>
+</script>
+</h:head>
+<h:body>
+    <h:form id="navForm" prependId="false" pt:data-turbo="false" xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+        <header class="sw-header">
+            <nav class="sw-navbar">
+                <a class="sw-logo" href="index.xhtml">
+                    <span class="sw-logo-icon material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">album</span>
+                    <span class="sw-logo-text">Rezonans-ı Ahenk</span>
+                </a>
+
+                <button type="button" class="sw-navbar-toggle" id="swNavToggle" aria-label="Menüyü aç/kapat">☰</button>
+
+                <ul class="sw-nav-links" id="swNavLinks">
+                    <li><a class="#{view.viewId == '/index.xhtml' ? 'active' : ''}" href="index.xhtml">Müzikler</a></li>
+                    <li><a class="#{view.viewId == '/artists.xhtml' ? 'active' : ''}" href="artists.xhtml">Sanatçılar</a></li>
+                    <li><a class="#{view.viewId == '/genres.xhtml' ? 'active' : ''}" href="genres.xhtml">Türler</a></li>
+                    <li><a class="#{view.viewId == '/playlists.xhtml' ? 'active' : ''}" href="playlists.xhtml">Playlistlerim</a></li>
+                    <li><a class="#{view.viewId == '/likes.xhtml' ? 'active' : ''}" href="likes.xhtml">Favorilerim</a></li>
+                    <li><a class="#{view.viewId == '/membership.xhtml' ? 'active' : ''}" href="membership.xhtml">Paketler</a></li>
+                </ul>
+
+                <form class="sw-search" action="search.xhtml" method="get" style="position: relative;">
+                    <input type="search" id="searchInput" name="q" placeholder="Şarkı, sanatçı, tür ara..." autocomplete="off" />
+                    <button type="submit">Ara</button>
+                    <div id="searchAutocomplete" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: #1a1e29; border: 1px solid #333; border-radius: 4px; z-index: 1000; max-height: 300px; overflow-y: auto; margin-top: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                    </div>
+                </form>
+
+                <h:panelGroup rendered="#{loginBean.isLoggedIn}" class="sw-auth">
+                    <a class="#{view.viewId == '/profile.xhtml' ? 'active' : ''}" href="profile.xhtml">Profilim</a>
+                    <h:commandLink action="#{loginBean.logout}">Çıkış</h:commandLink>
+                </h:panelGroup>
+                
+                <h:panelGroup rendered="#{not loginBean.isLoggedIn}" class="sw-auth">
+                    <a href="login.xhtml">Giriş</a>
+                    <a class="sw-cta" href="register.xhtml">Üye Ol</a>
+                </h:panelGroup>
+            </nav>
+        </header>
+    </h:form>
+
+    <div class="container sw-page-wrap">
+        <main role="main" class="pb-3">
+            <ui:insert name="content" />
+        </main>
+    </div>
+
+    
+    <!-- Player -->
+    <div id="globalPlayer" class="gp-bar" style="display:none;" data-turbo-permanent="true">
+        <div class="gp-inner">
+            <div class="gp-meta">
+                <div class="gp-thumb">&#9834;</div>
+                <div style="min-width:0;">
+                    <div id="gp-title" class="gp-title">—</div>
+                    <div id="gp-artist" class="gp-artist"></div>
+                </div>
+            </div>
+            <div class="gp-controls">
+                <button class="gp-btn" onclick="player.prev()" title="Önceki">&#9198;</button>
+                <button class="gp-btn gp-btn-main" id="btn-playpause" onclick="player.togglePlayPause()" title="Oynat/Duraklat">&#9208;</button>
+                <button class="gp-btn" onclick="player.next()" title="Sonraki">&#9199;</button>
+                <button class="gp-btn" id="btn-shuffle" onclick="player.toggleShuffle()" title="Karıştır" style="opacity:0.5;">&#128256;</button>
+                <button class="gp-btn" id="btn-repeat" onclick="player.toggleRepeat()" title="Tekrarla" style="opacity:0.5;">&#128257;</button>
+            </div>
+            <audio id="globalAudio" controls="controls"></audio>
+        </div>
+    </div>
+
+
+    
+    <!-- Playlist'e ekleme modalı -->
+    <div class="pladd-overlay" id="pladdOverlay" data-turbo-permanent="true">
+        <div class="pladd-modal" role="dialog" aria-modal="true" aria-labelledby="pladdTitle">
+            <div class="pladd-header">
+                <h3 class="pladd-title" id="pladdTitle">
+                    <span class="material-symbols-outlined">playlist_add</span>
+                    Playlist'e Ekle
+                </h3>
+                <button type="button" class="pladd-close" id="pladdClose" aria-label="Kapat">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="pladd-body" id="pladdBody">
+                <p class="pladd-status">Playlistler yükleniyor...</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="sw-footer">
+        <div class="container">
+            &#169;#169; 2026 - Rezonans-ı Ahenk
+        </div>
+    </footer>
+
+
+    <ui:insert name="scripts" />
+<script>
+//<![CDATA[
+document.getElementById("swNavToggle")?.addEventListener("click", function () {
+    document.getElementById("swNavLinks")?.classList.toggle("show");
+});
+document.addEventListener("turbo:load", () => {
+    const input = document.getElementById("searchInput");
+    const dropdown = document.getElementById("searchAutocomplete");
+    if (!input || !dropdown) return;
+    let debounceTimer;
+    input.addEventListener("input", (e) => {
+        clearTimeout(debounceTimer);
+        const q = e.target.value.trim();
+        if (q.length < 2) {
+            dropdown.style.display = "none";
+            return;
+        }
+        debounceTimer = setTimeout(async () => {
+            try {
+                const res = await fetch("/music-credit-system/api/Song/Search?q=" + encodeURIComponent(q));
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.length > 0) {
+                        let html = "";
+                        data.forEach(song => {
+                            html += "<a href=\"search.xhtml?q=" + encodeURIComponent(song.title) + "\" style=\"display: block; padding: 10px; color: #fff; text-decoration: none; border-bottom: 1px solid #333;\">" +
+                                "<div style=\"font-weight: bold; font-size: 0.9em; display: flex; align-items: center; justify-content: space-between;\">" +
+                                    "<span>" + song.title + "</span>" +
+                                    "<span style=\"background: rgba(255,215,0,0.2); color: gold; padding: 2px 6px; border-radius: 4px; font-size: 0.7em;\">" + song.tier + "</span>" +
+                                "</div>" +
+                                "<div style=\"font-size: 0.8em; color: #aaa;\">" + song.artist + "</div>" +
+                            "</a>";
+                        });
+                        dropdown.innerHTML = html;
+                        dropdown.style.display = "block";
+                    } else {
+                        dropdown.style.display = "none";
+                    }
+                }
+            } catch (err) { console.error(err); }
+        }, 300);
+    });
+    document.addEventListener("click", (e) => {
+        if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.style.display = "none";
+        }
+    });
+});
+//]]>
+</script>
+</h:body>
+</html>

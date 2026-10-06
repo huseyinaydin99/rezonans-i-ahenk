@@ -1,96 +1,69 @@
-<ui:composition template="/layouts/main.xhtml"
+<ui:composition template="/WEB-INF/layout.xhtml"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
-
-    <ui:define name="title">Sanatçılar Keşfi</ui:define>
-
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:define name="title">Sanatçılar</ui:define>
     <ui:define name="content">
-        <style>
-            .artist-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                gap: 24px;
-                padding: 20px 0;
-            }
-            .artist-card {
-                background: rgba(30, 30, 40, 0.7);
-                border-radius: 12px;
-                padding: 20px;
-                text-align: center;
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-                border: 1px solid rgba(255, 255, 255, 0.05);
-                text-decoration: none;
-                color: white;
-                display: block;
-            }
-            .artist-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-                background: rgba(40, 40, 50, 0.9);
-                color: white;
-            }
-            .artist-avatar {
-                width: 150px;
-                height: 150px;
-                border-radius: 50%;
-                object-fit: cover;
-                margin: 0 auto 15px auto;
-                box-shadow: 0 8px 15px rgba(0,0,0,0.5);
-                border: 2px solid transparent;
-                transition: border-color 0.3s ease;
-            }
-            .artist-card:hover .artist-avatar { border-color: #0dcaf0; }
-            .artist-name { font-weight: bold; font-size: 18px; margin-bottom: 5px; }
-            .artist-listeners { font-size: 12px; color: #aaa; }
-            .verified-badge { color: #1da1f2; font-size: 16px; margin-left: 5px; }
-        </style>
-
-        <div class="mb-5">
-            <h2 class="fw-bold mb-1"><i class="fa-solid fa-users text-info me-2"></i>Öne Çıkan Sanatçılar</h2>
-            <p class="text-secondary">Retro ızgarada en iyi sanatçıları keşfet</p>
-            
-            <h:form id="searchForm" class="d-flex mt-4" style="max-width: 400px;">
-                <h:inputText value="#{artistDiscoveryBean.searchQuery}" class="form-control bg-dark text-white border-secondary me-2" placeholder="Sanatçı ara..." />
-                <h:commandButton action="#{artistDiscoveryBean.searchArtists}" value="Ara" class="btn btn-outline-info">
-                    <f:ajax execute="@form" render="artistPanel" />
-                </h:commandButton>
-            </h:form>
+        <div class="al-bg-grid"></div>
+        <div class="al-header">
+            <div>
+                <h2 class="al-heading">Öne Çıkan Sanatçılar</h2>
+                <p class="al-subheading">Retro ızgarada en iyi sanatçıları keşfet</p>
+            </div>
+            <div class="al-search">
+                <span class="material-symbols-outlined">search</span>
+                <input type="text" id="artistSearch" placeholder="Sanatçı ara..." oninput="filterArtists(this.value)" />
+            </div>
         </div>
-
-        <h:panelGroup id="artistPanel">
-            <c:choose>
-                <c:when test="#{empty artistDiscoveryBean.artists}">
-                    <div class="alert alert-dark text-center py-5 rounded-4 border border-secondary">
-                        <i class="fa-solid fa-microphone-slash fa-3x text-secondary mb-3"></i>
-                        <h5>Sanatçı Bulunamadı</h5>
-                    </div>
-                </c:when>
-                <c:otherwise>
-                    <div class="artist-grid">
-                        <c:forEach items="#{artistDiscoveryBean.artists}" var="art">
-                            <h:link outcome="artist_detail.xhtml" class="artist-card">
-                                <f:param name="id" value="#{art.id}" />
-                                <img src="#{art.imageUrl}" alt="#{art.name}" class="artist-avatar" />
-                                <div class="artist-name">
-                                    #{art.name}
-                                    <c:if test="#{art.verified}">
-                                        <i class="fa-solid fa-circle-check verified-badge" title="Doğrulanmış"></i>
-                                    </c:if>
-                                </div>
-                                <div class="artist-listeners">
-                                    <h:outputText value="#{art.monthlyListeners}">
-                                        <f:convertNumber pattern="###,###,###" />
-                                    </h:outputText> Aylık Dinleyici
-                                </div>
-                            </h:link>
-                        </c:forEach>
-                    </div>
-                </c:otherwise>
-            </c:choose>
-        </h:panelGroup>
-
+        <div class="al-grid" id="artistGrid">
+            <!-- Mock Data -->
+            <a href="artist-details.xhtml?id=1" class="al-card" data-name="the weeknd">
+                <div class="al-avatar">
+                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&amp;fit=crop&amp;w=200&amp;q=80" alt="The Weeknd" />
+                </div>
+                <div class="al-name">
+                    <span>The Weeknd</span>
+                    <span class="material-symbols-outlined al-verified" style="font-variation-settings: 'FILL' 1;" title="Doğrulanmış">verified</span>
+                </div>
+                <p class="al-listeners">108.450.000 Aylık Dinleyici</p>
+            </a>
+            <a href="artist-details.xhtml?id=1" class="al-card" data-name="ed sheeran">
+                <div class="al-avatar">
+                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&amp;fit=crop&amp;w=200&amp;q=80" alt="Ed Sheeran" />
+                </div>
+                <div class="al-name">
+                    <span>Ed Sheeran</span>
+                    <span class="material-symbols-outlined al-verified" style="font-variation-settings: 'FILL' 1;" title="Doğrulanmış">verified</span>
+                </div>
+                <p class="al-listeners">85.320.000 Aylık Dinleyici</p>
+            </a>
+            <a href="artist-details.xhtml?id=1" class="al-card" data-name="queen">
+                <div class="al-avatar">
+                    <img src="https://images.unsplash.com/photo-1493225457124-a1a2a53b51ee?auto=format&amp;fit=crop&amp;w=200&amp;q=80" alt="Queen" />
+                </div>
+                <div class="al-name">
+                    <span>Queen</span>
+                    <span class="material-symbols-outlined al-verified" style="font-variation-settings: 'FILL' 1;" title="Doğrulanmış">verified</span>
+                </div>
+                <p class="al-listeners">45.120.000 Aylık Dinleyici</p>
+            </a>
+        </div>
+        <p class="al-empty" id="artistEmpty" style="display:none;">Aramanla eşleşen sanatçı bulunamadı.</p>
+    </ui:define>
+    <ui:define name="scripts">
+        <script>
+            function filterArtists(query) {
+                const q = query.trim().toLowerCase();
+                const cards = document.querySelectorAll('#artistGrid .al-card');
+                let visibleCount = 0;
+                cards.forEach(card => {
+                    const match = card.getAttribute('data-name').includes(q);
+                    card.style.display = match ? '' : 'none';
+                    if (match) visibleCount++;
+                });
+                const empty = document.getElementById('artistEmpty');
+                if (empty) empty.style.display = visibleCount === 0 ? 'block' : 'none';
+            }
+        </script>
     </ui:define>
 </ui:composition>

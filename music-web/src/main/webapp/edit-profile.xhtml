@@ -1,0 +1,37 @@
+<ui:composition template="/WEB-INF/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <ui:define name="title">Profili Düzenle</ui:define>
+    <ui:define name="content">
+        <h1 class="fv-title">Profili Düzenle</h1>
+        <p class="fv-subtitle mb-4">Kişisel bilgilerinizi buradan güncelleyebilirsiniz.</p>
+        
+        <div class="card bg-dark text-white p-4 mx-auto" style="max-width: 600px; border: 1px solid var(--glass-border); border-radius: 16px;">
+            <h:form pt:data-turbo="false">
+                <div class="mb-3">
+                    <label class="form-label text-secondary">Ad Soyad</label>
+                    <input type="text" class="form-control bg-dark text-white border-secondary" value="#{loginBean.loggedInUserRole != null ? loginBean.loggedInUserRole : 'Hüseyin Aydın'}" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-secondary">Kullanıcı Adı</label>
+                    <input type="text" class="form-control bg-dark text-white border-secondary" value="@huseyinaydin99" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-secondary">E-posta</label>
+                    <input type="email" class="form-control bg-dark text-white border-secondary" value="test@example.com" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-secondary">Hakkımda</label>
+                    <textarea class="form-control bg-dark text-white border-secondary" rows="3">Müzik tutkunu, yazılım geliştirici.</textarea>
+                </div>
+                
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a href="profile.xhtml" class="btn btn-outline-secondary">İptal</a>
+                    <button type="button" class="btn btn-primary" style="background: var(--brand-primary); border: none;" onclick="notify('Profil başarıyla güncellendi.', 'success'); setTimeout(() => window.location.href='profile.xhtml', 1500);">Kaydet</button>
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

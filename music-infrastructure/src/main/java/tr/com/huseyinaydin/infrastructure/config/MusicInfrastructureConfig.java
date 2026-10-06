@@ -37,9 +37,16 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @Configuration
 @EnableCaching
+@org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories(basePackages = "tr.com.huseyinaydin.infrastructure")
 @ComponentScan(basePackages = "tr.com.huseyinaydin.infrastructure")
 @EnableAspectJAutoProxy
-public class MusicInfrastructureConfig {
+public class MusicInfrastructureConfig extends org.springframework.data.elasticsearch.client.elc.ElasticsearchConfiguration {
+    @Override
+    public org.springframework.data.elasticsearch.client.ClientConfiguration clientConfiguration() {
+        return org.springframework.data.elasticsearch.client.ClientConfiguration.builder()
+                .connectedTo("localhost:9200")
+                .build();
+    }
     @Bean(name = "mvcHandlerMappingIntrospector")
     public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
         return new HandlerMappingIntrospector();

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Ana Sayfa - Rezonans-ı Ahenk</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <section class="mg-section">
+            <div class="mg-hero-head">
+                <h2 class="mg-heading mg-heading--secondary">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                    Senin için önerilenler
+                </h2>
+                <div class="mg-hero-nav">
+                    <button type="button" class="mg-hero-nav-btn" id="recPrevBtn" aria-label="Önceki">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </button>
+                    <button type="button" class="mg-hero-nav-btn" id="recNextBtn" aria-label="Sonraki">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="recommendations" class="mb-4">
+                <div class="mg-hero-strip">
+                    <th:block th:each="song : ${personalizedRecommendations}">
+                        <div class="mg-card mg-card--tier-1">
+                            <div class="mg-card-cover">
+                                <img th:src="${song.coverUrl != null ? song.coverUrl : 'https://via.placeholder.com/150'}" th:alt="${song.title}" />
+                                <div class="mg-card-play-overlay">
+                                    <button class="mg-card-play queue-item" 
+                                            th:data-song-id="${song.songId}" 
+                                            th:data-song-title="${song.title}" 
+                                            th:data-song-artist="${song.artist}" 
+                                            th:onclick="|player.playFrom(${song.songId})|" 
+                                            title="Oynat">
+                                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mg-card-title-row">
+                                <h4 class="mg-card-title" th:text="${song.title}"></h4>
+                                <span class="mg-badge">Basic</span>
+                            </div>
+                            <p class="mg-card-artist" th:text="${song.artist}"></p>
+                            <div class="mg-card-actions">
+                                <button class="mg-icon-btn like-btn text-muted" th:data-song-id="${song.songId}" th:onclick="|toggleLike(${song.songId}, this)|" title="Beğen">&#9825;</button>
+                                <button class="mg-icon-btn" th:onclick="|addToPlaylist(${song.songId})|" title="Playlist'e ekle">
+                                    <span class="material-symbols-outlined">playlist_add</span>
+                                </button>
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
+            </div>
+        </section>
+
+        <section class="mg-section mt-5">
+            <h2 class="mg-heading mg-heading--primary">
+                <span class="material-symbols-outlined">grid_view</span>
+                Keşfet
+            </h2>
+            <div class="mg-grid">
+                <th:block th:each="song : ${topGlobalSongs}">
+                    <div class="mg-card mg-card--tier-2">
+                        <div class="mg-card-cover">
+                            <img th:src="${song.coverUrl != null ? song.coverUrl : 'https://via.placeholder.com/150'}" th:alt="${song.title}" />
+                            <div class="mg-card-play-overlay">
+                                <button class="mg-card-play queue-item" 
+                                        th:data-song-id="${song.songId}" 
+                                        th:data-song-title="${song.title}" 
+                                        th:data-song-artist="${song.artist}" 
+                                        th:onclick="|player.playFrom(${song.songId})|" 
+                                        title="Oynat">
+                                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mg-card-title-row">
+                            <h4 class="mg-card-title" th:text="${song.title}"></h4>
+                            <span class="mg-badge">Gold</span>
+                        </div>
+                        <p class="mg-card-artist" th:text="${song.artist}"></p>
+                        <div class="mg-card-actions">
+                            <button class="mg-icon-btn like-btn text-muted" th:data-song-id="${song.songId}" th:onclick="|toggleLike(${song.songId}, this)|" title="Beğen">&#9825;</button>
+                            <button class="mg-icon-btn" th:onclick="|addToPlaylist(${song.songId})|" title="Playlist'e ekle">
+                                <span class="material-symbols-outlined">playlist_add</span>
+                            </button>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+        </section>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <script>
+            function initHeroScrollNav(containerId, prevId, nextId) {
+                const strip = document.querySelector('#' + containerId + ' .mg-hero-strip');
+                const prevBtn = document.getElementById(prevId);
+                const nextBtn = document.getElementById(nextId);
+                if (!strip || !prevBtn || !nextBtn) return;
+                
+                function updateNavState() {
+                    prevBtn.disabled = strip.scrollLeft <= 4;
+                    nextBtn.disabled = strip.scrollLeft >= strip.scrollWidth - strip.clientWidth - 4;
+                }
+                strip.addEventListener('scroll', updateNavState);
+                window.addEventListener('resize', updateNavState);
+                prevBtn.addEventListener('click', () => strip.scrollBy({ left: -360, behavior: 'smooth' }));
+                nextBtn.addEventListener('click', () => strip.scrollBy({ left: 360, behavior: 'smooth' }));
+                updateNavState();
+            }
+            
+            window.addEventListener('DOMContentLoaded', function () {
+                initHeroScrollNav('recommendations', 'recPrevBtn', 'recNextBtn');
+            });
+        </script>
+    </th:block>
+</body>
+</html>

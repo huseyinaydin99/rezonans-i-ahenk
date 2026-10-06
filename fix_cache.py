@@ -1,16 +1,9 @@
-with open('music-infrastructure/src/main/java/tr/com/huseyinaydin/infrastructure/config/MusicInfrastructureConfig.java', 'r') as f:
-    content = f.read()
+path = 'music-web/src/main/webapp/WEB-INF/layout.xhtml'
+with open(path, 'r') as f:
+    c = f.read()
 
-content = content.replace('import org.springframework.context.annotation.Configuration;', 'import org.springframework.context.annotation.Configuration;\nimport org.springframework.cache.CacheManager;\nimport org.springframework.cache.concurrent.ConcurrentMapCacheManager;\nimport org.springframework.cache.annotation.EnableCaching;')
+c = c.replace('.js"></script>', '.js?v=3"></script>')
+c = c.replace('.css" />', '.css?v=3" />')
 
-content = content.replace('@Configuration', '@Configuration\n@EnableCaching')
-
-content = content.replace('public class MusicInfrastructureConfig {', '''public class MusicInfrastructureConfig {
-    @Bean
-    public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("queryCache", "referenceDataCache");
-    }
-''')
-
-with open('music-infrastructure/src/main/java/tr/com/huseyinaydin/infrastructure/config/MusicInfrastructureConfig.java', 'w') as f:
-    f.write(content)
+with open(path, 'w') as f:
+    f.write(c)

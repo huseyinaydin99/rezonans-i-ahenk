@@ -1,0 +1,85 @@
+/* Rezonans-ı Ahenk — Global Oynatıcı Stilleri */
+
+body { padding-bottom: 96px; } /* İçerik oynatıcının altında kalmasın */
+
+.rz-player {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    height: 88px;
+    z-index: 1050;
+    display: grid;
+    grid-template-columns: minmax(180px, 30%) 1fr minmax(160px, 22%);
+    align-items: center;
+    gap: 16px;
+    padding: 0 20px;
+    background: rgba(14, 14, 18, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.45);
+    color: #fff;
+}
+
+/* Sol */
+.rz-player__meta { display: flex; align-items: center; min-width: 0; gap: 12px; }
+.rz-player__cover {
+    width: 56px; height: 56px; border-radius: 6px; object-fit: cover;
+    background: linear-gradient(45deg, #1f1c2c, #928dab);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.rz-player.is-playing .rz-player__cover { animation: rz-pulse 2.4s ease-in-out infinite; }
+.rz-player__info { display: flex; flex-direction: column; min-width: 0; }
+.rz-player__title { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rz-player__tier { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #0dcaf0; }
+
+/* Orta */
+.rz-player__center { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; }
+.rz-player__controls { display: flex; align-items: center; gap: 14px; margin: 0; }
+.rz-player__progress { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 620px; }
+.rz-time { font-size: 11px; color: #a7a7a7; font-variant-numeric: tabular-nums; min-width: 36px; text-align: center; }
+
+/* Sağ */
+.rz-player__right { display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
+
+/* Butonlar */
+.rz-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 0; background: transparent; color: #cfcfcf;
+    text-decoration: none; cursor: pointer;
+    transition: color .15s ease, transform .15s ease;
+}
+.rz-btn:hover { color: #fff; transform: scale(1.08); }
+.rz-btn[disabled], .rz-btn.disabled, a.rz-btn:not([href]) { opacity: .35; pointer-events: none; }
+.rz-btn--primary { width: 40px; height: 40px; background: #fff; color: #111; }
+.rz-btn--primary:hover { color: #000; background: #0dcaf0; }
+
+/* Range (konum ve ses) — doluluk CSS değişkeniyle boyanır */
+.rz-range {
+    --fill: 0%;
+    -webkit-appearance: none; appearance: none;
+    height: 4px; border-radius: 4px; cursor: pointer; outline: none;
+    background: linear-gradient(to right, #0dcaf0 var(--fill), #4a4a4a var(--fill));
+}
+.rz-range--seek { flex: 1; }
+.rz-range--volume { width: 110px; }
+.rz-range::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%;
+    background: #fff; opacity: 0; transition: opacity .15s ease;
+}
+.rz-range:hover::-webkit-slider-thumb { opacity: 1; }
+.rz-range::-moz-range-thumb { width: 12px; height: 12px; border: 0; border-radius: 50%; background: #fff; }
+
+@keyframes rz-pulse {
+    0%, 100% { box-shadow: 0 4px 12px rgba(0, 0, 0, .5); }
+    50%      { box-shadow: 0 0 18px rgba(13, 202, 240, .55); }
+}
+
+/* Mobil */
+@media (max-width: 768px) {
+    .rz-player { grid-template-columns: 1fr auto; height: 96px; }
+    .rz-player__right { display: none; }
+    .rz-player__center { grid-column: 1 / -1; grid-row: 2; }
+    .rz-player__meta { grid-row: 1; }
+    body { padding-bottom: 110px; }
+}

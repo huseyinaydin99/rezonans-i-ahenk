@@ -37,12 +37,11 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/**"), new AntPathRequestMatcher("/health")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/**"), new AntPathRequestMatcher("/health"), new AntPathRequestMatcher("/api/Song/Play/**"), new AntPathRequestMatcher("/api/Song/Search**")).permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(
                 new JwtAuthenticationFilter(jwtTokenProvider),
-
                 UsernamePasswordAuthenticationFilter.class
             );
         return http.build();

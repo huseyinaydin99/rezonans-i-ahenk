@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<body>
+
+    <div layout:fragment="title">Profilim</div>
+    <div layout:fragment="content">
+        <section class="pr-hero">
+            <div class="pr-avatar-wrap">
+                <div class="pr-avatar">
+                    <div class="pr-avatar-fallback">HU</div>
+                </div>
+                <span class="pr-tier-ribbon pr-tier-ribbon--premium">Premium</span>
+            </div>
+
+            <div>
+                <h1 class="pr-name">#{loginBean.loggedInUserRole != null ? loginBean.loggedInUserRole : 'Hüseyin Aydın'}</h1>
+                <p class="pr-username">@huseyinaydin99</p>
+                <p class="pr-email">
+                    <span class="material-symbols-outlined">mail</span>
+                    test@example.com
+                </p>
+
+                <div class="pr-actions">
+                    <a href="edit-profile.xhtml" class="pr-btn-edit">
+                        <span class="material-symbols-outlined">edit</span>
+                        Profili Düzenle
+                    </a>
+                    <button type="button" class="pr-btn-share" onclick="shareProfile()">
+                        <span class="material-symbols-outlined">share</span>
+                        Paylaş
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <div class="pr-stats">
+
+            <div class="pr-stat-card" style="background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.3);">
+                <div class="pr-stat-icon" style="color: gold;"><span class="material-symbols-outlined">monetization_on</span></div>
+                <div>
+                    <div class="pr-stat-label" style="color: #ffd700;">Kredi Bakiyesi</div>
+                    <div class="pr-stat-value" style="color: #fff;">2,500</div>
+                </div>
+            </div>
+
+            <div class="pr-stat-card pr-stat-card--secondary">
+                <div class="pr-stat-icon"><span class="material-symbols-outlined">queue_music</span></div>
+                <div>
+                    <div class="pr-stat-label">Playlist</div>
+                    <div class="pr-stat-value">12</div>
+                </div>
+            </div>
+            <div class="pr-stat-card pr-stat-card--primary">
+                <div class="pr-stat-icon"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span></div>
+                <div>
+                    <div class="pr-stat-label">Beğeni</div>
+                    <div class="pr-stat-value">480</div>
+                </div>
+            </div>
+            <div class="pr-stat-card pr-stat-card--tertiary">
+                <div class="pr-stat-icon"><span class="material-symbols-outlined">headphones</span></div>
+                <div>
+                    <div class="pr-stat-label">Dinleme</div>
+                    <div class="pr-stat-value">1,402</div>
+                </div>
+            </div>
+        </div>
+
+        <section>
+            <div class="mg-hero-head">
+                <h2 class="mg-heading mg-heading--secondary">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                    Senin İçin Öneriler
+                </h2>
+                <div class="mg-hero-nav">
+                    <button type="button" class="mg-hero-nav-btn" id="recPrevBtn" aria-label="Önceki">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </button>
+                    <button type="button" class="mg-hero-nav-btn" id="recNextBtn" aria-label="Sonraki">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+            <div id="recommendations" class="mb-4">
+                <div class="mg-hero-strip">
+                    <div class="mg-card mg-card--tier-1">
+                        <div class="mg-card-cover">
+                            <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&amp;fit=crop&amp;w=150&amp;q=80" alt="Öneri" />
+                            <div class="mg-card-play-overlay">
+                                <button class="mg-card-play queue-item" 
+                                        data-song-id="5" 
+                                        data-song-title="Öneri Şarkı" 
+                                        data-song-artist="Artist" 
+                                        onclick="player.playFrom(5)" 
+                                        title="Oynat">
+                                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mg-card-title-row">
+                            <h4 class="mg-card-title">Öneri Şarkı</h4>
+                            <span class="mg-badge">Premium</span>
+                        </div>
+                        <p class="mg-card-artist">Profil Önerisi</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div layout:fragment="scripts">
+        <script>
+            function initHeroScrollNav(containerId, prevId, nextId) {
+                const strip = document.querySelector('#' + containerId + ' .mg-hero-strip');
+                const prevBtn = document.getElementById(prevId);
+                const nextBtn = document.getElementById(nextId);
+                if (!strip || !prevBtn || !nextBtn) return;
+                function updateNavState() {
+                    prevBtn.disabled = strip.scrollLeft &lt;= 4;
+                    nextBtn.disabled = strip.scrollLeft >= strip.scrollWidth - strip.clientWidth - 4;
+                }
+                strip.addEventListener('scroll', updateNavState);
+                window.addEventListener('resize', updateNavState);
+                prevBtn.addEventListener('click', () => strip.scrollBy({ left: -360, behavior: 'smooth' }));
+                nextBtn.addEventListener('click', () => strip.scrollBy({ left: 360, behavior: 'smooth' }));
+                updateNavState();
+            }
+            window.addEventListener('DOMContentLoaded', () => {
+                initHeroScrollNav('recommendations', 'recPrevBtn', 'recNextBtn');
+            });
+
+            function shareProfile() {
+                const url = window.location.href;
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(url)
+                        .then(() => notify('Profil bağlantısı kopyalandı.', 'success', 2000))
+                        .catch(() => notify('Bağlantı kopyalanamadı.', 'error'));
+                } else {
+                    notify(url, 'info');
+                }
+            }
+        </script>
+    </div>
+
+
+</body>
+</html>

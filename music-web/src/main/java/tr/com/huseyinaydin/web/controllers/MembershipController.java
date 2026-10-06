@@ -1,21 +1,31 @@
 package tr.com.huseyinaydin.web.controllers;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import tr.com.huseyinaydin.application.cqrs.Mediator;
-import tr.com.huseyinaydin.application.membership.commands.UpgradeMembershipCommand;
-import java.util.UUID;
+import jakarta.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/membership")
-@PreAuthorize("isAuthenticated()")
-public class MembershipController extends BaseController {
+@RequestMapping({"/Membership", "/api/Membership"})
+public class MembershipController {
 
-    public MembershipController(Mediator mediator) { super(mediator); }
+    @PostMapping("/Buy")
+    public ResponseEntity<Map<String, Object>> buy(@RequestParam("tier") String tier, HttpSession session) {
+        Object user = session.getAttribute("LOGGED_IN_USER");
+        if (user == null) {
+            Map<String, Object> err = new HashMap<>();
+            err.put("message", "Lütfen önce giriş yapın.");
+            return ResponseEntity.status(401).body(err);
+        }
 
-    @PostMapping("/upgrade")
-    public ResponseEntity<Boolean> upgradeTier(@RequestBody UpgradeMembershipCommand command) {
-        return ResponseEntity.ok(mediator.send(command));
+        // Tier'ı kaydet
+        session.setAttribute("USER_TIER", tier);
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("message", "Paketiniz başarıyla " + tier + " seviyesine yükseltildi!");
+        res.put("tier", tier);
+        res.put("token", "dummy-jwt-for-client");
+        return ResponseEntity.ok(res);
     }
 }

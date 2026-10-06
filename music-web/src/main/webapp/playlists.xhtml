@@ -1,0 +1,35 @@
+<ui:composition template="/WEB-INF/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <ui:define name="title">Playlistlerim</ui:define>
+    <ui:define name="content">
+        <h1 class="fv-title">Playlistlerim</h1>
+        <p class="fv-subtitle mb-4">Kendi frekans koleksiyonlarını oluştur ve düzenle.</p>
+        
+        <form class="pl-create">
+            <input type="text" name="name" placeholder="Yeni playlist adı" required="required" />
+            <button type="button">
+                <span class="material-symbols-outlined" style="vertical-align:middle; font-size:18px;">add</span>
+                Oluştur
+            </button>
+        </form>
+        
+        <div class="pl-grid">
+            <a href="playlist-details.xhtml?id=1" class="pl-card">
+                <div class="pl-card-icon">
+                    <span class="material-symbols-outlined">queue_music</span>
+                </div>
+                <div class="pl-card-name">Yol Şarkıları</div>
+                <div class="pl-card-count">42 şarkı</div>
+            </a>
+            <a href="playlist-details.xhtml?id=1" class="pl-card">
+                <div class="pl-card-icon">
+                    <span class="material-symbols-outlined">queue_music</span>
+                </div>
+                <div class="pl-card-name">Spor &amp; Motivasyon</div>
+                <div class="pl-card-count">18 şarkı</div>
+            </a>
+        </div>
+    </ui:define>
+</ui:composition>

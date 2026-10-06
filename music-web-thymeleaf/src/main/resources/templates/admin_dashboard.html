@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <title>Sistem Yönetim Paneli - Rezonans-ı Ahenk</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+
+<body class="bg-dark text-white">
+    <div class="container mt-5">
+        <h2><i class="fa-solid fa-shield-halved text-danger"></i> Sistem Yöneticisi (Admin) Paneli</h2>
+        <p class="text-secondary">Tüm kullanıcıları görüntüleyin, rolleri atayın veya hesapları dondurun.</p>
+        <hr class="mb-4"/>
+
+        <h:form id="adminForm">
+            <div class="card bg-secondary text-white border-0 shadow">
+                <div class="card-body p-0">
+                    <table class="table table-dark table-striped table-hover mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Kullanıcı Adı</th>
+                                <th>E-Posta</th>
+                                <th>Mevcut Yetki (Role)</th>
+                                <th>Yetki Ata</th>
+                                <th>Durum</th>
+                                <th class="text-end">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ui:repeat value="#{adminBean.userList}" var="user">
+                                <tr>
+                                    <td class="align-middle fw-bold">#{user.username}</td>
+                                    <td class="align-middle">#{user.email}</td>
+                                    <td class="align-middle">
+                                        <span class="badge #{user.currentRole == 'ROLE_ADMIN' ? 'bg-danger' : (user.currentRole == 'ROLE_ARTIST' ? 'bg-warning text-dark' : 'bg-info text-dark')}">
+                                            #{user.currentRole}
+                                        </span>
+                                    </td>
+                                    <td class="align-middle">
+                                        <!-- JSF AJAX Rol Güncelleme -->
+                                        <div class="input-group input-group-sm w-75">
+                                            <h:selectOneMenu value="#{adminBean.selectedRole}" class="form-select bg-dark text-white border-secondary">
+                                                <f:selectItem itemValue="" itemLabel="Rol Seç..." />
+                                                <f:selectItem itemValue="ROLE_USER" itemLabel="Dinleyici (USER)" />
+                                                <f:selectItem itemValue="ROLE_ARTIST" itemLabel="Sanatçı (ARTIST)" />
+                                                <f:selectItem itemValue="ROLE_ADMIN" itemLabel="Yönetici (ADMIN)" />
+                                            </h:selectOneMenu>
+                                            <h:commandButton value="Ata" action="#{adminBean.updateRole(user)}" styleClass="btn btn-outline-success">
+                                                <f:ajax execute="@form" render="adminForm" />
+                                            </h:commandButton>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle">
+                                        <h:panelGroup rendered="#{user.banned}">
+                                            <span class="badge bg-danger"><i class="fa-solid fa-ban"></i> Yasaklı</span>
+                                        </h:panelGroup>
+                                        <h:panelGroup rendered="#{not user.banned}">
+                                            <span class="badge bg-success"><i class="fa-solid fa-check"></i> Aktif</span>
+                                        </h:panelGroup>
+                                    </td>
+                                    <td class="align-middle text-end">
+                                        <!-- JSF AJAX Ban Toggle -->
+                                        <h:commandButton value="#{user.banned ? 'Yasağı Kaldır' : 'Hesabı Dondur'}" 
+                                                         action="#{adminBean.toggleBan(user)}" 
+                                                         styleClass="btn btn-sm #{user.banned ? 'btn-success' : 'btn-danger'} fw-bold">
+                                            <f:ajax execute="@this" render="adminForm" />
+                                        </h:commandButton>
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </h:form>
+    </div>
+</body>
+</html>

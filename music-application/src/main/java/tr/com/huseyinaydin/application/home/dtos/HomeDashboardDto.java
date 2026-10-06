@@ -18,16 +18,19 @@ public class HomeDashboardDto {
     public List<SongSnippet> getPersonalizedRecommendations() { return personalizedRecommendations; }
 
     public static class SongSnippet {
+        private Long songId;
         private String title;
         private String artist;
         private String coverUrl;
 
-        public SongSnippet(String title, String artist, String coverUrl) {
+        public SongSnippet(Long songId, String title, String artist, String coverUrl) {
+            this.songId = songId;
             this.title = title;
             this.artist = artist;
             this.coverUrl = coverUrl;
         }
 
+        public Long getSongId() { return songId; }
         public String getTitle() { return title; }
         public String getArtist() { return artist; }
         public String getCoverUrl() { return coverUrl; }

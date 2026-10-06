@@ -1,0 +1,2 @@
+sed -i '' 's/private tr.com.huseyinaydin.infrastructure.kafka.ListenEventProducer listenEventProducer;/\/\/private Object listenEventProducer;/g' music-web/src/main/java/tr/com/huseyinaydin/web/controllers/SongController.java
+sed -i '' 's/listenEventProducer.sendListenEvent(user.toString(), id);/\/\/listenEventProducer.sendListenEvent(user.toString(), id);/g' music-web/src/main/java/tr/com/huseyinaydin/web/controllers/SongController.java

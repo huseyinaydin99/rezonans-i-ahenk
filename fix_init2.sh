@@ -1,0 +1,1 @@
+sed -i '' 's/tr.com.huseyinaydin.web.config.ActuatorConfig.class,/tr.com.huseyinaydin.web.config.ActuatorConfig.class/g' music-web-thymeleaf/src/main/java/tr/com/huseyinaydin/web/config/WebAppInitializer.java

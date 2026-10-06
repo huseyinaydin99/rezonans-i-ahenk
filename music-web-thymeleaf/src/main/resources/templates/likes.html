@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<body>
+
+    <div layout:fragment="title">Favorilerim</div>
+    <div layout:fragment="content">
+        <div class="fv-header">
+            <div>
+                <h1 class="fv-title">Favorilerim</h1>
+                <p class="fv-subtitle">Beğendiğin tüm parçalar. 3 şarkı.</p>
+            </div>
+            <div class="fv-actions">
+                <button type="button" class="fv-btn-playall" onclick="playAllOnPage()">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                    Tümünü Çal
+                </button>
+                <button type="button" class="fv-btn-shuffle" id="shuffleBtn" onclick="toggleShuffleBtn(this)" title="Karışık çal">
+                    <span class="material-symbols-outlined">shuffle</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="fv-list">
+            <div class="fv-row">
+                <div class="fv-row-main">
+                    <div class="fv-cover">
+                        <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&amp;fit=crop&amp;w=100&amp;q=80" alt="Starboy" />
+                        <div class="fv-cover-overlay queue-item"
+                             data-song-id="6"
+                             data-song-title="Starboy"
+                             data-song-artist="The Weeknd"
+                             onclick="player.playFrom(6)">
+                            <span class="material-symbols-outlined">play_arrow</span>
+                        </div>
+                    </div>
+                    <div class="fv-row-info">
+                        <span class="fv-row-title">Starboy</span>
+                        <span class="fv-row-artist">The Weeknd</span>
+                    </div>
+                </div>
+                <div class="fv-row-meta">
+                    <span class="fv-duration">3:50</span>
+                    <span class="fv-badge fv-badge--1">Basic</span>
+                    <button class="fv-icon-btn like-btn text-danger" data-song-id="6" onclick="toggleLike(6, this)" title="Beğeniyi kaldır">&#9829;</button>
+                </div>
+            </div>
+            
+            <div class="fv-row">
+                <div class="fv-row-main">
+                    <div class="fv-cover">
+                        <img src="https://images.unsplash.com/photo-1493225457124-a1a2a53b51ee?auto=format&amp;fit=crop&amp;w=100&amp;q=80" alt="Vampire" />
+                        <div class="fv-cover-overlay queue-item"
+                             data-song-id="4"
+                             data-song-title="Vampire"
+                             data-song-artist="Olivia Rodrigo"
+                             onclick="player.playFrom(4)">
+                            <span class="material-symbols-outlined">play_arrow</span>
+                        </div>
+                    </div>
+                    <div class="fv-row-info">
+                        <span class="fv-row-title">Vampire</span>
+                        <span class="fv-row-artist">Olivia Rodrigo</span>
+                    </div>
+                </div>
+                <div class="fv-row-meta">
+                    <span class="fv-duration">3:39</span>
+                    <span class="fv-badge fv-badge--2">Gold</span>
+                    <button class="fv-icon-btn like-btn text-danger" data-song-id="4" onclick="toggleLike(4, this)" title="Beğeniyi kaldır">&#9829;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div layout:fragment="scripts">
+        <script>
+            function playAllOnPage() {
+                const first = document.querySelector('.queue-item');
+                if (first) player.playFrom(parseInt(first.getAttribute('data-song-id'), 10));
+            }
+            function toggleShuffleBtn(btn) {
+                player.toggleShuffle();
+                btn.classList.toggle('active', player.shuffle);
+            }
+        </script>
+    </div>
+
+
+</body>
+</html>
