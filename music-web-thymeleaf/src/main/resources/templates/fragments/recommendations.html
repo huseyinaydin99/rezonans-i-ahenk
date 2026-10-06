@@ -1,0 +1,30 @@
+<div class="mg-hero-strip" xmlns:th="http://www.thymeleaf.org">
+    <th:block th:each="song : ${personalizedRecommendations}">
+        <div class="mg-card mg-card--tier-1">
+            <div class="mg-card-cover">
+                <img th:src="${song.coverUrl != null ? song.coverUrl : 'https://via.placeholder.com/150'}" th:alt="${song.title}" />
+                <div class="mg-card-play-overlay">
+                    <button class="mg-card-play queue-item" 
+                            th:data-song-id="${song.songId}" 
+                            th:data-song-title="${song.title}" 
+                            th:data-song-artist="${song.artist}" 
+                            th:onclick="|player.playFrom(${song.songId})|" 
+                            title="Oynat">
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                    </button>
+                </div>
+            </div>
+            <div class="mg-card-title-row">
+                <h4 class="mg-card-title" th:text="${song.title}"></h4>
+                <span class="mg-badge">Basic</span>
+            </div>
+            <p class="mg-card-artist" th:text="${song.artist}"></p>
+            <div class="mg-card-actions">
+                <button class="mg-icon-btn like-btn text-muted" th:data-song-id="${song.songId}" th:onclick="|toggleLike(${song.songId}, this)|" title="Beğen">&#9825;</button>
+                <button class="mg-icon-btn" th:onclick="|addToPlaylist(${song.songId})|" title="Playlist'e ekle">
+                    <span class="material-symbols-outlined">playlist_add</span>
+                </button>
+            </div>
+        </div>
+    </th:block>
+</div>

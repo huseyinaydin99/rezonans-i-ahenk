@@ -66,7 +66,8 @@ public class SecurityConfig {
                     new AntPathRequestMatcher("/"), 
                     new AntPathRequestMatcher("/artists"), 
                     new AntPathRequestMatcher("/genres"), 
-                    new AntPathRequestMatcher("/search")
+                    new AntPathRequestMatcher("/search"),
+                    new AntPathRequestMatcher("/recommendations")
                 ).permitAll()
                 .anyRequest().authenticated()
             )

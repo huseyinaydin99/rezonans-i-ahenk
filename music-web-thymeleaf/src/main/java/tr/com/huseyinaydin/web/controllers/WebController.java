@@ -17,9 +17,15 @@ public class WebController {
     @GetMapping({"/", "/index"})
     public String index(Model model) {
         HomeDashboardDto dashboardData = homeService.buildHomeDashboard("current-user");
-        model.addAttribute("personalizedRecommendations", dashboardData.getPersonalizedRecommendations());
         model.addAttribute("topGlobalSongs", dashboardData.getTopGlobalSongs());
         return "index";
+    }
+
+    @GetMapping("/recommendations")
+    public String recommendations(Model model) {
+        HomeDashboardDto dashboardData = homeService.buildHomeDashboard("current-user");
+        model.addAttribute("personalizedRecommendations", dashboardData.getPersonalizedRecommendations());
+        return "fragments/recommendations";
     }
 
     @GetMapping("/login")
