@@ -2,13 +2,19 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{auth-layout}">
 <head>
     <title>Giriş Yap - Rezonans-ı Ahenk</title>
+    <th:block layout:fragment="head">
+        <style>
+            .login-bg { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); min-height: 100vh; width: 100vw; display:flex; align-items:center; justify-content:center; }
+            .login-card { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.05); }
+        </style>
+    </th:block>
 </head>
-<body class="login-bg d-flex align-items-center justify-content-center">
-    <div layout:fragment="content">
-        <div class="container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+<body>
+    <div layout:fragment="content" class="login-bg">
+        <div class="container py-5">
             <div class="row justify-content-center w-100">
                 <div class="col-md-4">
-                    <div class="card login-card text-white shadow-lg p-5" style="background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.05);">
+                    <div class="card login-card text-white shadow-lg p-5">
                         <div class="text-center mb-4">
                             <span class="material-symbols-outlined mb-3 text-info" style="font-size: 48px;">album</span>
                             <h3 class="fw-bold">Tekrar Hoş Geldin</h3>
@@ -18,7 +24,7 @@
                         <!-- Hata Mesajı -->
                         <div th:if="${error != null}" class="alert alert-danger d-block mb-3 fw-bold" th:text="${error}"></div>
 
-                        <form th:action="@{/doLogin}" method="post">
+                        <form th:action="@{/doLogin}" method="post" data-turbo="false">
                             <div class="mb-3">
                                 <label class="form-label text-light fw-bold">E-Posta Adresi</label>
                                 <div class="input-group">

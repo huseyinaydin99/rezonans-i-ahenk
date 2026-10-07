@@ -23,6 +23,9 @@ public class AuthController {
     @Autowired
     private ILoginService loginService;
 
+    @Autowired
+    private tr.com.huseyinaydin.application.ports.IRegisterService registerService;
+
     @PostMapping("/doLogin")
     public String doLogin(@RequestParam("email") String email, 
                           @RequestParam("password") String password, 
@@ -44,9 +47,7 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(auth);
             session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
             
-            response.setStatus(303);
-            response.setHeader("Location", "/");
-            return null;
+            return "redirect:/";
         } catch (BusinessException e) {
             model.addAttribute("error", e.getMessage());
             return "login";
@@ -62,8 +63,21 @@ public class AuthController {
                              @RequestParam("password") String password,
                              @RequestParam(value = "artistAccount", required = false) String artistAccount,
                              Model model) {
-        // Dummy register logic
-        model.addAttribute("message", "Kayıt başarılı! Lütfen giriş yapınız.");
+        try {
+            tr.com.huseyinaydin.application.auth.dtos.RegisterRequestDto req = new tr.com.huseyinaydin.application.auth.dtos.RegisterRequestDto();
+            req.setUsername(username);
+            req.setEmail(email);
+            req.setPassword(password);
+            req.setFullName(username); // formda fullname yok, username'i atıyoruz
+            req.setArtistAccount("on".equals(artistAccount));
+            
+            registerService.registerNewUser(req);
+            model.addAttribute("message", "Kayıt başarılı! Lütfen giriş yapınız.");
+        } catch (BusinessException e) {
+            model.addAttribute("error", e.getMessage());
+        } catch (Exception e) {
+            model.addAttribute("error", "Kayıt sırasında bir hata oluştu: " + e.getMessage());
+        }
         return "register";
     }
 
@@ -71,8 +85,6 @@ public class AuthController {
     public String doLogout(HttpSession session, jakarta.servlet.http.HttpServletResponse response) {
         session.invalidate();
         SecurityContextHolder.clearContext();
-        response.setStatus(303);
-        response.setHeader("Location", "/login");
-        return null;
+        return "redirect:/login";
     }
 }

@@ -2,15 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{auth-layout}">
 <head>
     <title>Sisteme Katıl - Rezonans-ı Ahenk</title>
+    <th:block layout:fragment="head">
+        <style>
+            .register-bg { background: linear-gradient(135deg, #1f1c2c 0%, #928DAB 100%); min-height: 100vh; width: 100vw; display:flex; align-items:center; justify-content:center; }
+            .register-card { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1); }
+        </style>
+    </th:block>
 </head>
 <body>
-    <div layout:fragment="content">
-        <div class="container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+    <div layout:fragment="content" class="register-bg">
+        <div class="container py-5">
             <div class="row justify-content-center w-100">
                 <div class="col-md-5">
-                    <div class="card text-white shadow-lg p-4" style="background: rgba(31, 28, 44, 0.7); backdrop-filter: blur(10px); border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="card register-card text-white shadow-lg p-4">
                         <div class="text-center mb-4">
-                            <span class="material-symbols-outlined mb-3" style="font-size: 48px; color: #0dcaf0;">music_note</span>
+                            <span class="material-symbols-outlined mb-3 text-info" style="font-size: 48px;">music_note</span>
                             <h3 class="fw-bold">Müzik Evrenine Katıl</h3>
                             <p class="text-light small">Hemen ücretsiz hesap oluştur ve keşfetmeye başla.</p>
                         </div>
@@ -30,7 +36,7 @@
                             </script>
                         </div>
 
-                        <form th:action="@{/doRegister}" method="post">
+                        <form th:action="@{/doRegister}" method="post" data-turbo="false">
                             <div class="mb-3">
                                 <label class="form-label text-light">Kullanıcı Adı</label>
                                 <input type="text" name="username" class="form-control bg-dark text-white border-secondary" required="required" />
