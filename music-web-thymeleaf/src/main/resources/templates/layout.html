@@ -46,14 +46,14 @@
                     </div>
                 </form>
 
-                <div th:if="${session.LOGGED_IN_USER != null}" class="sw-auth">
+                <div th:if="${session.JWT_TOKEN != null}" class="sw-auth">
                     <a  th:href="@{/profile}">Profilim</a>
                     <form th:action="@{/doLogout}" method="post" style="display:inline; margin:0; padding:0;">
                         <button type="submit" style="background:none; border:none; color:inherit; font:inherit; cursor:pointer; padding:0;">Çıkış</button>
                     </form>
                 </div>
                 
-                <div th:if="${session.LOGGED_IN_USER == null}" class="sw-auth">
+                <div th:if="${session.JWT_TOKEN == null}" class="sw-auth">
                     <a th:href="@{/login}">Giriş</a>
                     <a class="sw-cta" th:href="@{/register}">Üye Ol</a>
                 </div>
