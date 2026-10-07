@@ -98,8 +98,10 @@ public class SongController {
         response.put("audioUrl", urls[index]);
         response.put("title", "Song " + id);
         
-        // ML dinleme geçmişi kaydı Kafka'ya gönderiliyor
-        listenEventProducer.sendListenEvent(user.toString(), id);
+        // ML dinleme geçmişi kaydı Kafka'ya gönderiliyor (Asenkron - Çalmayı Yavaşlatmasın)
+        java.util.concurrent.CompletableFuture.runAsync(() -> {
+            listenEventProducer.sendListenEvent(user.toString(), id);
+        });
         
         return ResponseEntity.ok(response);
     }
