@@ -56,6 +56,17 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/doRegister")
+    public String doRegister(@RequestParam("username") String username,
+                             @RequestParam("email") String email,
+                             @RequestParam("password") String password,
+                             @RequestParam(value = "artistAccount", required = false) String artistAccount,
+                             Model model) {
+        // Dummy register logic
+        model.addAttribute("message", "Kayıt başarılı! Lütfen giriş yapınız.");
+        return "register";
+    }
+
     @PostMapping("/doLogout")
     public String doLogout(HttpSession session, jakarta.servlet.http.HttpServletResponse response) {
         session.invalidate();

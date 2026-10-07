@@ -57,17 +57,12 @@ public class SecurityConfig {
                     new AntPathRequestMatcher("/login"), 
                     new AntPathRequestMatcher("/doLogin"), 
                     new AntPathRequestMatcher("/register"), 
+                    new AntPathRequestMatcher("/doRegister"), 
                     new AntPathRequestMatcher("/error/**"), 
                     new AntPathRequestMatcher("/css/**"), 
                     new AntPathRequestMatcher("/js/**"), 
                     new AntPathRequestMatcher("/images/**"), 
-                    new AntPathRequestMatcher("/webjars/**"), 
-                    new AntPathRequestMatcher("/index"), 
-                    new AntPathRequestMatcher("/"), 
-                    new AntPathRequestMatcher("/artists"), 
-                    new AntPathRequestMatcher("/genres"), 
-                    new AntPathRequestMatcher("/search"),
-                    new AntPathRequestMatcher("/recommendations")
+                    new AntPathRequestMatcher("/webjars/**")
                 ).permitAll()
                 .anyRequest().authenticated()
             )
