@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Profilim</title>
+</head>
 <body>
-
-    <div layout:fragment="title">Profilim</div>
     <div layout:fragment="content">
         <section class="pr-hero">
             <div class="pr-avatar-wrap">
@@ -13,7 +14,7 @@
             </div>
 
             <div>
-                <h1 class="pr-name">#{loginBean.loggedInUserRole != null ? loginBean.loggedInUserRole : 'Hüseyin Aydın'}</h1>
+                <h1 class="pr-name" th:text="${session.LOGGED_IN_USER != null ? session.LOGGED_IN_USER.username : 'Hüseyin Aydın'}"></h1>
                 <p class="pr-username">@huseyinaydin99</p>
                 <p class="pr-email">
                     <span class="material-symbols-outlined">mail</span>
@@ -34,7 +35,6 @@
         </section>
 
         <div class="pr-stats">
-
             <div class="pr-stat-card" style="background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.3);">
                 <div class="pr-stat-icon" style="color: gold;"><span class="material-symbols-outlined">monetization_on</span></div>
                 <div>
@@ -42,7 +42,6 @@
                     <div class="pr-stat-value" style="color: #fff;">2,500</div>
                 </div>
             </div>
-
             <div class="pr-stat-card pr-stat-card--secondary">
                 <div class="pr-stat-icon"><span class="material-symbols-outlined">queue_music</span></div>
                 <div>
@@ -108,7 +107,7 @@
         </section>
     </div>
 
-    <div layout:fragment="scripts">
+    <th:block layout:fragment="scripts">
         <script>
             function initHeroScrollNav(containerId, prevId, nextId) {
                 const strip = document.querySelector('#' + containerId + ' .mg-hero-strip');
@@ -116,7 +115,7 @@
                 const nextBtn = document.getElementById(nextId);
                 if (!strip || !prevBtn || !nextBtn) return;
                 function updateNavState() {
-                    prevBtn.disabled = strip.scrollLeft &lt;= 4;
+                    prevBtn.disabled = strip.scrollLeft <= 4;
                     nextBtn.disabled = strip.scrollLeft >= strip.scrollWidth - strip.clientWidth - 4;
                 }
                 strip.addEventListener('scroll', updateNavState);
@@ -140,8 +139,6 @@
                 }
             }
         </script>
-    </div>
-
-
+    </th:block>
 </body>
 </html>

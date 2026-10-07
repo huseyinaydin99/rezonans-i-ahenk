@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Paketler</title>
+</head>
 <body>
-
-    <div layout:fragment="title">Paketler</div>
     <div layout:fragment="content">
         <div class="pk-floor"></div>
 
@@ -71,7 +72,7 @@
         <p class="pk-footnote">Bu bir demo sistemdir — gerçek bir ödeme alınmaz, paket değişikliği anında uygulanır.</p>
     </div>
 
-    <div layout:fragment="scripts">
+    <th:block layout:fragment="scripts">
         <script>
             async function buyPackage(tier) {
                 try {
@@ -93,9 +94,6 @@
                 }
             }
         </script>
-    </div>
-
-
-
+    </th:block>
 </body>
 </html>

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Sanatçılar</title>
+</head>
 <body>
-
-    <div layout:fragment="title">Sanatçılar</div>
     <div layout:fragment="content">
         <div class="al-bg-grid"></div>
         <div class="al-header">
@@ -17,7 +18,7 @@
         </div>
         <div class="al-grid" id="artistGrid">
             <!-- Mock Data -->
-            <a href="artist-details.xhtml?id=1" class="al-card" data-name="the weeknd">
+            <a th:href="@{/artist-details(id=1)}" class="al-card" data-name="the weeknd">
                 <div class="al-avatar">
                     <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&amp;fit=crop&amp;w=200&amp;q=80" alt="The Weeknd" />
                 </div>
@@ -27,7 +28,7 @@
                 </div>
                 <p class="al-listeners">108.450.000 Aylık Dinleyici</p>
             </a>
-            <a href="artist-details.xhtml?id=1" class="al-card" data-name="ed sheeran">
+            <a th:href="@{/artist-details(id=1)}" class="al-card" data-name="ed sheeran">
                 <div class="al-avatar">
                     <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&amp;fit=crop&amp;w=200&amp;q=80" alt="Ed Sheeran" />
                 </div>
@@ -37,7 +38,7 @@
                 </div>
                 <p class="al-listeners">85.320.000 Aylık Dinleyici</p>
             </a>
-            <a href="artist-details.xhtml?id=1" class="al-card" data-name="queen">
+            <a th:href="@{/artist-details(id=1)}" class="al-card" data-name="queen">
                 <div class="al-avatar">
                     <img src="https://images.unsplash.com/photo-1493225457124-a1a2a53b51ee?auto=format&amp;fit=crop&amp;w=200&amp;q=80" alt="Queen" />
                 </div>
@@ -50,7 +51,8 @@
         </div>
         <p class="al-empty" id="artistEmpty" style="display:none;">Aramanla eşleşen sanatçı bulunamadı.</p>
     </div>
-    <div layout:fragment="scripts">
+    
+    <th:block layout:fragment="scripts">
         <script>
             function filterArtists(query) {
                 const q = query.trim().toLowerCase();
@@ -65,8 +67,6 @@
                 if (empty) empty.style.display = visibleCount === 0 ? 'block' : 'none';
             }
         </script>
-    </div>
-
-
+    </th:block>
 </body>
 </html>
