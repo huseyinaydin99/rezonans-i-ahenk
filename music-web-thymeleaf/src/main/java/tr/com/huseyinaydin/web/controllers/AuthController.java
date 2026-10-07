@@ -26,7 +26,7 @@ public class AuthController {
     @PostMapping("/doLogin")
     public String doLogin(@RequestParam("email") String email, 
                           @RequestParam("password") String password, 
-                          HttpSession session, Model model) {
+                          HttpSession session, Model model, jakarta.servlet.http.HttpServletResponse response) {
         try {
             LoginRequestDto req = new LoginRequestDto();
             req.setEmail(email);
@@ -44,7 +44,9 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(auth);
             session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
             
-            return "redirect:/index.xhtml";
+            response.setStatus(303);
+            response.setHeader("Location", "/");
+            return null;
         } catch (BusinessException e) {
             model.addAttribute("error", e.getMessage());
             return "login";
@@ -55,9 +57,11 @@ public class AuthController {
     }
 
     @PostMapping("/doLogout")
-    public String doLogout(HttpSession session) {
+    public String doLogout(HttpSession session, jakarta.servlet.http.HttpServletResponse response) {
         session.invalidate();
         SecurityContextHolder.clearContext();
-        return "redirect:/login.xhtml";
+        response.setStatus(303);
+        response.setHeader("Location", "/login");
+        return null;
     }
 }

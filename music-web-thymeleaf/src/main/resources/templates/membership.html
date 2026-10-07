@@ -84,7 +84,11 @@
                     } else {
                         const data = await res.json();
                         if (res.status === 401) {
-                            window.location.href = 'login.xhtml';
+                            if (typeof Turbo !== 'undefined') {
+                                Turbo.visit('/music-credit-system/login');
+                            } else {
+                                window.location.href = '/music-credit-system/login';
+                            }
                         } else {
                             notify(data.message || 'Satın alma başarısız.', 'error');
                         }
