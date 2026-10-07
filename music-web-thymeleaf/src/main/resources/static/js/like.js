@@ -1,17 +1,17 @@
 // Bir şarkının beğenisini aç/kapat. Buton: <button class="like-btn" data-song-id="X">
 async function toggleLike(songId, btn) {
     try {
-        const res = await fetch('/music-credit-system/api/Like/Toggle/' + songId, {
+        const res = await fetch('/web-api/Like/Toggle/' + songId, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         });
         
         if (res.status === 401) {
             notify('Beğenmek için giriş yapmalısınız.', 'info');
-            window.location.href = '/music-credit-system/login';
+            window.location.href = '/login';
             return;
         }
-        if (res.status === 200) {
+        if (res.ok) {
             const data = await res.json();
             setHeart(btn, data.liked);
             notify(data.liked ? 'Şarkı favorilere eklendi.' : 'Şarkı favorilerden çıkarıldı.', 'success', 2000);
@@ -24,13 +24,15 @@ async function toggleLike(songId, btn) {
 // Butonun görünümünü beğenildi/beğenilmedi durumuna göre ayarla.
 function setHeart(btn, liked) {
     if (liked) {
-        btn.innerText = '♥';
+        btn.innerHTML = '♥';
         btn.classList.add('text-danger');
         btn.classList.remove('text-muted');
+        btn.title = 'Beğeniyi kaldır';
     } else {
-        btn.innerText = '♡';
+        btn.innerHTML = '♡';
         btn.classList.remove('text-danger');
         btn.classList.add('text-muted');
+        btn.title = 'Beğen';
     }
 }
 
@@ -40,7 +42,7 @@ async function initLikes() {
     if (buttons.length === 0) return;
 
     try {
-        const res = await fetch('/music-credit-system/api/Like/MyLikes');
+        const res = await fetch('/web-api/Like/MyLikes');
         if (!res.ok) return;   // giriş yoksa sessiz geç
         
         const likedIds = await res.json();
@@ -55,5 +57,6 @@ async function initLikes() {
     }
 }
 
+// Turbo sayfa geçişlerinde ve DOMContentLoaded'da çalıştır
 document.addEventListener('turbo:load', initLikes);
 window.addEventListener('DOMContentLoaded', () => document.dispatchEvent(new Event('turbo:load')));

@@ -49,7 +49,7 @@ if (!window.player) {
         if (this.index < 0 || this.index >= this.queue.length) return;
         const song = this.queue[this.index];
         try {
-            const res = await fetch('/music-credit-system/api/Song/Play/' + song.id, { credentials: 'same-origin' });
+            const res = await fetch('/api/Song/Play/' + song.id, { credentials: 'same-origin' });
             if (res.status === 200) {
                 const data = await res.json();
                 this._attempts = 0;
@@ -62,7 +62,7 @@ if (!window.player) {
             }
             if (res.status === 401) {
                 notify('Oynatmak için giriş yapmalısınız.', 'info');
-                window.location.href = '/music-credit-system/login.xhtml';
+                window.location.href = '/login';
                 return;
             }
             if (res.status === 403) {

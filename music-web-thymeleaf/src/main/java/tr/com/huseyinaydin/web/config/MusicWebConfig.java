@@ -13,6 +13,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
@@ -20,9 +21,10 @@ import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 import java.util.List;
 
 @Configuration
+@EnableWebMvc
 @ComponentScan(basePackages = "tr.com.huseyinaydin.web", excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class))
 @Import(OpenApiConfig.class)
-public class MusicWebConfig extends org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport {
+public class MusicWebConfig implements WebMvcConfigurer {
 
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
@@ -62,15 +64,14 @@ public class MusicWebConfig extends org.springframework.web.servlet.config.annot
     }
 
     @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         ObjectMapper mapper = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS).setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL);
-        converters.add(new MappingJackson2HttpMessageConverter(mapper));
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL);
+        
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter(mapper);
+        converters.add(0, converter);
     }
 
-    @Override
-    protected org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping createRequestMappingHandlerMapping() {
-        return new ApiVersionRequestMappingHandlerMapping();
-    }
 }

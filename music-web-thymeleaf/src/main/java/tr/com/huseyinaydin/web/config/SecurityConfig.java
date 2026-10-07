@@ -54,15 +54,27 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                    new AntPathRequestMatcher("/login"), 
-                    new AntPathRequestMatcher("/doLogin"), 
-                    new AntPathRequestMatcher("/register"), 
-                    new AntPathRequestMatcher("/doRegister"), 
-                    new AntPathRequestMatcher("/error/**"), 
-                    new AntPathRequestMatcher("/css/**"), 
-                    new AntPathRequestMatcher("/js/**"), 
-                    new AntPathRequestMatcher("/images/**"), 
-                    new AntPathRequestMatcher("/webjars/**")
+                    new AntPathRequestMatcher("/"),
+                    new AntPathRequestMatcher("/index"),
+                    new AntPathRequestMatcher("/login"),
+                    new AntPathRequestMatcher("/doLogin"),
+                    new AntPathRequestMatcher("/register"),
+                    new AntPathRequestMatcher("/doRegister"),
+                    new AntPathRequestMatcher("/recommendations"),
+                    new AntPathRequestMatcher("/search"),
+                    new AntPathRequestMatcher("/likes"),
+                    new AntPathRequestMatcher("/profile"),
+                    new AntPathRequestMatcher("/edit-profile"),
+                    new AntPathRequestMatcher("/artists"),
+                    new AntPathRequestMatcher("/genres"),
+                    new AntPathRequestMatcher("/playlists"),
+                    new AntPathRequestMatcher("/membership"),
+                    new AntPathRequestMatcher("/error/**"),
+                    new AntPathRequestMatcher("/css/**"),
+                    new AntPathRequestMatcher("/js/**"),
+                    new AntPathRequestMatcher("/images/**"),
+                    new AntPathRequestMatcher("/webjars/**"),
+                    new AntPathRequestMatcher("/web-api/Like/**")
                 ).permitAll()
                 .anyRequest().authenticated()
             )

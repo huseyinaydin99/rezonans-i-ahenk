@@ -1,10 +1,13 @@
-﻿// Bir şarkının beğenisini aç/kapat. Buton: <button class="like-btn" data-song-id="X">
+// Bir şarkının beğenisini aç/kapat. Buton: <button class="like-btn" data-song-id="X">
 async function toggleLike(songId, btn) {
     try {
-        const res = { status: 200, json: async () => ({ liked: btn.innerText === '♡' }) };
+        const res = await fetch('/web-api/Like/Toggle/' + songId, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
         if (res.status === 401) {
             notify('Beğenmek için giriş yapmalısınız.', 'info');
-            window.location.href = '/Login/SignIn';
+            window.location.href = '/login.xhtml';
             return;
         }
         const data = await res.json();
@@ -18,13 +21,15 @@ async function toggleLike(songId, btn) {
 // Butonun görünümünü beğenildi/beğenilmedi durumuna göre ayarla.
 function setHeart(btn, liked) {
     if (liked) {
-        btn.innerText = '♥';
+        btn.innerHTML = '♥';
         btn.classList.add('text-danger');
         btn.classList.remove('text-muted');
+        btn.title = 'Beğeniyi kaldır';
     } else {
-        btn.innerText = '♡';
+        btn.innerHTML = '♡';
         btn.classList.remove('text-danger');
         btn.classList.add('text-muted');
+        btn.title = 'Beğen';
     }
 }
 
@@ -34,7 +39,7 @@ async function initLikes() {
     if (buttons.length === 0) return;
 
     try {
-        const res = { ok: true, json: async () => [1, 2, 4, 6] };
+        const res = await fetch('/web-api/Like/MyLikes');
         if (!res.ok) return;   // giriş yoksa sessiz geç
         const likedIds = await res.json();
         const likedSet = new Set(likedIds);

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 @RestController
-@RequestMapping("/api/Like")
+@RequestMapping("/web-api/Like")
 public class LikeApiController {
 
     // Kullanıcı bazlı (email) beğenilen şarkı ID'lerini bellekte tutuyoruz (Sıfırdan veritabanı kurmamak için Demo)
