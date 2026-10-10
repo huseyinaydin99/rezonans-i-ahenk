@@ -27,6 +27,7 @@ public class SongSearchAdapter implements ISongSearchService {
         }
 
         try {
+            // Elasticsearch üzerinden "Like/Containing" araması
             List<ElasticSong> results = elasticSongRepository.findByTitleContainingOrArtistContaining(keyword, keyword);
             for (ElasticSong es : results) {
                 Map<String, Object> map = new HashMap<>();
@@ -38,7 +39,8 @@ public class SongSearchAdapter implements ISongSearchService {
                 filtered.add(map);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            // Hata durumunda (örneğin Elasticsearch kapalıysa) sessizce boş döner veya fallback yapılabilir.
+            System.err.println("Elasticsearch arama hatası: " + e.getMessage());
         }
         return filtered;
     }

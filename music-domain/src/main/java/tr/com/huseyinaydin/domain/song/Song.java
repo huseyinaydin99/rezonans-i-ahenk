@@ -58,17 +58,27 @@ public class Song extends tr.com.huseyinaydin.domain.common.BaseEntity<java.util
         public Builder genreId(UUID genreId) { this.genreId = genreId; return this; }
 
         public Song build() {
-            if (title == null || audioUrl == null || artistId == null) {
-                throw new IllegalStateException("Zorunlu alanlar (title, audioUrl, artistId) eksik!");
+            // DDD Katı İş Kuralları (Guard Clauses)
+            if (title == null || title.trim().isEmpty()) {
+                throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Şarkı adı (title) boş bırakılamaz.");
             }
+            if (audioUrl == null || audioUrl.trim().isEmpty()) {
+                throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Ses dosyası URL'si (audioUrl) zorunludur.");
+            }
+            if (artistId == null) {
+                throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Bir şarkı mutlaka bir sanatçıya (artistId) ait olmalıdır.");
+            }
+            if (duration != null && duration.isNegative()) {
+                throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Şarkı süresi (duration) negatif bir değer olamaz.");
+            }
+            
             return new Song(this);
         }
     }
 
-    // Getters
+    // Getters ve İş Mantığı (Business Logic)
     public UUID getId() { return id; }
     public String getTitle() { return title; }
-
     public String getCoverImageUrl() { return coverImageUrl; }
     public String getAudioUrl() { return audioUrl; }
     public Duration getDuration() { return duration; }
@@ -77,5 +87,8 @@ public class Song extends tr.com.huseyinaydin.domain.common.BaseEntity<java.util
     public UUID getArtistId() { return artistId; }
     public UUID getGenreId() { return genreId; }
     public long getPlayCount() { return playCount; }
-    public void incrementPlayCount() { this.playCount++; }
+    
+    public void incrementPlayCount() { 
+        this.playCount++; 
+    }
 }

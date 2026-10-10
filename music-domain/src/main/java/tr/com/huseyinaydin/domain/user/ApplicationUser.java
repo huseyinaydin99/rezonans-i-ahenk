@@ -4,6 +4,7 @@ import tr.com.huseyinaydin.domain.common.Entity;
 import tr.com.huseyinaydin.domain.enums.UserRole;
 
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class ApplicationUser extends Entity<UUID> {
 
@@ -13,6 +14,8 @@ public class ApplicationUser extends Entity<UUID> {
     private byte[] passwordSalt;
     private boolean isActive;
     private UserRole role;
+    
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
 
     protected ApplicationUser() {
         super();
@@ -21,6 +24,21 @@ public class ApplicationUser extends Entity<UUID> {
     public ApplicationUser(UUID customerId, String email,
                            byte[] passwordHash, byte[] passwordSalt, UserRole role) {
         super();
+        
+        // DDD Katı İş Kuralları (Guard Clauses)
+        if (customerId == null) {
+            throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Müşteri ID (customerId) atanmamış.");
+        }
+        if (email == null || email.trim().isEmpty() || !EMAIL_PATTERN.matcher(email).matches()) {
+            throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Geçerli bir e-posta adresi girilmelidir: " + email);
+        }
+        if (passwordHash == null || passwordHash.length == 0 || passwordSalt == null || passwordSalt.length == 0) {
+            throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Şifre ve güvenlik tuzu (Salt) değerleri boş bırakılamaz.");
+        }
+        if (role == null) {
+            throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Kullanıcıya ait rol bilgisi eksik.");
+        }
+
         this.id = UUID.randomUUID();
         this.customerId = customerId;
         this.email = email;
@@ -31,15 +49,22 @@ public class ApplicationUser extends Entity<UUID> {
     }
 
     public void changeRole(UserRole role) {
+        if (role == null) throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Yeni rol bilgisi boş olamaz.");
         this.role = role;
     }
 
     public void updatePassword(byte[] passwordHash, byte[] passwordSalt) {
+        if (passwordHash == null || passwordHash.length == 0 || passwordSalt == null || passwordSalt.length == 0) {
+            throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Yeni şifre ve güvenlik tuzu (Salt) değerleri boş bırakılamaz.");
+        }
         this.passwordHash = passwordHash;
         this.passwordSalt = passwordSalt;
     }
 
     public void updateEmail(String email) {
+        if (email == null || email.trim().isEmpty() || !EMAIL_PATTERN.matcher(email).matches()) {
+            throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Geçerli bir yeni e-posta adresi girilmelidir.");
+        }
         this.email = email;
     }
 

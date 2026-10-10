@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tr.com.huseyinaydin.application.ports.ILoginService;
 import tr.com.huseyinaydin.application.ports.IPasswordHashService;
+import tr.com.huseyinaydin.application.ports.ITokenService;
+import org.springframework.beans.factory.annotation.Value;
 import tr.com.huseyinaydin.application.ports.PasswordHash;
 import tr.com.huseyinaydin.application.auth.dtos.LoginRequestDto;
 import tr.com.huseyinaydin.application.auth.dtos.ResponseTokenDto;
@@ -20,9 +22,17 @@ public class LoginServiceImpl implements ILoginService {
     private final IApplicationUserRepository userRepository;
     private final IPasswordHashService passwordHashService;
 
-    public LoginServiceImpl(IApplicationUserRepository userRepository, IPasswordHashService passwordHashService) {
+    private final ITokenService tokenService;
+    private final String defaultTier;
+
+    public LoginServiceImpl(IApplicationUserRepository userRepository,
+                            IPasswordHashService passwordHashService,
+                            ITokenService tokenService,
+                            @Value("${music.membership.default-tier:Premium}") String defaultTier) {
         this.userRepository = userRepository;
         this.passwordHashService = passwordHashService;
+        this.tokenService = tokenService;
+        this.defaultTier = defaultTier;
     }
 
     @Override
@@ -51,11 +61,10 @@ public class LoginServiceImpl implements ILoginService {
 
         System.out.println("-> Kullanıcı doğrulandı. JWT Access Token üretiliyor.");
         
-        // TODO: Entegre JWT provider
-        String mockJwtToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." + UUID.randomUUID().toString();
+        String accessToken = tokenService.generateAccessToken(user.getEmail(), user.getRole().name(), defaultTier);
         String mockRefreshToken = UUID.randomUUID().toString();
         
         System.out.println("[GİRİŞ SİSTEMİ] Kullanıcı başarıyla sisteme bağlandı.");
-        return new ResponseTokenDto(mockJwtToken, mockRefreshToken, 3600, user.getRole().name());
+        return new ResponseTokenDto(accessToken, mockRefreshToken, tokenService.getExpirationSeconds(), user.getRole().name());
     }
 }

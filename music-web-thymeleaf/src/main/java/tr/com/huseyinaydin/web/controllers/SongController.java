@@ -33,15 +33,15 @@ public class SongController {
     }
 
     @GetMapping(value = {"/Song/Play/{id}", "/api/Song/Play/{id}"})
-    public ResponseEntity<Map<String, Object>> playSong(@PathVariable("id") Long id, jakarta.servlet.http.HttpSession session) {
-        Object user = session.getAttribute("LOGGED_IN_USER");
+    public ResponseEntity<Map<String, Object>> playSong(@PathVariable("id") Long id) {
+        var user = tr.com.huseyinaydin.web.security.CurrentUser.get().orElse(null);
         if (user == null) {
             Map<String, Object> err = new HashMap<>();
             err.put("message", "Müzik dinlemek için giriş yapmalısınız.");
             return ResponseEntity.status(401).body(err);
         }
 
-        String tier = (String) session.getAttribute("USER_TIER");
+        String tier = user.tier();
         
         // Open-Closed Principle (OCP): Yetki doğrulaması soyutlandı.
         if (!playbackService.hasAccess(id, tier)) {
@@ -53,7 +53,7 @@ public class SongController {
 
         // Open-Closed Principle (OCP): Hardcoded URL dizisi soyutlandı.
         String audioUrl = playbackService.getAudioUrl(id);
-        playbackService.recordListenEvent(user.toString(), id);
+        playbackService.recordListenEvent(user.email(), id);
         
         Map<String, Object> response = new HashMap<>();
         response.put("audioUrl", audioUrl);

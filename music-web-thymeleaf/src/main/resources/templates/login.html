@@ -4,15 +4,15 @@
     <title>Giriş Yap - Rezonans-ı Ahenk</title>
     <th:block layout:fragment="head">
         <style>
-            .login-bg { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); min-height: 100vh; width: 100vw; display:flex; align-items:center; justify-content:center; }
-            .login-card { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.05); }
+            .login-bg { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); min-height: 100vh; width: 100%; padding-top: 12vh; overflow-x: hidden; }
+            .login-card { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.05); margin: 0 auto; }
         </style>
     </th:block>
 </head>
 <body>
     <div layout:fragment="content" class="login-bg">
-        <div class="container py-5">
-            <div class="row justify-content-center w-100">
+        <div class="container">
+            <div class="row justify-content-center">
                 <div class="col-md-4">
                     <div class="card login-card text-white shadow-lg p-5">
                         <div class="text-center mb-4">

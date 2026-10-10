@@ -3,7 +3,7 @@ package tr.com.huseyinaydin.web.controllers;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import jakarta.servlet.http.HttpSession;
+import tr.com.huseyinaydin.web.security.CurrentUser;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
@@ -20,8 +20,8 @@ public class LikeApiController {
     private Mediator mediator;
 
     @PostMapping("/Toggle/{songId}")
-    public ResponseEntity<Map<String, Object>> toggleLike(@PathVariable("songId") Long songId, HttpSession session) {
-        String email = (String) session.getAttribute("LOGGED_IN_USER");
+    public ResponseEntity<Map<String, Object>> toggleLike(@PathVariable("songId") Long songId) {
+        String email = CurrentUser.get().map(c -> c.email()).orElse(null);
         if (email == null) {
             return ResponseEntity.status(401).build();
         }
@@ -31,8 +31,8 @@ public class LikeApiController {
     }
 
     @GetMapping("/MyLikes")
-    public ResponseEntity<List<Long>> getMyLikes(HttpSession session) {
-        String email = (String) session.getAttribute("LOGGED_IN_USER");
+    public ResponseEntity<List<Long>> getMyLikes() {
+        String email = CurrentUser.get().map(c -> c.email()).orElse(null);
         if (email == null) {
             return ResponseEntity.ok(new ArrayList<>());
         }

@@ -13,6 +13,13 @@ public class SongLike {
     protected SongLike() {}
 
     public SongLike(UUID userId, UUID songId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Kullanıcı ID (userId) boş olamaz. Beğenme işlemi geçersiz.");
+        }
+        if (songId == null) {
+            throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Şarkı ID (songId) boş olamaz. Beğenme işlemi geçersiz.");
+        }
+        
         this.id = UUID.randomUUID();
         this.userId = userId;
         this.songId = songId;

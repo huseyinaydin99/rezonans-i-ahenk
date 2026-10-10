@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import tr.com.huseyinaydin.infrastructure.security.JwtTokenProvider;
+import tr.com.huseyinaydin.application.ports.ITokenService;
 
 import tr.com.huseyinaydin.infrastructure.security.JwtAuthenticationFilter;
 
@@ -20,13 +20,10 @@ import tr.com.huseyinaydin.infrastructure.security.JwtAuthenticationFilter;
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final ITokenService tokenService;
 
-
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
-
-        this.jwtTokenProvider = jwtTokenProvider;
-
+    public SecurityConfig(ITokenService tokenService) {
+        this.tokenService = tokenService;
     }
 
     @Bean
@@ -41,7 +38,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .addFilterBefore(
-                new JwtAuthenticationFilter(jwtTokenProvider),
+                new JwtAuthenticationFilter(tokenService),
                 UsernamePasswordAuthenticationFilter.class
             );
         return http.build();
@@ -60,6 +57,7 @@ public class SecurityConfig {
                     new AntPathRequestMatcher("/doLogin"),
                     new AntPathRequestMatcher("/register"),
                     new AntPathRequestMatcher("/doRegister"),
+                    new AntPathRequestMatcher("/doLogout"),
                     new AntPathRequestMatcher("/recommendations"),
                     new AntPathRequestMatcher("/search"),
                     new AntPathRequestMatcher("/likes"),
@@ -86,8 +84,9 @@ public class SecurityConfig {
                     response.sendRedirect(request.getContextPath() + "/error/403");
                 })
             )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
-            
+.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .addFilterBefore(new JwtAuthenticationFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 }

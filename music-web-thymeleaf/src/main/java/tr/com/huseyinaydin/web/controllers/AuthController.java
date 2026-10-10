@@ -1,53 +1,42 @@
 package tr.com.huseyinaydin.web.controllers;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import jakarta.servlet.http.HttpSession;
-import tr.com.huseyinaydin.application.cqrs.Mediator;
 import tr.com.huseyinaydin.application.auth.commands.LoginCommand;
 import tr.com.huseyinaydin.application.auth.commands.RegisterCommand;
 import tr.com.huseyinaydin.application.auth.dtos.ResponseTokenDto;
+import tr.com.huseyinaydin.application.cqrs.Mediator;
 import tr.com.huseyinaydin.sharedkernel.exception.BusinessException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import java.util.Collections;
-import java.util.List;
+import tr.com.huseyinaydin.web.security.AuthCookies;
+import tr.com.huseyinaydin.web.security.FlashCookies;
 
+/** Stateless kimlik doğrulama: JWT, HttpOnly cookie ile taşınır; sunucuda oturum tutulmaz. */
 @Controller
 public class AuthController {
 
     @Autowired
     private Mediator mediator;
 
-    @PostMapping("/doLogin")
-    public String doLogin(@RequestParam("email") String email, 
-                          @RequestParam("password") String password, 
-                          HttpSession session, Model model, jakarta.servlet.http.HttpServletResponse response) {
-        try {
-            ResponseTokenDto tokenResponse = mediator.send(new LoginCommand(email, password));
-            
-            session.setAttribute("JWT_TOKEN", tokenResponse.getAccessToken());
-            session.setAttribute("USER_ROLE", tokenResponse.getUserRole());
-            session.setAttribute("LOGGED_IN_USER", email);
-            session.setAttribute("USER_TIER", "Premium");
+    @Autowired
+    private AuthCookies authCookies;
 
-            List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(tokenResponse.getUserRole()));
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(email, null, authorities);
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
-            
+    @PostMapping("/doLogin")
+    public String doLogin(@RequestParam("email") String email,
+                          @RequestParam("password") String password,
+                          HttpServletResponse response) {
+        try {
+            ResponseTokenDto token = mediator.send(new LoginCommand(email, password));
+            authCookies.write(response, token.getAccessToken(), token.getExpiresIn());
             return "redirect:/";
         } catch (BusinessException e) {
-            model.addAttribute("error", e.getMessage());
-            return "login";
+            FlashCookies.set(response, "error", e.getMessage());
+            return "redirect:/login";
         } catch (Exception e) {
-            model.addAttribute("error", "Sunucu hatası: " + e.getMessage());
-            return "login";
+            FlashCookies.set(response, "error", "Sunucu hatası: " + e.getMessage());
+            return "redirect:/login";
         }
     }
 
@@ -56,24 +45,24 @@ public class AuthController {
                              @RequestParam("email") String email,
                              @RequestParam("password") String password,
                              @RequestParam(value = "artistAccount", required = false) String artistAccount,
-                             Model model) {
+                             HttpServletResponse response) {
         try {
             boolean isArtist = "on".equals(artistAccount);
             mediator.send(new RegisterCommand(username, email, password, isArtist));
-            
-            model.addAttribute("message", "Kayıt başarılı! Lütfen giriş yapınız.");
+            FlashCookies.set(response, "message", "Kayıt başarılı! Lütfen giriş yapınız.");
+            return "redirect:/login";
         } catch (BusinessException e) {
-            model.addAttribute("error", e.getMessage());
+            FlashCookies.set(response, "error", e.getMessage());
+            return "redirect:/register";
         } catch (Exception e) {
-            model.addAttribute("error", "Kayıt sırasında bir hata oluştu: " + e.getMessage());
+            FlashCookies.set(response, "error", "Kayıt sırasında bir hata oluştu: " + e.getMessage());
+            return "redirect:/register";
         }
-        return "register";
     }
 
     @PostMapping("/doLogout")
-    public String doLogout(HttpSession session, jakarta.servlet.http.HttpServletResponse response) {
-        session.invalidate();
-        SecurityContextHolder.clearContext();
+    public String doLogout(HttpServletResponse response) {
+        authCookies.clear(response);
         return "redirect:/login";
     }
 }
