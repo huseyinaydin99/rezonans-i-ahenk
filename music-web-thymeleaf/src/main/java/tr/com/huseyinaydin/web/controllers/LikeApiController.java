@@ -2,20 +2,22 @@ package tr.com.huseyinaydin.web.controllers;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.servlet.http.HttpSession;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+
+import tr.com.huseyinaydin.application.cqrs.Mediator;
+import tr.com.huseyinaydin.application.like.commands.ToggleLikeCommand;
+import tr.com.huseyinaydin.application.like.queries.GetLikedSongsQuery;
 
 @RestController
 @RequestMapping("/web-api/Like")
 public class LikeApiController {
 
-    // Kullanıcı bazlı (email) beğenilen şarkı ID'lerini bellekte tutuyoruz (Sıfırdan veritabanı kurmamak için Demo)
-    private static final Map<String, Set<Long>> userLikes = new HashMap<>();
+    @Autowired
+    private Mediator mediator;
 
     @PostMapping("/Toggle/{songId}")
     public ResponseEntity<Map<String, Object>> toggleLike(@PathVariable("songId") Long songId, HttpSession session) {
@@ -24,21 +26,8 @@ public class LikeApiController {
             return ResponseEntity.status(401).build();
         }
 
-        userLikes.putIfAbsent(email, new HashSet<>());
-        Set<Long> likes = userLikes.get(email);
-        
-        boolean isLiked;
-        if (likes.contains(songId)) {
-            likes.remove(songId);
-            isLiked = false;
-        } else {
-            likes.add(songId);
-            isLiked = true;
-        }
-
-        Map<String, Object> res = new HashMap<>();
-        res.put("liked", isLiked);
-        return ResponseEntity.ok(res);
+        Map<String, Object> result = mediator.send(new ToggleLikeCommand(email, songId));
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/MyLikes")
@@ -48,7 +37,7 @@ public class LikeApiController {
             return ResponseEntity.ok(new ArrayList<>());
         }
         
-        userLikes.putIfAbsent(email, new HashSet<>());
-        return ResponseEntity.ok(new ArrayList<>(userLikes.get(email)));
+        List<Long> result = mediator.query(new GetLikedSongsQuery(email));
+        return ResponseEntity.ok(result);
     }
 }

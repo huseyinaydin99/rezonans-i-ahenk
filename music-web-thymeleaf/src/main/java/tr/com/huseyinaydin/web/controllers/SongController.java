@@ -11,48 +11,25 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
-import tr.com.huseyinaydin.infrastructure.kafka.ListenEventProducer;
-import tr.com.huseyinaydin.infrastructure.IElasticSongRepository;
-import tr.com.huseyinaydin.infrastructure.ElasticSong;
+import tr.com.huseyinaydin.application.ports.ISongSearchService;
+import tr.com.huseyinaydin.application.ports.IPlaybackService;
 
 @RestController
 public class SongController {
 
-    @Autowired
-    private ListenEventProducer listenEventProducer;
+    private final ISongSearchService songSearchService;
+    private final IPlaybackService playbackService;
 
     @Autowired
-    private IElasticSongRepository elasticSongRepository;
+    public SongController(ISongSearchService songSearchService, IPlaybackService playbackService) {
+        this.songSearchService = songSearchService;
+        this.playbackService = playbackService;
+    }
 
     @GetMapping(value = {"/Song/Search", "/api/Song/Search"})
     public ResponseEntity<List<Map<String, Object>>> search(@RequestParam(value="q", required=false) String q) {
-        List<Map<String, Object>> filtered = new java.util.ArrayList<>();
-        
-        if (q == null || q.trim().isEmpty()) {
-            return ResponseEntity.ok(filtered);
-        }
-
-        try {
-            List<ElasticSong> results = elasticSongRepository.findByTitleContainingOrArtistContaining(q, q);
-            for (ElasticSong es : results) {
-                filtered.add(createSong(Long.parseLong(es.getId()), es.getTitle(), es.getArtist(), es.getCoverUrl(), es.getTier()));
-            }
-        } catch (Exception e) {
-            // Eğer Elastic kapalıysa veya data yoksa boş dön, ama Exception yutma tam olarak logla
-            e.printStackTrace();
-        }
-        
-        return ResponseEntity.ok(filtered);
-    }
-
-    private Map<String, Object> createSong(Long id, String title, String artist, String cover, String tier) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", id);
-        map.put("title", title);
-        map.put("artist", artist);
-        map.put("cover", cover);
-        map.put("tier", tier);
-        return map;
+        List<Map<String, Object>> results = songSearchService.searchSongs(q);
+        return ResponseEntity.ok(results);
     }
 
     @GetMapping(value = {"/Song/Play/{id}", "/api/Song/Play/{id}"})
@@ -65,43 +42,22 @@ public class SongController {
         }
 
         String tier = (String) session.getAttribute("USER_TIER");
-        if (tier == null) tier = "Basic";
-
-        int requiredLevel = 0;
-        if (id == 3 || id == 4) requiredLevel = 2; // Premium
-        if (id == 5) requiredLevel = 3; // Elit
-
-        int userLevel = 0;
-        if (tier.equals("Gold")) userLevel = 1;
-        if (tier.equals("Premium")) userLevel = 2;
-        if (tier.equals("Elit")) userLevel = 3;
-
-        if (userLevel < requiredLevel) {
+        
+        // Open-Closed Principle (OCP): Yetki doğrulaması soyutlandı.
+        if (!playbackService.hasAccess(id, tier)) {
             Map<String, Object> err = new HashMap<>();
             err.put("message", "Bu şarkı için en az daha üst bir pakete sahip olmanız gerekiyor.");
-            err.put("requiredTier", requiredLevel);
+            err.put("requiredTier", playbackService.getRequiredTierLevel(id));
             return ResponseEntity.status(403).body(err);
         }
 
-        // TODO: Gerçek MP3 dosyaları S3 (MinIO) üzerinden veya gerçek bir disk yolundan çekilmeli.
-        // Şimdilik test mp3'leri .NET'teki gibi sahte bırakıyoruz çünkü S3'e MP3 yüklemedik.
-        String[] urls = {
-            "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-            "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-            "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-            "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
-            "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"
-        };
-        int index = (int) (id % urls.length);
+        // Open-Closed Principle (OCP): Hardcoded URL dizisi soyutlandı.
+        String audioUrl = playbackService.getAudioUrl(id);
+        playbackService.recordListenEvent(user.toString(), id);
         
         Map<String, Object> response = new HashMap<>();
-        response.put("audioUrl", urls[index]);
+        response.put("audioUrl", audioUrl);
         response.put("title", "Song " + id);
-        
-        // ML dinleme geçmişi kaydı Kafka'ya gönderiliyor (Asenkron - Çalmayı Yavaşlatmasın)
-        java.util.concurrent.CompletableFuture.runAsync(() -> {
-            listenEventProducer.sendListenEvent(user.toString(), id);
-        });
         
         return ResponseEntity.ok(response);
     }

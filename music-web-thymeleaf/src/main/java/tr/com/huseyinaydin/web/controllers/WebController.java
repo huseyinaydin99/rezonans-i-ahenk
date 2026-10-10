@@ -5,25 +5,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
-import tr.com.huseyinaydin.application.ports.IHomeService;
+import tr.com.huseyinaydin.application.cqrs.Mediator;
 import tr.com.huseyinaydin.application.home.dtos.HomeDashboardDto;
+import tr.com.huseyinaydin.application.home.queries.GetHomeDashboardQuery;
 
 @Controller
 public class WebController {
 
     @Autowired
-    private IHomeService homeService;
+    private Mediator mediator;
 
     @GetMapping({"/", "/index"})
     public String index(Model model) {
-        HomeDashboardDto dashboardData = homeService.buildHomeDashboard("current-user");
+        HomeDashboardDto dashboardData = mediator.query(new GetHomeDashboardQuery("current-user"));
         model.addAttribute("topGlobalSongs", dashboardData.getTopGlobalSongs());
         return "index";
     }
 
     @GetMapping("/recommendations")
     public String recommendations(Model model) {
-        HomeDashboardDto dashboardData = homeService.buildHomeDashboard("current-user");
+        HomeDashboardDto dashboardData = mediator.query(new GetHomeDashboardQuery("current-user"));
         model.addAttribute("personalizedRecommendations", dashboardData.getPersonalizedRecommendations());
         return "fragments/recommendations";
     }

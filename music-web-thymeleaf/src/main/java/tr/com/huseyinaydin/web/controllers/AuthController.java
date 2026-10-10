@@ -6,8 +6,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpSession;
-import tr.com.huseyinaydin.application.ports.ILoginService;
-import tr.com.huseyinaydin.application.auth.dtos.LoginRequestDto;
+import tr.com.huseyinaydin.application.cqrs.Mediator;
+import tr.com.huseyinaydin.application.auth.commands.LoginCommand;
+import tr.com.huseyinaydin.application.auth.commands.RegisterCommand;
 import tr.com.huseyinaydin.application.auth.dtos.ResponseTokenDto;
 import tr.com.huseyinaydin.sharedkernel.exception.BusinessException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,21 +22,14 @@ import java.util.List;
 public class AuthController {
 
     @Autowired
-    private ILoginService loginService;
-
-    @Autowired
-    private tr.com.huseyinaydin.application.ports.IRegisterService registerService;
+    private Mediator mediator;
 
     @PostMapping("/doLogin")
     public String doLogin(@RequestParam("email") String email, 
                           @RequestParam("password") String password, 
                           HttpSession session, Model model, jakarta.servlet.http.HttpServletResponse response) {
         try {
-            LoginRequestDto req = new LoginRequestDto();
-            req.setEmail(email);
-            req.setPassword(password);
-
-            ResponseTokenDto tokenResponse = loginService.authenticate(req);
+            ResponseTokenDto tokenResponse = mediator.send(new LoginCommand(email, password));
             
             session.setAttribute("JWT_TOKEN", tokenResponse.getAccessToken());
             session.setAttribute("USER_ROLE", tokenResponse.getUserRole());
@@ -64,14 +58,9 @@ public class AuthController {
                              @RequestParam(value = "artistAccount", required = false) String artistAccount,
                              Model model) {
         try {
-            tr.com.huseyinaydin.application.auth.dtos.RegisterRequestDto req = new tr.com.huseyinaydin.application.auth.dtos.RegisterRequestDto();
-            req.setUsername(username);
-            req.setEmail(email);
-            req.setPassword(password);
-            req.setFullName(username); // formda fullname yok, username'i atıyoruz
-            req.setArtistAccount("on".equals(artistAccount));
+            boolean isArtist = "on".equals(artistAccount);
+            mediator.send(new RegisterCommand(username, email, password, isArtist));
             
-            registerService.registerNewUser(req);
             model.addAttribute("message", "Kayıt başarılı! Lütfen giriş yapınız.");
         } catch (BusinessException e) {
             model.addAttribute("error", e.getMessage());
