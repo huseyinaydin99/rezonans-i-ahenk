@@ -35,18 +35,19 @@ async function loadPlaylistOptions() {
         if (res.status === 401) {
             closePlaylistModal();
             notify('Playlist için giriş yapmalısınız.', 'info');
-            window.location.href = '/login';
+            window.location.href = window.getAppUrl ? window.getAppUrl('/login') : '/login';
             return;
         }
 
         const playlists = await res.json();
 
         if (!playlists || playlists.length === 0) {
+            const createUrl = window.getAppUrl ? window.getAppUrl('/playlists') : '/playlists';
             body.innerHTML =
                 '<div class="pladd-empty">' +
                 '<span class="material-symbols-outlined">queue_music</span>' +
                 '<p>Henüz playlistin yok.</p>' +
-                '<a href="/Playlist/Index" class="pladd-empty-btn">' +
+                '<a href="' + createUrl + '" class="pladd-empty-btn">' +
                 '<span class="material-symbols-outlined">add</span>Playlist Oluştur</a>' +
                 '</div>';
             return;

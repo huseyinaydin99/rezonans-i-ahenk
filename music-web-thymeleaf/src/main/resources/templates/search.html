@@ -7,73 +7,48 @@
     <div layout:fragment="content">
         <h1 class="fv-title">Arama Sonuçları</h1>
         <p class="fv-subtitle mb-4">
-            "<span th:text="${param.q != null ? param.q : 'Herhangi bir kelime'}"></span>" için arama sonuçları listeleniyor.
+            "<span th:text="${q != null and !q.isEmpty() ? q : 'Tüm Şarkılar'}"></span>" için arama sonuçları listeleniyor.
         </p>
         
         <div id="searchResults" class="mg-grid mt-4">
-            <div class="text-secondary">Aranıyor...</div>
+            <div th:if="${songs == null or songs.isEmpty()}" class="alert alert-warning" style="background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.3); color: #ffc107; grid-column: 1 / -1; padding: 16px; border-radius: 8px;">
+                Aradığınız kriterlere uygun şarkı bulunamadı.
+            </div>
+
+            <div th:each="song : ${songs}" 
+                 th:class="'mg-card ' + (${song.tier == 'Premium'} ? 'mg-card--tier-2' : (${song.tier == 'Elit'} ? 'mg-card--tier-3' : 'mg-card--tier-1'))">
+                <div class="mg-card-cover">
+                    <img th:src="${song.cover != null ? song.cover : 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300'}" th:alt="${song.title}" />
+                    <div class="mg-card-play-overlay">
+                        <button class="mg-card-play queue-item" 
+                                th:data-song-id="${song.id}" 
+                                th:data-song-title="${song.title}" 
+                                th:data-song-artist="${song.artist}" 
+                                th:onclick="|player.playFrom(${song.id})|" 
+                                title="Oynat">
+                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="mg-card-title-row">
+                    <h4 class="mg-card-title" th:text="${song.title}"></h4>
+                    <span class="mg-badge" th:text="${song.tier != null ? song.tier : 'Basic'}"></span>
+                </div>
+                <p class="mg-card-artist">
+                    <span th:text="${song.artist}"></span>
+                    <span th:if="${song.genre != null}" class="text-secondary" style="font-size: 0.85em;" th:text="' • ' + ${song.genre}"></span>
+                </p>
+                <div class="mg-card-actions">
+                    <button class="mg-icon-btn like-btn text-muted" th:data-song-id="${song.id}" th:onclick="|toggleLike(${song.id}, this)|" title="Beğen">&#9825;</button>
+                    <button class="mg-icon-btn" th:onclick="|addToPlaylist(${song.id})|" title="Playlist'e ekle">
+                        <span class="material-symbols-outlined">playlist_add</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
     <th:block layout:fragment="scripts">
-        <script th:inline="javascript">
-            (async function() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const q = urlParams.get('q');
-                
-                const resultsDiv = document.getElementById('searchResults');
-                if (!resultsDiv) return; // Not on search page
-                
-                const searchApiUrl = /*[[@{/api/Song/Search}]]*/ '/api/Song/Search';
-
-                try {
-                    const res = await fetch(searchApiUrl + '?q=' + (q || ''));
-                    if (!res.ok) throw new Error("Arama yapılamadı");
-                    
-                    const data = await res.json();
-                    
-                    if (data.length === 0) {
-                        resultsDiv.innerHTML = '<div class="alert alert-warning" style="background: rgba(255, 193, 7, 0.1); border: 1px solid rgba(255, 193, 7, 0.3); color: #ffc107;">Aradığınız kriterlere uygun şarkı bulunamadı.</div>';
-                        return;
-                    }
-                    
-                    let html = '';
-                    data.forEach(song => {
-                        let tierClass = 'mg-card--tier-1';
-                        if (song.tier === 'Premium') tierClass = 'mg-card--tier-2';
-                        if (song.tier === 'Elit') tierClass = 'mg-card--tier-3';
-                        
-                        html += `
-                        <div class="mg-card ${tierClass}">
-                            <div class="mg-card-cover">
-                                <img src="${song.cover}" alt="${song.title}" />
-                                <div class="mg-card-play-overlay">
-                                    <button class="mg-card-play queue-item" data-song-id="${song.id}" data-song-title="${song.title}" data-song-artist="${song.artist}" onclick="player.playFrom(${song.id})" title="Oynat">
-                                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="mg-card-title-row">
-                                <h4 class="mg-card-title">${song.title}</h4>
-                                <span class="mg-badge">${song.tier}</span>
-                            </div>
-                            <p class="mg-card-artist">${song.artist}</p>
-                            <div class="mg-card-actions">
-                                <button class="mg-icon-btn like-btn text-muted" data-song-id="${song.id}" onclick="toggleLike(${song.id}, this)" title="Beğen">&#9825;</button>
-                                <button class="mg-icon-btn" onclick="addToPlaylist(${song.id})" title="Playlist'e ekle">
-                                    <span class="material-symbols-outlined">playlist_add</span>
-                                </button>
-                            </div>
-                        </div>
-                        `;
-                    });
-                    
-                    resultsDiv.innerHTML = html;
-                } catch (e) {
-                    resultsDiv.innerHTML = '<div class="alert alert-danger" style="background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); color: #dc3545;">Arama sırasında bir hata oluştu: ' + e + '</div>';
-                }
-            })();
-        </script>
     </th:block>
 </body>
 </html>

@@ -34,8 +34,12 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/**"), new AntPathRequestMatcher("/health"), new AntPathRequestMatcher("/api/Song/Play/**"), new AntPathRequestMatcher("/api/Song/Search**")).permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers(
+                    new AntPathRequestMatcher("/api/v1/auth/**"),
+                    new AntPathRequestMatcher("/health"),
+                    new AntPathRequestMatcher("/api/Song/**"),
+                    new AntPathRequestMatcher("/api/v1/search/**")
+                ).permitAll()
             )
             .addFilterBefore(
                 new JwtAuthenticationFilter(tokenService),
@@ -59,7 +63,9 @@ public class SecurityConfig {
                     new AntPathRequestMatcher("/doRegister"),
                     new AntPathRequestMatcher("/doLogout"),
                     new AntPathRequestMatcher("/recommendations"),
+                    new AntPathRequestMatcher("/Song/Search**"),
                     new AntPathRequestMatcher("/search"),
+                    new AntPathRequestMatcher("/search.xhtml"),
                     new AntPathRequestMatcher("/likes"),
                     new AntPathRequestMatcher("/likes.xhtml"),
                     new AntPathRequestMatcher("/profile"),

@@ -74,9 +74,17 @@ public class WebController {
         return "membership";
     }
 
-    @GetMapping("/search")
+    @Autowired
+    private tr.com.huseyinaydin.application.ports.ISongSearchService songSearchService;
+
+    @GetMapping({"/search", "/search.xhtml"})
     public String search(@RequestParam(value = "q", required = false) String q, Model model) {
-        model.addAttribute("q", q);
+        String query = (q != null) ? q.trim() : "";
+        model.addAttribute("q", query);
+        java.util.List<java.util.Map<String, Object>> searchResults = (!query.isEmpty() && songSearchService != null)
+                ? songSearchService.searchSongs(query)
+                : java.util.Collections.emptyList();
+        model.addAttribute("songs", searchResults);
         return "search";
     }
 }

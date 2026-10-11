@@ -10,7 +10,8 @@ window.toggleLike = async function(songId, btn) {
     setHeart(btn, !isCurrentlyLiked);
 
     try {
-        const res = await fetch('/web-api/Like/Toggle/' + songId, {
+        const toggleUrl = window.getAppUrl ? window.getAppUrl('/web-api/Like/Toggle/' + songId) : ('/web-api/Like/Toggle/' + songId);
+        const res = await fetch(toggleUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         });
@@ -19,7 +20,7 @@ window.toggleLike = async function(songId, btn) {
             // Hata varsa geri al
             setHeart(btn, isCurrentlyLiked);
             notify('Beğenmek için giriş yapmalısınız.', 'info');
-            window.location.href = '/login';
+            window.location.href = window.getAppUrl ? window.getAppUrl('/login') : '/login';
             return;
         }
         
@@ -62,7 +63,8 @@ window.initLikes = async function() {
     if (buttons.length === 0) return;
 
     try {
-        const res = await fetch('/web-api/Like/MyLikes');
+        const myLikesUrl = window.getAppUrl ? window.getAppUrl('/web-api/Like/MyLikes') : ('/web-api/Like/MyLikes');
+        const res = await fetch(myLikesUrl);
         if (!res.ok) return;   // giriş yoksa sessiz geç
         
         const likedIds = await res.json();
