@@ -8,10 +8,10 @@
         <p class="fv-subtitle mb-4">Kişisel bilgilerinizi buradan güncelleyebilirsiniz.</p>
         
         <div class="card bg-dark text-white p-4 mx-auto" style="max-width: 600px; border: 1px solid var(--glass-border); border-radius: 16px;">
-            <h:form pt:data-turbo="false">
+            <form data-turbo="false">
                 <div class="mb-3">
                     <label class="form-label text-secondary">Ad Soyad</label>
-                    <input type="text" class="form-control bg-dark text-white border-secondary" value="#{loginBean.loggedInUserRole != null ? loginBean.loggedInUserRole : 'Hüseyin Aydın'}" />
+                    <input type="text" class="form-control bg-dark text-white border-secondary" th:value="${session.LOGGED_IN_USER != null ? session.LOGGED_IN_USER : 'Hüseyin Aydın'}" />
                 </div>
                 <div class="mb-3">
                     <label class="form-label text-secondary">Kullanıcı Adı</label>
@@ -27,10 +27,10 @@
                 </div>
                 
                 <div class="d-flex justify-content-end gap-2 mt-4">
-                    <a href="profile.xhtml" class="btn btn-outline-secondary">İptal</a>
-                    <button type="button" class="btn btn-primary" style="background: var(--brand-primary); border: none;" onclick="notify('Profil başarıyla güncellendi.', 'success'); setTimeout(() => window.location.href='profile.xhtml', 1500);">Kaydet</button>
+                    <a th:href="@{/profile}" class="btn btn-outline-secondary">İptal</a>
+                    <button type="button" class="btn btn-primary" style="background: var(--brand-primary); border: none;" onclick="notify('Profil başarıyla güncellendi.', 'success'); setTimeout(() => window.location.href='/profile', 1500);">Kaydet</button>
                 </div>
-            </h:form>
+            </form>
         </div>
     </div>
 

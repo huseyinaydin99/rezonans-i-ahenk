@@ -29,47 +29,47 @@ public class WebController {
         return "fragments/recommendations";
     }
 
-    @GetMapping("/login")
+    @GetMapping({"/login", "/login.xhtml"})
     public String login() {
         return "login";
     }
 
-    @GetMapping("/register")
+    @GetMapping({"/register", "/register.xhtml"})
     public String register() {
         return "register";
     }
 
-    @GetMapping("/profile")
+    @GetMapping({"/profile", "/profile.xhtml"})
     public String profile() {
         return "profile";
     }
 
-    @GetMapping("/edit-profile")
+    @GetMapping({"/edit-profile", "/edit-profile.xhtml"})
     public String editProfile() {
         return "edit-profile";
     }
 
-    @GetMapping("/artists")
+    @GetMapping({"/artists", "/artists.xhtml"})
     public String artists() {
         return "artists";
     }
 
-    @GetMapping("/genres")
+    @GetMapping({"/genres", "/genres.xhtml"})
     public String genres() {
         return "genres";
     }
 
-    @GetMapping("/playlists")
+    @GetMapping({"/playlists", "/playlists.xhtml"})
     public String playlists() {
         return "playlists";
     }
 
-    @GetMapping("/likes")
+    @GetMapping({"/likes", "/likes.xhtml"})
     public String likes() {
         return "likes";
     }
 
-    @GetMapping("/membership")
+    @GetMapping({"/membership", "/membership.xhtml"})
     public String membership() {
         return "membership";
     }

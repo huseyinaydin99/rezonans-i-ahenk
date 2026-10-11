@@ -71,7 +71,7 @@ public class MusicInfrastructureConfig extends org.springframework.data.elastics
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, tr.com.huseyinaydin.infrastructure.kafka.SmartJsonSerializer.class);
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 

@@ -9,7 +9,7 @@
             <p class="gn-subtitle">Frekans ızgarasına dal. Bir tür seç, o dünyaya geçiş yap.</p>
         </div>
         <div class="gn-grid">
-            <a href="genre-details.xhtml?id=1" class="gn-card gn-card--has-image" style="background-image:url('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&amp;fit=crop&amp;w=300&amp;q=80');">
+            <a th:href="@{/search(q='Pop')}" class="gn-card gn-card--has-image" style="background-image:url('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&amp;fit=crop&amp;w=300&amp;q=80');">
                 <div class="gn-card-overlay"></div>
                 <div class="gn-card-content">
                     <h3 class="gn-card-name">Pop</h3>
@@ -19,7 +19,7 @@
                     </div>
                 </div>
             </a>
-            <a href="genre-details.xhtml?id=1" class="gn-card gn-card--has-image" style="background-image:url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&amp;fit=crop&amp;w=300&amp;q=80');">
+            <a th:href="@{/search(q='Rock')}" class="gn-card gn-card--has-image" style="background-image:url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&amp;fit=crop&amp;w=300&amp;q=80');">
                 <div class="gn-card-overlay"></div>
                 <div class="gn-card-content">
                     <h3 class="gn-card-name">Rock</h3>
@@ -29,7 +29,7 @@
                     </div>
                 </div>
             </a>
-            <a href="genre-details.xhtml?id=1" class="gn-card gn-card--has-image" style="background-image:url('https://images.unsplash.com/photo-1493225457124-a1a2a53b51ee?auto=format&amp;fit=crop&amp;w=300&amp;q=80');">
+            <a th:href="@{/search(q='Hip-Hop')}" class="gn-card gn-card--has-image" style="background-image:url('https://images.unsplash.com/photo-1493225457124-a1a2a53b51ee?auto=format&amp;fit=crop&amp;w=300&amp;q=80');">
                 <div class="gn-card-overlay"></div>
                 <div class="gn-card-content">
                     <h3 class="gn-card-name">Hip-Hop</h3>
@@ -39,7 +39,7 @@
                     </div>
                 </div>
             </a>
-            <a href="genre-details.xhtml?id=1" class="gn-card">
+            <a th:href="@{/search(q='Jazz')}" class="gn-card">
                 <div class="gn-card-overlay"></div>
                 <span class="material-symbols-outlined gn-card-icon">graphic_eq</span>
                 <div class="gn-card-content">

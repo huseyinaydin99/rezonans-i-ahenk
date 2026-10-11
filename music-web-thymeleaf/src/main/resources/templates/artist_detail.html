@@ -68,9 +68,9 @@
         </c:if>
 
         <c:if test="#{artistDiscoveryBean.selectedArtist != null}">
-            <h:link outcome="artists.xhtml" class="text-secondary text-decoration-none fw-bold mb-3 d-inline-block">
+            <a th:href="@{/artists}" class="text-secondary text-decoration-none fw-bold mb-3 d-inline-block">
                 <i class="fa-solid fa-arrow-left me-2"></i>Tüm Sanatçılara Dön
-            </h:link>
+            </a>
             
             <!-- Sanatçı Hero Banner -->
             <div class="artist-hero">
