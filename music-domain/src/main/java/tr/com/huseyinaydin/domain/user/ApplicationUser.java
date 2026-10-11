@@ -29,8 +29,13 @@ public class ApplicationUser extends Entity<UUID> {
         if (email == null || email.trim().isEmpty() || !EMAIL_PATTERN.matcher(email).matches()) {
             throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Geçerli bir e-posta adresi girilmelidir: " + email);
         }
-        if (passwordHash == null || passwordHash.length == 0 || passwordSalt == null || passwordSalt.length == 0) {
-            throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Şifre ve güvenlik tuzu (Salt) değerleri boş bırakılamaz.");
+        if (passwordHash == null || passwordHash.length == 0) {
+            throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Şifre hash değeri boş bırakılamaz.");
+        }
+        if (passwordSalt == null || passwordSalt.length == 0) {
+            byte[] autoSalt = new byte[16];
+            new java.security.SecureRandom().nextBytes(autoSalt);
+            passwordSalt = autoSalt;
         }
         if (role == null) {
             throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Kullanıcıya ait rol bilgisi eksik.");
@@ -43,6 +48,8 @@ public class ApplicationUser extends Entity<UUID> {
         this.passwordSalt = passwordSalt;
         this.role = role;
         this.isActive = true;
+        this.createdDate = java.time.LocalDateTime.now();
+        this.version = 0L;
 
         registerEvent(new tr.com.huseyinaydin.domain.events.UserRegisteredEvent(this.id, this.customerId, this.email, this.role));
     }
@@ -53,8 +60,13 @@ public class ApplicationUser extends Entity<UUID> {
     }
 
     public void updatePassword(byte[] passwordHash, byte[] passwordSalt) {
-        if (passwordHash == null || passwordHash.length == 0 || passwordSalt == null || passwordSalt.length == 0) {
-            throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Yeni şifre ve güvenlik tuzu (Salt) değerleri boş bırakılamaz.");
+        if (passwordHash == null || passwordHash.length == 0) {
+            throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Yeni şifre hash değeri boş bırakılamaz.");
+        }
+        if (passwordSalt == null || passwordSalt.length == 0) {
+            byte[] autoSalt = new byte[16];
+            new java.security.SecureRandom().nextBytes(autoSalt);
+            passwordSalt = autoSalt;
         }
         this.passwordHash = passwordHash;
         this.passwordSalt = passwordSalt;
