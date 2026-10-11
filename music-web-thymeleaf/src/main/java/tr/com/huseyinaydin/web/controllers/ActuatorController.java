@@ -1,10 +1,10 @@
 package tr.com.huseyinaydin.web.controllers;
 
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -25,9 +25,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/actuator")
-@Tag(name = "Actuator", description = "Sistem sağlık, bilgi ve metrik endpoint'leri (ADMIN rolü gerektirir)")
-@SecurityRequirement(name = "bearerAuth")
-@org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+@Tag(name = "Actuator", description = "Sistem sağlık, bilgi, Prometheus ve izleme endpoint'leri")
 public class ActuatorController {
 
     private static final List<String> STATUS_ORDER =
@@ -36,13 +34,28 @@ public class ActuatorController {
     private final Map<String, HealthIndicator> healthIndicators;
     private final List<InfoContributor> infoContributors;
     private final MetricsEndpoint metricsEndpoint;
+    private final PrometheusMeterRegistry prometheusMeterRegistry;
 
     public ActuatorController(Map<String, HealthIndicator> healthIndicators,
                                List<InfoContributor> infoContributors,
-                               MetricsEndpoint metricsEndpoint) {
+                               MetricsEndpoint metricsEndpoint,
+                               PrometheusMeterRegistry prometheusMeterRegistry) {
         this.healthIndicators = healthIndicators;
         this.infoContributors = infoContributors;
         this.metricsEndpoint = metricsEndpoint;
+        this.prometheusMeterRegistry = prometheusMeterRegistry;
+    }
+
+    @GetMapping(value = "/prometheus", produces = "text/plain; version=0.0.4; charset=utf-8")
+    @Operation(
+        summary = "Prometheus Scrape Endpoint",
+        description = "Prometheus ve Grafana için OpenMetrics exposition formatında metrik döner."
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Prometheus metrikleri başarıyla üretildi")
+    })
+    public ResponseEntity<String> prometheus() {
+        return ResponseEntity.ok(prometheusMeterRegistry.scrape());
     }
 
     @GetMapping("/health")
@@ -52,9 +65,7 @@ public class ActuatorController {
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "UP veya DEGRADED"),
-        @ApiResponse(responseCode = "503", description = "DOWN — sistem kullanılamaz"),
-        @ApiResponse(responseCode = "401", description = "JWT token eksik veya geçersiz"),
-        @ApiResponse(responseCode = "403", description = "ADMIN rolü gereklidir")
+        @ApiResponse(responseCode = "503", description = "DOWN — sistem kullanılamaz")
     })
     public ResponseEntity<Map<String, Object>> health() {
 
@@ -89,9 +100,7 @@ public class ActuatorController {
         description = "Tüm InfoContributor bean'lerinden derlenen uygulama meta verisi."
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Uygulama bilgileri"),
-        @ApiResponse(responseCode = "401", description = "JWT token eksik veya geçersiz"),
-        @ApiResponse(responseCode = "403", description = "ADMIN rolü gereklidir")
+        @ApiResponse(responseCode = "200", description = "Uygulama bilgileri")
     })
     public ResponseEntity<Map<String, Object>> info() {
         Info.Builder builder = new Info.Builder();
@@ -105,9 +114,7 @@ public class ActuatorController {
         description = "MeterRegistry'de kayıtlı tüm meter adlarını listeler."
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Metrik isim listesi"),
-        @ApiResponse(responseCode = "401", description = "JWT token eksik veya geçersiz"),
-        @ApiResponse(responseCode = "403", description = "ADMIN rolü gereklidir")
+        @ApiResponse(responseCode = "200", description = "Metrik isim listesi")
     })
     public ResponseEntity<Map<String, Object>> metrics() {
         Map<String, Object> response = new LinkedHashMap<>();
@@ -122,9 +129,7 @@ public class ActuatorController {
     )
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Metrik ayrıntıları"),
-        @ApiResponse(responseCode = "404", description = "Metrik bulunamadı"),
-        @ApiResponse(responseCode = "401", description = "JWT token eksik veya geçersiz"),
-        @ApiResponse(responseCode = "403", description = "ADMIN rolü gereklidir")
+        @ApiResponse(responseCode = "404", description = "Metrik bulunamadı")
     })
     public ResponseEntity<?> metricByName(@PathVariable String name) {
         MetricsEndpoint.MetricDescriptor metric = metricsEndpoint.metric(name, null);

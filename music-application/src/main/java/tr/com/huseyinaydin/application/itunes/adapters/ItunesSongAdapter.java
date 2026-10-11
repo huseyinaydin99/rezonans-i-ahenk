@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.application.itunes.adapters;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.itunes.dtos.ItunesTrackDto;
 import tr.com.huseyinaydin.domain.song.Song;
@@ -11,6 +14,8 @@ import java.util.UUID;
 
 @Component
 public class ItunesSongAdapter {
+    private static final Logger log = LoggerFactory.getLogger(ItunesSongAdapter.class);
+
 
     /**
      * Dış dünyadan (iTunes) gelen uyumsuz ItunesTrackDto nesnesini, 
@@ -22,7 +27,7 @@ public class ItunesSongAdapter {
             throw new IllegalArgumentException("Dış veri kaynağı (iTunes Track) boş olamaz!");
         }
 
-        System.out.println("[ADAPTER] Dış iTunes verisi iç mimarimize (Song) entegre ediliyor...");
+        log.info("[ADAPTER] Dış iTunes verisi iç mimarimize (Song) entegre ediliyor...");
 
         // iTunes süresi milisaniye cinsinden geliyor, Duration'a çeviriyoruz
         Duration duration = Duration.ofMillis(externalTrack.trackTimeMillis());

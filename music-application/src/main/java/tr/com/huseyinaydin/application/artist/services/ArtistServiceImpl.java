@@ -22,10 +22,17 @@ public class ArtistServiceImpl implements IArtistService {
 
     private final UploadPipelineService uploadPipelineService;
     private final IStorageService storageService;
+    private final tr.com.huseyinaydin.domain.repositories.ISongRepository songRepository;
+    private final tr.com.huseyinaydin.domain.repositories.IArtistRepository artistRepository;
 
-    public ArtistServiceImpl(UploadPipelineService uploadPipelineService, IStorageService storageService) {
+    public ArtistServiceImpl(UploadPipelineService uploadPipelineService,
+                             IStorageService storageService,
+                             @org.springframework.beans.factory.annotation.Autowired(required = false) tr.com.huseyinaydin.domain.repositories.ISongRepository songRepository,
+                             @org.springframework.beans.factory.annotation.Autowired(required = false) tr.com.huseyinaydin.domain.repositories.IArtistRepository artistRepository) {
         this.uploadPipelineService = uploadPipelineService;
         this.storageService = storageService;
+        this.songRepository = songRepository;
+        this.artistRepository = artistRepository;
     }
 
     @Override
@@ -37,10 +44,30 @@ public class ArtistServiceImpl implements IArtistService {
     @Transactional
     public void publishNewSong(String artistId, String title, InputStream audioStream, String fileName, long fileSize, String contentType) {
         String minioUrl = storageService.uploadAudioFile(fileName, audioStream, fileSize, contentType);
-        byte[] mockData = new byte[(int) fileSize]; 
-        String format = fileName.substring(fileName.lastIndexOf(".") + 1);
+        byte[] mockData = new byte[(int) Math.min(fileSize > 0 ? fileSize : 1024, 1024)]; 
+        String format = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf(".") + 1) : "mp3";
         SongUploadRequest request = new SongUploadRequest(fileName, format, mockData, artistId);
         uploadPipelineService.processUpload(request);
+
+        if (songRepository != null) {
+            UUID artistUid;
+            try {
+                artistUid = UUID.fromString(artistId);
+            } catch (Exception e) {
+                artistUid = UUID.randomUUID();
+            }
+            tr.com.huseyinaydin.domain.song.Song song = tr.com.huseyinaydin.domain.song.Song.builder()
+                    .title(title != null && !title.isBlank() ? title : fileName)
+                    .coverImageUrl("https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300")
+                    .audioUrl(minioUrl != null ? minioUrl : "/uploads/" + fileName)
+                    .duration(java.time.Duration.ofSeconds(180))
+                    .tier(tr.com.huseyinaydin.domain.enums.MembershipTier.BASIC)
+                    .releaseDate(LocalDateTime.now())
+                    .artistId(artistUid)
+                    .genreId(UUID.randomUUID())
+                    .build();
+            songRepository.save(song);
+        }
     }
 
     // --- YENİ EKLENEN VİTRİN METOTLARI ---

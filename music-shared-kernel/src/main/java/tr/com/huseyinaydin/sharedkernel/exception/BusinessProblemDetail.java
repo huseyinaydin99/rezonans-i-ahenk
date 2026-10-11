@@ -17,5 +17,11 @@ public class BusinessProblemDetail extends ProblemDetail {
         this.errorCode = errorCode;
     }
 
+    public BusinessProblemDetail(URI type, String title, int status, String detail,
+                                 URI instance, String errorCode, String traceId) {
+        super(type, title, status, detail, instance, traceId);
+        this.errorCode = errorCode;
+    }
+
     public String getErrorCode() { return errorCode; }
 }

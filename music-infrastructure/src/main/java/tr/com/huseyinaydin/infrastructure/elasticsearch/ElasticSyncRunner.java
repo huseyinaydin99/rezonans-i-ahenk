@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.infrastructure.elasticsearch;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.infrastructure.IElasticSongRepository;
@@ -12,6 +15,8 @@ import java.util.List;
 
 @Component
 public class ElasticSyncRunner implements CommandLineRunner {
+    private static final Logger log = LoggerFactory.getLogger(ElasticSyncRunner.class);
+
 
     private final IElasticSongRepository elasticSongRepository;
     private final ElasticsearchOperations elasticsearchOperations;
@@ -34,7 +39,7 @@ public class ElasticSyncRunner implements CommandLineRunner {
             // Veritabanından Elasticsearch'e senkronizasyon simülasyonu
             long count = elasticSongRepository.count();
             if (count == 0) {
-                System.out.println("[ELASTICSEARCH] Index boş, örnek şarkılar senkronize ediliyor...");
+                log.info("[ELASTICSEARCH] Index boş, örnek şarkılar senkronize ediliyor...");
                 
                 List<ElasticSong> seedData = Arrays.asList(
                     createSong("1", "Bohemian Rhapsody", "Queen", "Premium", "https://i.scdn.co/image/ab67616d0000b273e8b066f70c206551210d902b"),
@@ -46,12 +51,12 @@ public class ElasticSyncRunner implements CommandLineRunner {
                 );
 
                 elasticSongRepository.saveAll(seedData);
-                System.out.println("[ELASTICSEARCH] 6 adet şarkı başarıyla indekslendi.");
+                log.info("[ELASTICSEARCH] 6 adet şarkı başarıyla indekslendi.");
             } else {
-                System.out.println("[ELASTICSEARCH] Indexte halihazırda " + count + " kayıt bulunuyor.");
+                log.info("[ELASTICSEARCH] Indexte halihazırda " + count + " kayıt bulunuyor.");
             }
         } catch (Exception e) {
-            System.err.println("[ELASTICSEARCH] Senkronizasyon hatası: " + e.getMessage());
+            log.error("[ELASTICSEARCH] Senkronizasyon hatası: " + e.getMessage());
         }
     }
 

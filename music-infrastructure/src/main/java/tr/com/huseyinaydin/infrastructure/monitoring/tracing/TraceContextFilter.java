@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.infrastructure.monitoring.tracing;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
 import org.springframework.stereotype.Component;
@@ -14,6 +17,8 @@ import reactor.core.publisher.Mono;
  */
 @Component
 public class TraceContextFilter implements WebFilter {
+    private static final Logger log = LoggerFactory.getLogger(TraceContextFilter.class);
+
 
     private final Tracer tracer;
 
@@ -26,7 +31,7 @@ public class TraceContextFilter implements WebFilter {
         Span currentSpan = tracer.currentSpan();
         if (currentSpan != null) {
             String traceId = currentSpan.context().traceId();
-            System.out.println("[DAĞITIK İZLEME] İstek sisteme girdi. Trace ID: [" + traceId + "]");
+            log.info("[DAĞITIK İZLEME] İstek sisteme girdi. Trace ID: [" + traceId + "]");
             // Kafka, gRPC ve Veritabanı çağrılarının tümü bu eşsiz Trace ID üzerinden
             // Jaeger arayüzünde tek bir zincir (Graph) halinde birleşecek.
             

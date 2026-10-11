@@ -19,5 +19,11 @@ public class ValidationProblemDetail extends ProblemDetail {
         this.errors = errors;
     }
 
+    public ValidationProblemDetail(URI type, String title, int status, String detail,
+                                   URI instance, Map<String, List<String>> errors, String traceId) {
+        super(type, title, status, detail, instance, traceId);
+        this.errors = errors;
+    }
+
     public Map<String, List<String>> getErrors() { return errors; }
 }

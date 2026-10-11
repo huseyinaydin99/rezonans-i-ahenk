@@ -1,8 +1,6 @@
 package tr.com.huseyinaydin.infrastructure.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
@@ -57,9 +55,14 @@ public class MusicInfrastructureConfig extends org.springframework.data.elastics
         return new RouteLocatorBuilder(context);
     }
 
-    @Bean
-    public Tracer tracer() {
+    @Bean(name = "defaultFallbackTracer")
+    public Tracer defaultFallbackTracer() {
         return io.micrometer.tracing.Tracer.NOOP;
+    }
+
+    @Bean(name = "defaultFallbackMeterRegistry")
+    public io.micrometer.core.instrument.MeterRegistry defaultFallbackMeterRegistry() {
+        return new io.micrometer.core.instrument.simple.SimpleMeterRegistry();
     }
 
     @Bean
@@ -82,11 +85,4 @@ public class MusicInfrastructureConfig extends org.springframework.data.elastics
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
-
-    @Bean
-    public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("queryCache", "referenceDataCache");
-    }
-
-
 }

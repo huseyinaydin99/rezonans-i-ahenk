@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.web.config.jsf;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import jakarta.faces.FacesException;
 import jakarta.faces.application.NavigationHandler;
 import jakarta.faces.context.ExceptionHandler;
@@ -14,6 +17,8 @@ import tr.com.huseyinaydin.sharedkernel.exception.NotFoundException;
 import java.util.Iterator;
 
 public class GlobalExceptionHandler extends ExceptionHandlerWrapper {
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
 
     public GlobalExceptionHandler(ExceptionHandler wrapped) {
         super(wrapped);
@@ -34,7 +39,7 @@ public class GlobalExceptionHandler extends ExceptionHandlerWrapper {
             try {
                 // Hata tipini belirle ve ilgili sayfaya yönlendir
                 Throwable rootCause = getRootCause(t);
-                System.err.println("[JSF HATA YAKALAYICI] " + rootCause.getMessage());
+                log.error("[JSF HATA YAKALAYICI] " + rootCause.getMessage());
 
                 if (rootCause instanceof AuthorizationException) {
                     nav.handleNavigation(facesContext, null, "/error/403.xhtml?faces-redirect=true");

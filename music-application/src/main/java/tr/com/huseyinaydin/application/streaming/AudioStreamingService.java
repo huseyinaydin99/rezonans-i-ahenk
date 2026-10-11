@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.application.streaming;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import tr.com.huseyinaydin.application.streaming.decorators.AdInsertionDecorator;
 import tr.com.huseyinaydin.application.streaming.decorators.HighResEqualizerDecorator;
@@ -9,6 +12,8 @@ import tr.com.huseyinaydin.domain.enums.MembershipTier;
 
 @Service
 public class AudioStreamingService {
+    private static final Logger log = LoggerFactory.getLogger(AudioStreamingService.class);
+
 
     /**
      * Kullanıcının abonelik modeline göre ham sesin üzerine dinamik (Runtime)
@@ -31,9 +36,9 @@ public class AudioStreamingService {
         // İstersek zincirleme (Soğan Zarı gibi) sarabiliriz: 
         // stream = new WatermarkDecorator(new HighResEqualizerDecorator(new BaseAudioStream(song)));
 
-        System.out.println("---- Akış Başlatıldı (" + user.getUsername() + ") ----");
+        log.info("---- Akış Başlatıldı (" + user.getUsername() + ") ----");
         String finalOutput = stream.play();
-        System.out.println(finalOutput);
+        log.info(finalOutput);
         return finalOutput;
     }
 }

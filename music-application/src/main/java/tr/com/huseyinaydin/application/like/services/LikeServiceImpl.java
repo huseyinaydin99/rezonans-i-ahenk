@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.application.like.services;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tr.com.huseyinaydin.application.ports.ILikeService;
@@ -13,6 +16,8 @@ import java.util.UUID;
 
 @Service
 public class LikeServiceImpl implements ILikeService {
+    private static final Logger log = LoggerFactory.getLogger(LikeServiceImpl.class);
+
 
     private final IDomainEventDispatcher eventDispatcher;
 
@@ -23,17 +28,17 @@ public class LikeServiceImpl implements ILikeService {
     @Override
     @Transactional
     public boolean toggleLike(LikeToggleDto dto) {
-        System.out.println("[BEĞENİ SİSTEMİ] Kullanıcı (" + dto.getUserId() + "), Şarkı (" + dto.getSongId() + ") etkileşimi inceleniyor...");
+        log.info("[BEĞENİ SİSTEMİ] Kullanıcı (" + dto.getUserId() + "), Şarkı (" + dto.getSongId() + ") etkileşimi inceleniyor...");
         
         // Simülasyon: Veritabanında (SongLike entity) kayıt var mı kontrolü
         boolean isAlreadyLiked = Math.random() > 0.5; // Rastgele toggle
         
         if (isAlreadyLiked) {
-            System.out.println("-> Şarkı beğenilerden çıkarıldı (UNLIKE).");
+            log.info("-> Şarkı beğenilerden çıkarıldı (UNLIKE).");
             // repository.deleteByUserIdAndSongId(...)
             return false;
         } else {
-            System.out.println("-> Şarkı favorilere eklendi (LIKE). Kafka Event fırlatılıyor...");
+            log.info("-> Şarkı favorilere eklendi (LIKE). Kafka Event fırlatılıyor...");
             // repository.save(new SongLike(...))
             
             // Olay yönelimli mimari (Kafka/Outbox üzerinden ML motorunu besler)

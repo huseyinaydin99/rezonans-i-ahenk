@@ -1,10 +1,15 @@
 package tr.com.huseyinaydin.domain.config;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * Global Müzik Akış (Streaming) konfigürasyonlarını yöneten SAF (Pure) Java Singleton sınıfı.
  * Hiçbir framework bağımlılığı içermez.
  */
 public class StreamingConfigManager {
+    private static final Logger log = LoggerFactory.getLogger(StreamingConfigManager.class);
+
 
     // Sisteme özel katı kurallar
     private int defaultBitrate;
@@ -13,7 +18,7 @@ public class StreamingConfigManager {
 
     // 1. Kurucu metodu gizle (private) ki dışarıdan new ile üretilemesin
     private StreamingConfigManager() {
-        System.out.println("[SINGLETON INIT] Global Streaming Konfigürasyon Yöneticisi belleğe yükleniyor...");
+        log.info("[SINGLETON INIT] Global Streaming Konfigürasyon Yöneticisi belleğe yükleniyor...");
         // Varsayılan değerler atanıyor (Örn: Veritabanından veya ortam değişkenlerinden de okunabilir)
         this.defaultBitrate = 128;
         this.maxConcurrentStreams = 10000;

@@ -5,11 +5,13 @@
                                      https://jakarta.ee/xml/ns/persistence/orm_3_0.xsd"
                  version="3.0">
 
+    <sequence-generator name="SEQ_DOMAIN_EVENT_OUTBOX_GEN" sequence-name="SEQ_DOMAIN_EVENT_OUTBOX" allocation-size="50"/>
+
     <entity class="tr.com.huseyinaydin.domain.outbox.DomainEventOutbox" name="DomainEventOutbox">
         <table name="domain_event_outbox"/>
         <attributes>
             <id name="id">
-                <column name="id" column-definition="UUID"/>
+                <column name="id"/>
             </id>
             <basic name="aggregateType">
                 <column name="aggregate_type" nullable="false"/>
@@ -21,7 +23,8 @@
                 <column name="event_type" nullable="false"/>
             </basic>
             <basic name="payload">
-                <column name="payload" column-definition="TEXT" nullable="false"/>
+                <column name="payload" nullable="false"/>
+                <lob/>
             </basic>
             <basic name="occurredAt">
                 <column name="occurred_at" nullable="false"/>
@@ -33,7 +36,8 @@
                 <column name="retry_count" nullable="false"/>
             </basic>
             <basic name="lastError">
-                <column name="last_error" column-definition="TEXT"/>
+                <column name="last_error"/>
+                <lob/>
             </basic>
         </attributes>
     </entity>

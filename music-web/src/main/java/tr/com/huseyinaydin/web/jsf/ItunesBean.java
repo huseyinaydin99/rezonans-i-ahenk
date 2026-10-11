@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.web.jsf;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,8 @@ import java.util.List;
 @Component
 @RequestScope
 public class ItunesBean {
+    private static final Logger log = LoggerFactory.getLogger(ItunesBean.class);
+
 
     @Autowired
     private Mediator mediator;
@@ -32,7 +37,7 @@ public class ItunesBean {
 
     public void importTrack(ItunesTrackDto track) {
         // Burada sisteme (veritabanına) ImportSongsCommand veya CreateSongCommand tetiklenir.
-        System.out.println(track.trackName() + " isimli şarkı kütüphaneye eklendi!");
+        log.info(track.trackName() + " isimli şarkı kütüphaneye eklendi!");
     }
 
     public String getSearchTerm() { return searchTerm; }

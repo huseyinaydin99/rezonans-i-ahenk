@@ -23,7 +23,7 @@ public class LikeApiController {
     public ResponseEntity<Map<String, Object>> toggleLike(@PathVariable("songId") Long songId) {
         String email = CurrentUser.get().map(c -> c.email()).orElse(null);
         if (email == null) {
-            return ResponseEntity.status(401).build();
+            throw new tr.com.huseyinaydin.sharedkernel.exception.AuthorizationException("toggleLike", "Beğenmek için giriş yapmalısınız.");
         }
 
         Map<String, Object> result = mediator.send(new ToggleLikeCommand(email, songId));

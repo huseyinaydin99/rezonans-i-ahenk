@@ -12,6 +12,7 @@ import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.context.propagation.TextMapPropagator;
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
+import io.opentelemetry.exporter.zipkin.ZipkinSpanExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
@@ -19,6 +20,7 @@ import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
@@ -26,6 +28,10 @@ import org.springframework.core.io.ClassPathResource;
 import java.util.Collections;
 import java.util.Properties;
 
+/**
+ * Dağıtık İzleme (Distributed Tracing) Konfigürasyonu.
+ * Jaeger, Zipkin ve OpenTelemetry (OTLP) entegrasyonlarını sağlar.
+ */
 @Configuration
 public class TracingConfig {
 
@@ -48,19 +54,28 @@ public class TracingConfig {
             return OpenTelemetry.noop();
         }
 
-        String serviceName = env.getProperty("otel.service.name", "music-credit-system");
-        String endpoint = env.getProperty("otel.exporter.otlp.endpoint", "http://localhost:4317");
+        String serviceName = env.getProperty("otel.service.name", "rezonans-music-platform");
+        String otlpEndpoint = env.getProperty("otel.exporter.otlp.endpoint", "http://localhost:4317");
+        String zipkinEndpoint = env.getProperty("management.zipkin.tracing.endpoint", "http://localhost:9411/api/v2/spans");
 
         Resource resource = Resource.getDefault().merge(
-                Resource.create(Attributes.of(AttributeKey.stringKey("service.name"), serviceName)));
+                Resource.create(Attributes.of(
+                        AttributeKey.stringKey("service.name"), serviceName,
+                        AttributeKey.stringKey("service.version"), "1.0.0"
+                )));
 
-        OtlpGrpcSpanExporter spanExporter = OtlpGrpcSpanExporter.builder()
-                .setEndpoint(endpoint)
+        OtlpGrpcSpanExporter otlpSpanExporter = OtlpGrpcSpanExporter.builder()
+                .setEndpoint(otlpEndpoint)
+                .build();
+
+        ZipkinSpanExporter zipkinSpanExporter = ZipkinSpanExporter.builder()
+                .setEndpoint(zipkinEndpoint)
                 .build();
 
         SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
-                .addSpanProcessor(BatchSpanProcessor.builder(spanExporter).build())
                 .setResource(resource)
+                .addSpanProcessor(BatchSpanProcessor.builder(otlpSpanExporter).build())
+                .addSpanProcessor(BatchSpanProcessor.builder(zipkinSpanExporter).build())
                 .build();
 
         ContextPropagators propagators = ContextPropagators.create(
@@ -73,12 +88,13 @@ public class TracingConfig {
         return OpenTelemetrySdk.builder()
                 .setTracerProvider(tracerProvider)
                 .setPropagators(propagators)
-                .buildAndRegisterGlobal();
+                .build();
     }
 
     @Bean
+    @Primary
     public Tracer tracer(OpenTelemetry openTelemetry) {
-        io.opentelemetry.api.trace.Tracer otelTracer = openTelemetry.getTracer("music-credit-system");
+        io.opentelemetry.api.trace.Tracer otelTracer = openTelemetry.getTracer("rezonans-music-platform");
         OtelCurrentTraceContext otelCurrentTraceContext = new OtelCurrentTraceContext();
         OtelBaggageManager otelBaggageManager = new OtelBaggageManager(
                 otelCurrentTraceContext,

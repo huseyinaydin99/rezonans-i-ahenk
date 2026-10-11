@@ -6,6 +6,8 @@
                             https://jakarta.ee/xml/ns/persistence/orm/orm_3_1.xsd"
         version="3.1">
 
+    <sequence-generator name="SEQ_BASE_ENTITY_GEN" sequence-name="SEQ_MUSIC_BASE_ENTITY" allocation-size="50"/>
+
     <mapped-superclass class="tr.com.huseyinaydin.domain.common.BaseEntity" access="FIELD">
         
         <entity-listeners>
@@ -29,7 +31,7 @@
                 <column name="DELETED_DATE" nullable="true"/>
             </basic>
             <version name="version">
-                <column name="VERSION" nullable="false" column-definition="BIGINT DEFAULT 0"/>
+                <column name="VERSION" nullable="false" column-definition="NUMBER(19) DEFAULT 0"/>
             </version>
         </attributes>
 

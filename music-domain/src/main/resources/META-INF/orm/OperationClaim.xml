@@ -5,11 +5,13 @@
                                      https://jakarta.ee/xml/ns/persistence/orm/orm_3_0.xsd"
                  version="3.0">
 
+    <sequence-generator name="SEQ_OPERATION_CLAIM_GEN" sequence-name="SEQ_OPERATION_CLAIMS" allocation-size="50"/>
+
     <entity class="tr.com.huseyinaydin.domain.user.OperationClaim" name="OperationClaim">
         <table name="operation_claims"/>
         <attributes>
             <id name="id">
-                <column name="id" column-definition="UUID"/>
+                <column name="id"/>
             </id>
             <basic name="name">
                 <column name="name" length="255" nullable="false" unique="true"/>

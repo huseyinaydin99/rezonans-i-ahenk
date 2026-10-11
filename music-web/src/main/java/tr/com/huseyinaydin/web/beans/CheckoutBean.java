@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.web.beans;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,6 +14,8 @@ import tr.com.huseyinaydin.domain.enums.MembershipTier;
 @Component
 @RequestScope
 public class CheckoutBean {
+    private static final Logger log = LoggerFactory.getLogger(CheckoutBean.class);
+
 
     @Autowired
     private ICheckoutService checkoutService;
@@ -34,9 +39,9 @@ public class CheckoutBean {
         this.result = checkoutService.processPayment(req);
         
         if(this.result.isSuccess()) {
-            System.out.println("[JSF AJAX] Ödeme başarılı. TRX: " + result.getTransactionId());
+            log.info("[JSF AJAX] Ödeme başarılı. TRX: " + result.getTransactionId());
         } else {
-            System.err.println("[JSF AJAX] Ödeme reddedildi: " + result.getMessage());
+            log.error("[JSF AJAX] Ödeme reddedildi: " + result.getMessage());
         }
     }
 

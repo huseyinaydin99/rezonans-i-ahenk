@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.application.admin.services;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import tr.com.huseyinaydin.application.ports.IAdminService;
 import tr.com.huseyinaydin.application.admin.dtos.UserRoleDto;
@@ -11,10 +14,12 @@ import java.util.UUID;
 
 @Service
 public class AdminServiceImpl implements IAdminService {
+    private static final Logger log = LoggerFactory.getLogger(AdminServiceImpl.class);
+
 
     @Override
     public List<UserRoleDto> getAllUsers() {
-        System.out.println("[ADMIN PANEL] Tüm kullanıcı listesi çekiliyor...");
+        log.info("[ADMIN PANEL] Tüm kullanıcı listesi çekiliyor...");
         
         List<UserRoleDto> users = new ArrayList<>();
         users.add(new UserRoleDto(UUID.randomUUID().toString(), "huseyinaydin", "admin@rezonans.com", "ROLE_ADMIN", false));
@@ -27,15 +32,15 @@ public class AdminServiceImpl implements IAdminService {
 
     @Override
     public void assignRole(String userId, String newRole) {
-        System.out.println("[ADMIN PANEL] Kullanıcı (" + userId + ") için rol değişikliği tetiklendi. Yeni Rol: " + newRole);
+        log.info("[ADMIN PANEL] Kullanıcı (" + userId + ") için rol değişikliği tetiklendi. Yeni Rol: " + newRole);
         // Gerçek senaryoda burada Keycloak Admin REST API'si çağrılarak 
         // kullanıcının "realm_access.roles" dizisi güncellenir.
-        System.out.println("-> Keycloak sunucusu ile asenkron iletişim kuruldu ve rol güncellendi.");
+        log.info("-> Keycloak sunucusu ile asenkron iletişim kuruldu ve rol güncellendi.");
     }
 
     @Override
     public void toggleUserBanStatus(String userId, boolean status) {
-        System.out.println("[ADMIN PANEL] Kullanıcı (" + userId + ") Ban Durumu: " + (status ? "YASAKLANDI" : "YASAK KALDIRILDI"));
+        log.info("[ADMIN PANEL] Kullanıcı (" + userId + ") Ban Durumu: " + (status ? "YASAKLANDI" : "YASAK KALDIRILDI"));
         // Keycloak üzerinden kullanıcının 'enabled' statüsü false/true yapılır.
     }
 }

@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.web.beans;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,6 +16,8 @@ import java.util.List;
 @Component
 @SessionScope
 public class BrowseBean implements Serializable {
+    private static final Logger log = LoggerFactory.getLogger(BrowseBean.class);
+
 
     @Autowired
     private IGenreService genreService;
@@ -28,7 +33,7 @@ public class BrowseBean implements Serializable {
 
     public void selectGenre(String genreId) {
         this.selectedGenreDetail = genreService.getTopSongsByGenreId(genreId);
-        System.out.println("[JSF AJAX] Müzik türü seçildi. İlgili şarkılar Elastic üzerinden UI'a yüklendi.");
+        log.info("[JSF AJAX] Müzik türü seçildi. İlgili şarkılar Elastic üzerinden UI'a yüklendi.");
     }
 
     public List<GenreBrowseDto> getGenres() { return genres; }

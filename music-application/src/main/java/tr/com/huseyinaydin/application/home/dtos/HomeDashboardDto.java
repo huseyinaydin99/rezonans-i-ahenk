@@ -1,8 +1,11 @@
 package tr.com.huseyinaydin.application.home.dtos;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class HomeDashboardDto {
+public class HomeDashboardDto implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private List<SongSnippet> topGlobalSongs;
     private List<SongSnippet> newReleases;
     private List<SongSnippet> personalizedRecommendations;
@@ -17,7 +20,9 @@ public class HomeDashboardDto {
     public List<SongSnippet> getNewReleases() { return newReleases; }
     public List<SongSnippet> getPersonalizedRecommendations() { return personalizedRecommendations; }
 
-    public static class SongSnippet {
+    public static class SongSnippet implements Serializable {
+        private static final long serialVersionUID = 1L;
+
         private Long songId;
         private String title;
         private String artist;

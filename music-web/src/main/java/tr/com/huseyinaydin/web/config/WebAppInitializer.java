@@ -31,9 +31,10 @@ tr.com.huseyinaydin.application.config.MusicApplicationConfig.class,
 tr.com.huseyinaydin.infrastructure.config.MusicInfrastructureConfig.class,
 tr.com.huseyinaydin.persistence.config.PersistenceConfig.class,
                 tr.com.huseyinaydin.web.config.SecurityConfig.class,
-tr.com.huseyinaydin.web.config.ActuatorConfig.class,
+                tr.com.huseyinaydin.web.config.TracingConfig.class,
+                tr.com.huseyinaydin.web.config.ActuatorConfig.class,
                 tr.com.huseyinaydin.web.config.MusicJsfConfig.class
-);
+        );
         ctx.addListener(new ContextLoaderListener(rootCtx));
 
         AnnotationConfigWebApplicationContext webCtx = new AnnotationConfigWebApplicationContext();

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="https://jakarta.ee/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence/orm https://jakarta.ee/xml/ns/persistence/orm_3_1.xsd"
+                 version="3.1">
+    
+    <entity class="tr.com.huseyinaydin.domain.song.read.SongReadModel" name="SongReadModel">
+        <table name="v_song_catalog"/>
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+            </id>
+            <basic name="title">
+                <column name="title"/>
+            </basic>
+            <basic name="coverImageUrl">
+                <column name="cover_image_url"/>
+            </basic>
+            <basic name="audioUrl">
+                <column name="audio_url"/>
+            </basic>
+            <basic name="durationSeconds">
+                <column name="duration_seconds"/>
+            </basic>
+            <basic name="playCount">
+                <column name="play_count"/>
+            </basic>
+            <basic name="tier">
+                <column name="tier"/>
+            </basic>
+            <basic name="releaseDate">
+                <column name="release_date"/>
+            </basic>
+            <basic name="artistId">
+                <column name="artist_id"/>
+            </basic>
+            <basic name="artistName">
+                <column name="artist_name"/>
+            </basic>
+            <basic name="genreId">
+                <column name="genre_id"/>
+            </basic>
+            <basic name="genreName">
+                <column name="genre_name"/>
+            </basic>
+            <basic name="createdDate">
+                <column name="created_date"/>
+            </basic>
+        </attributes>
+    </entity>
+</entity-mappings>

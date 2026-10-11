@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.application.importing;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tr.com.huseyinaydin.domain.song.Song;
 import java.util.List;
 
@@ -7,13 +10,15 @@ import java.util.List;
  * Şablon Metot (Template Method) tasarım deseninin ana iskelet sınıfı.
  */
 public abstract class BaseBulkImporter {
+    private static final Logger log = LoggerFactory.getLogger(BaseBulkImporter.class);
+
 
     /**
      * NİHAİ (FINAL) ŞABLON METOT:
      * Algoritmanın ana akış iskeletini belirler. Alt sınıflar bu akışı asla değiştiremez (override edemez).
      */
     public final void importData(String filePath) {
-        System.out.println("---- Toplu Veri Aktarımı Başlıyor: " + filePath + " ----");
+        log.info("---- Toplu Veri Aktarımı Başlıyor: " + filePath + " ----");
         
         // 1. Adım: Dosyayı belleğe oku (Ortak mantık)
         String rawContent = readFile(filePath);
@@ -27,26 +32,26 @@ public abstract class BaseBulkImporter {
         // 4. Adım: Veritabanına kaydet (Ortak mantık)
         saveToDatabase(parsedSongs);
         
-        System.out.println("---- Toplu Veri Aktarımı Tamamlandı ----\n");
+        log.info("---- Toplu Veri Aktarımı Tamamlandı ----\n");
     }
 
     // --- Ortak (Common) Adımlar ---
     
     protected String readFile(String filePath) {
-        System.out.println("[ADIM 1] Dosya sistemden okunuyor... (" + filePath + ")");
+        log.info("[ADIM 1] Dosya sistemden okunuyor... (" + filePath + ")");
         // IO işlemleri simülasyonu
         return "mock_raw_data"; 
     }
     
     protected void validateData(List<Song> songs) {
-        System.out.println("[ADIM 3] Ayrıştırılan veriler (Business Rules) doğrulanıyor...");
+        log.info("[ADIM 3] Ayrıştırılan veriler (Business Rules) doğrulanıyor...");
         if (songs == null) {
             throw new IllegalArgumentException("Veri ayrıştırma hatası! Kayıt bulunamadı.");
         }
     }
     
     protected void saveToDatabase(List<Song> songs) {
-        System.out.println("[ADIM 4] Doğrulanan " + songs.size() + " kayıt veritabanına toplu (Batch) olarak kaydediliyor...");
+        log.info("[ADIM 4] Doğrulanan " + songs.size() + " kayıt veritabanına toplu (Batch) olarak kaydediliyor...");
     }
 
     // --- Alt Sınıfa (Subclass) Bırakılan Özel Adım ---

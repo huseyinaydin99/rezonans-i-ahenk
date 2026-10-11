@@ -9,7 +9,10 @@ public enum MusicErrorTypes {
     VALIDATION_FAILED("/problems/validation-failed", "Doğrulama Hatası", 400),
     NOT_FOUND("/problems/not-found", "Kaynak Bulunamadı", 404),
     UNAUTHORIZED("/problems/unauthorized", "Yetkisiz İşlem", 401),
+    FORBIDDEN("/problems/forbidden", "Erişim Reddedildi", 403),
     CONFLICT("/problems/conflict", "Kaynak Çakışması", 409),
+    BAD_REQUEST("/problems/bad-request", "Geçersiz İstek", 400),
+    METHOD_NOT_ALLOWED("/problems/method-not-allowed", "Desteklenmeyen Metot", 405),
     INTERNAL_ERROR("/problems/internal-error", "Sunucu Hatası", 500);
 
     private final String type;

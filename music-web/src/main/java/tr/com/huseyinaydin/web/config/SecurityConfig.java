@@ -53,7 +53,19 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(new AntPathRequestMatcher("/login.xhtml"), new AntPathRequestMatcher("/register.xhtml"), new AntPathRequestMatcher("/error/**"), new AntPathRequestMatcher("/resources/**"), new AntPathRequestMatcher("/jakarta.faces.resource/**")).permitAll()
+                .requestMatchers(
+                    new AntPathRequestMatcher("/login.xhtml"),
+                    new AntPathRequestMatcher("/register.xhtml"),
+                    new AntPathRequestMatcher("/actuator/**"),
+                    new AntPathRequestMatcher("/health"),
+                    new AntPathRequestMatcher("/swagger-ui/**"),
+                    new AntPathRequestMatcher("/swagger-ui.html"),
+                    new AntPathRequestMatcher("/v3/api-docs/**"),
+                    new AntPathRequestMatcher("/webjars/**"),
+                    new AntPathRequestMatcher("/error/**"),
+                    new AntPathRequestMatcher("/resources/**"),
+                    new AntPathRequestMatcher("/jakarta.faces.resource/**")
+                ).permitAll()
                 .anyRequest().authenticated()
             )
             .exceptionHandling(ex -> ex

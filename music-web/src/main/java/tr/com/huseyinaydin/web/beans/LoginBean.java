@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.web.beans;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.annotation.SessionScope;
 import jakarta.faces.context.FacesContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,8 @@ import java.util.List;
 @Component
 @SessionScope
 public class LoginBean implements Serializable {
+    private static final Logger log = LoggerFactory.getLogger(LoginBean.class);
+
 
     @Autowired
     private ILoginService loginService;
@@ -68,7 +73,7 @@ public class LoginBean implements Serializable {
             
             this.success = true;
             this.message = "Giriş başarılı! Ana sayfaya yönlendiriliyorsunuz...";
-            System.out.println("[JSF AJAX] Token JSF Session havuzuna (Cookie) güvenle şifrelendi.");
+            log.info("[JSF AJAX] Token JSF Session havuzuna (Cookie) güvenle şifrelendi.");
             
 
             
@@ -88,7 +93,7 @@ public class LoginBean implements Serializable {
      * ardından Login ekranına yönlendirir.
      */
     public void logout() throws IOException {
-        System.out.println("[GİRİŞ SİSTEMİ] Kullanıcı oturumu sonlandırma talebi (Logout) alındı.");
+        log.info("[GİRİŞ SİSTEMİ] Kullanıcı oturumu sonlandırma talebi (Logout) alındı.");
         
         FacesContext context = FacesContext.getCurrentInstance();
         
@@ -107,7 +112,7 @@ public class LoginBean implements Serializable {
         // Güvenlik: Tüm JSF HTTP oturumunu kökten geçersiz kıl (Invalidate)
         context.getExternalContext().invalidateSession();
         
-        System.out.println("-> Oturum (Session) temizlendi. Token silindi.");
+        log.info("-> Oturum (Session) temizlendi. Token silindi.");
         
         // Çıkış yapıldıktan sonra Login sayfasına yönlendir
         context.getExternalContext().redirect(context.getExternalContext().getRequestContextPath() + "/login.xhtml");

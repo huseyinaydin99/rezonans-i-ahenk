@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.application.auth.services;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tr.com.huseyinaydin.application.ports.ILoginService;
@@ -18,6 +21,8 @@ import java.util.UUID;
 
 @Service
 public class LoginServiceImpl implements ILoginService {
+    private static final Logger log = LoggerFactory.getLogger(LoginServiceImpl.class);
+
 
     private final IApplicationUserRepository userRepository;
     private final IPasswordHashService passwordHashService;
@@ -38,7 +43,7 @@ public class LoginServiceImpl implements ILoginService {
     @Override
     @Transactional(readOnly = true)
     public ResponseTokenDto authenticate(LoginRequestDto request) {
-        System.out.println("[GİRİŞ SİSTEMİ] '" + request.getEmail() + "' için doğrulama isteği atılıyor...");
+        log.info("[GİRİŞ SİSTEMİ] '" + request.getEmail() + "' için doğrulama isteği atılıyor...");
         
         if (request.getPassword() == null || request.getPassword().length() == 0) {
             throw new BusinessException("ERR", "E-posta veya şifre hatalı!");
@@ -46,7 +51,7 @@ public class LoginServiceImpl implements ILoginService {
 
         Optional<ApplicationUser> existing = userRepository.findByEmail(request.getEmail());
         if (existing.isEmpty()) {
-            System.err.println("[GİRİŞ SİSTEMİ] Kullanıcı bulunamadı: " + request.getEmail());
+            log.error("[GİRİŞ SİSTEMİ] Kullanıcı bulunamadı: " + request.getEmail());
             throw new BusinessException("ERR", "E-posta veya şifre hatalı!");
         }
 
@@ -55,16 +60,16 @@ public class LoginServiceImpl implements ILoginService {
         
         boolean isMatch = passwordHashService.verifyHash(request.getPassword(), hash);
         if (!isMatch) {
-            System.err.println("[GİRİŞ SİSTEMİ] Hatalı şifre denemesi!");
+            log.error("[GİRİŞ SİSTEMİ] Hatalı şifre denemesi!");
             throw new BusinessException("ERR", "E-posta veya şifre hatalı!");
         }
 
-        System.out.println("-> Kullanıcı doğrulandı. JWT Access Token üretiliyor.");
+        log.info("-> Kullanıcı doğrulandı. JWT Access Token üretiliyor.");
         
         String accessToken = tokenService.generateAccessToken(user.getEmail(), user.getRole().name(), defaultTier);
         String mockRefreshToken = UUID.randomUUID().toString();
         
-        System.out.println("[GİRİŞ SİSTEMİ] Kullanıcı başarıyla sisteme bağlandı.");
+        log.info("[GİRİŞ SİSTEMİ] Kullanıcı başarıyla sisteme bağlandı.");
         return new ResponseTokenDto(accessToken, mockRefreshToken, tokenService.getExpirationSeconds(), user.getRole().name());
     }
 }

@@ -19,11 +19,15 @@ public class SongController {
 
     private final ISongSearchService songSearchService;
     private final IPlaybackService playbackService;
+    private final tr.com.huseyinaydin.infrastructure.monitoring.metrics.MusicPlatformMetrics metrics;
 
     @Autowired
-    public SongController(ISongSearchService songSearchService, IPlaybackService playbackService) {
+    public SongController(ISongSearchService songSearchService,
+                          IPlaybackService playbackService,
+                          @Autowired(required = false) tr.com.huseyinaydin.infrastructure.monitoring.metrics.MusicPlatformMetrics metrics) {
         this.songSearchService = songSearchService;
         this.playbackService = playbackService;
+        this.metrics = metrics;
     }
 
     @GetMapping(value = {"/Song/Search", "/api/Song/Search"})
@@ -36,19 +40,15 @@ public class SongController {
     public ResponseEntity<Map<String, Object>> playSong(@PathVariable("id") Long id) {
         var user = tr.com.huseyinaydin.web.security.CurrentUser.get().orElse(null);
         if (user == null) {
-            Map<String, Object> err = new HashMap<>();
-            err.put("message", "Müzik dinlemek için giriş yapmalısınız.");
-            return ResponseEntity.status(401).body(err);
+            throw new tr.com.huseyinaydin.sharedkernel.exception.AuthorizationException("playSong", "Müzik dinlemek için giriş yapmalısınız.");
         }
 
         String tier = user.tier();
         
         // Open-Closed Principle (OCP): Yetki doğrulaması soyutlandı.
         if (!playbackService.hasAccess(id, tier)) {
-            Map<String, Object> err = new HashMap<>();
-            err.put("message", "Bu şarkı için en az daha üst bir pakete sahip olmanız gerekiyor.");
-            err.put("requiredTier", playbackService.getRequiredTierLevel(id));
-            return ResponseEntity.status(403).body(err);
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "Bu şarkı için en az " + playbackService.getRequiredTierLevel(id) + " paketine sahip olmanız gerekiyor.");
         }
 
         // Open-Closed Principle (OCP): Hardcoded URL dizisi soyutlandı.
@@ -59,6 +59,9 @@ public class SongController {
         response.put("audioUrl", audioUrl);
         response.put("title", "Song " + id);
         
+        if (metrics != null) {
+            metrics.incrementSongsPlayed(tier);
+        }
         return ResponseEntity.ok(response);
     }
 }

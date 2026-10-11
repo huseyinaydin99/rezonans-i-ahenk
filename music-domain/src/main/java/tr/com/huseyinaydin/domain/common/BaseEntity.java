@@ -1,9 +1,15 @@
 package tr.com.huseyinaydin.domain.common;
 
+import org.springframework.data.domain.AbstractAggregateRoot;
+import tr.com.huseyinaydin.sharedkernel.events.DomainEvent;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
-public abstract class BaseEntity<TId> implements ITimestamp {
+public abstract class BaseEntity<TId> extends AbstractAggregateRoot<BaseEntity<TId>> implements ITimestamp {
 
     protected TId id;
     protected LocalDateTime createdDate;
@@ -37,6 +43,17 @@ public abstract class BaseEntity<TId> implements ITimestamp {
 
     public void markAsUpdated() { this.updatedDate = LocalDateTime.now(); }
     public void markAsDeleted() { this.deletedDate = LocalDateTime.now(); }
+
+    public List<DomainEvent> pullDomainEvents() {
+        List<DomainEvent> events = new ArrayList<>();
+        for (Object event : domainEvents()) {
+            if (event instanceof DomainEvent de) {
+                events.add(de);
+            }
+        }
+        clearDomainEvents();
+        return Collections.unmodifiableList(events);
+    }
 
     @Override
     public boolean equals(Object o) {

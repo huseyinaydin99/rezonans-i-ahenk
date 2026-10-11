@@ -11,7 +11,9 @@
             <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
                 <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                     <includeMdcKeyName>correlationId</includeMdcKeyName>
-                    <customFields>{"application":"music-credit-system"}</customFields>
+                    <includeMdcKeyName>traceId</includeMdcKeyName>
+                    <includeMdcKeyName>spanId</includeMdcKeyName>
+                    <customFields>{"application":"rezonans-music-platform"}</customFields>
                 </encoder>
             </appender>
             <root level="INFO">
@@ -22,7 +24,7 @@
             
             <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
                 <encoder>
-                    <pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) [%X{correlationId:-no-cid}] %cyan(%logger{36}) - %msg %kvp%n</pattern>
+                    <pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) [%X{traceId:-no-trace},%X{spanId:-no-span}] [%X{correlationId:-no-cid}] %cyan(%logger{36}) - %msg %kvp%n</pattern>
                 </encoder>
             </appender>
             <root level="INFO">

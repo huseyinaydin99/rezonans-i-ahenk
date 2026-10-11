@@ -35,36 +35,24 @@ public class PersistenceConfig {
     @Autowired
     private Environment env;
 
-    @Value("${spring.datasource.url:jdbc:h2:mem:musicdb;DB_CLOSE_DELAY=-1}")
+    @Value("${spring.datasource.url:jdbc:oracle:thin:@localhost:1521/FREEPDB1}")
     private String dbUrl;
 
-    @Value("${spring.datasource.username:sa}")
+    @Value("${spring.datasource.username:music_app}")
     private String dbUsername;
 
-    @Value("${spring.datasource.password:password}")
+    @Value("${spring.datasource.password:music_app_pwd}")
     private String dbPassword;
 
-    @Bean
-    public DataSource devDataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.h2.Driver");
-        dataSource.setUrl(dbUrl);
-        dataSource.setUsername(dbUsername);
-        dataSource.setPassword(dbPassword);
-        return dataSource;
-    }
+    @Value("${spring.datasource.driver-class-name:oracle.jdbc.OracleDriver}")
+    private String driverClassName;
 
     @Bean
-    public org.springframework.jdbc.core.JdbcTemplate jdbcTemplate(DataSource dataSource) {
-        return new org.springframework.jdbc.core.JdbcTemplate(dataSource);
-    }
-
-    @Bean
-    @Profile("prod")
-    public DataSource prodDataSource() {
+    @org.springframework.context.annotation.Primary
+    public DataSource dataSource() {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(dbUrl);
-        config.setDriverClassName("oracle.jdbc.OracleDriver");
+        config.setDriverClassName(driverClassName);
         config.setUsername(dbUsername);
         config.setPassword(dbPassword);
         config.setMaximumPoolSize(20);
@@ -72,8 +60,15 @@ public class PersistenceConfig {
         config.setConnectionTimeout(30_000);
         config.setIdleTimeout(600_000);
         config.setMaxLifetime(1_800_000);
-        config.setConnectionTestQuery("SELECT 1 FROM DUAL");
+        if (driverClassName.contains("Oracle") || dbUrl.contains("oracle")) {
+            config.setConnectionTestQuery("SELECT 1 FROM DUAL");
+        }
         return new HikariDataSource(config);
+    }
+
+    @Bean
+    public org.springframework.jdbc.core.JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new org.springframework.jdbc.core.JdbcTemplate(dataSource);
     }
 
     @Bean
@@ -97,7 +92,11 @@ public class PersistenceConfig {
             "META-INF/orm/RefreshToken.xml",
             "META-INF/orm/AuditLog.xml",
             "META-INF/orm/OperationClaim.xml",
-            "META-INF/orm/UserOperationClaim.xml"
+            "META-INF/orm/UserOperationClaim.xml",
+            "META-INF/orm/Song.xml",
+            "META-INF/orm/Artist.xml",
+            "META-INF/orm/DomainEventOutbox.xml",
+            "META-INF/orm/SongReadModel.xml"
         );
         emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         emf.setJpaProperties(hibernateProperties());
@@ -112,20 +111,23 @@ public class PersistenceConfig {
     private Properties hibernateProperties() {
         Properties props = new Properties();
         
-        if (env.acceptsProfiles(org.springframework.core.env.Profiles.of("prod"))) {
-            props.setProperty("hibernate.dialect", "org.hibernate.dialect.OracleDialect");
-            props.setProperty("hibernate.hbm2ddl.auto", "validate");
-            props.setProperty("hibernate.show_sql", "false");
-        } else {
-            props.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
-            props.setProperty("hibernate.hbm2ddl.auto", "create-drop");
-            props.setProperty("hibernate.show_sql", "true");
-        }
+        String dialect = env.getProperty("spring.jpa.database-platform", 
+            env.getProperty("spring.jpa.properties.hibernate.dialect", "org.hibernate.dialect.OracleDialect"));
+        props.setProperty("hibernate.dialect", dialect);
+
+        String ddlAuto = env.getProperty("spring.jpa.hibernate.ddl-auto", "update");
+        props.setProperty("hibernate.hbm2ddl.auto", ddlAuto);
+
+        String showSql = env.getProperty("spring.jpa.show-sql", "true");
+        props.setProperty("hibernate.show_sql", showSql);
         
         props.setProperty("hibernate.format_sql", "true");
         props.setProperty("hibernate.jdbc.batch_size", "50");
         props.setProperty("hibernate.order_inserts", "true");
         props.setProperty("hibernate.order_updates", "true");
+        props.setProperty("hibernate.jdbc.batch_versioned_data", "true");
+        props.setProperty("hibernate.id.new_generator_mappings", "true");
+        props.setProperty("hibernate.id.sequence.default_allocation_size", "50");
         props.setProperty("hibernate.generate_statistics", "false");
         props.setProperty("hibernate.connection.provider_disables_autocommit", "true");
         return props;

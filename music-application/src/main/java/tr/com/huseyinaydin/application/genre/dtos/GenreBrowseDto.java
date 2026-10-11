@@ -1,6 +1,9 @@
 package tr.com.huseyinaydin.application.genre.dtos;
 
-public class GenreBrowseDto {
+import java.io.Serializable;
+
+public class GenreBrowseDto implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String id;
     private String name;
     private String coverImageUrl;

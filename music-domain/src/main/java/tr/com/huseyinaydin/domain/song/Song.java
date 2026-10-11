@@ -72,7 +72,17 @@ public class Song extends tr.com.huseyinaydin.domain.common.BaseEntity<java.util
                 throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Şarkı süresi (duration) negatif bir değer olamaz.");
             }
             
-            return new Song(this);
+            Song song = new Song(this);
+            song.registerEvent(new tr.com.huseyinaydin.domain.events.SongCreatedEvent(
+                song.getId(),
+                song.getTitle(),
+                song.getArtistId(),
+                null,
+                song.getGenreId(),
+                song.getCoverImageUrl(),
+                song.getTier() != null ? song.getTier().name() : "Standard"
+            ));
+            return song;
         }
     }
 

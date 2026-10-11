@@ -7,11 +7,13 @@
     <description>Music Platform Complete Pure Domain XML Mappings</description>
     <package>tr.com.huseyinaydin.domain</package>
 
+    <sequence-generator name="SEQ_MUSIC_GEN" sequence-name="SEQ_MUSIC_PLATFORM_ID" allocation-size="50"/>
+
     <!-- SONG MAPPING -->
     <entity class="song.Song" name="Song">
         <table name="songs"/>
         <attributes>
-            <id name="id"><column name="id" column-definition="UUID"/></id>
+            <id name="id"><column name="id"/></id>
             <basic name="title"><column name="title" nullable="false" length="255"/></basic>
             <basic name="coverImageUrl"><column name="cover_image_url" length="500"/></basic>
             <basic name="audioUrl"><column name="audio_url" nullable="false" length="500"/></basic>
@@ -21,8 +23,8 @@
                 <enumerated>STRING</enumerated>
             </basic>
             <basic name="releaseDate"><column name="release_date" nullable="false"/></basic>
-            <basic name="artistId"><column name="artist_id" nullable="false" column-definition="UUID"/></basic>
-            <basic name="genreId"><column name="genre_id" nullable="false" column-definition="UUID"/></basic>
+            <basic name="artistId"><column name="artist_id" nullable="false"/></basic>
+            <basic name="genreId"><column name="genre_id" nullable="false"/></basic>
             <basic name="playCount"><column name="play_count" nullable="false"/></basic>
         </attributes>
     </entity>
@@ -31,7 +33,7 @@
     <entity class="artist.Artist" name="Artist">
         <table name="artists"/>
         <attributes>
-            <id name="id"><column name="id" column-definition="UUID"/></id>
+            <id name="id"><column name="id"/></id>
             <basic name="name"><column name="name" nullable="false" length="255"/></basic>
             <basic name="bio"><column name="bio" length="2000"/></basic>
             <basic name="profileImageUrl"><column name="profile_image_url" length="500"/></basic>
@@ -43,10 +45,10 @@
     <entity class="playlist.Playlist" name="Playlist">
         <table name="playlists"/>
         <attributes>
-            <id name="id"><column name="id" column-definition="UUID"/></id>
+            <id name="id"><column name="id"/></id>
             <basic name="name"><column name="name" nullable="false" length="255"/></basic>
             <basic name="description"><column name="description" length="1000"/></basic>
-            <basic name="ownerId"><column name="owner_id" nullable="false" column-definition="UUID"/></basic>
+            <basic name="ownerId"><column name="owner_id" nullable="false"/></basic>
         </attributes>
     </entity>
 
@@ -54,7 +56,7 @@
     <entity class="genre.Genre" name="Genre">
         <table name="genres"/>
         <attributes>
-            <id name="id"><column name="id" column-definition="UUID"/></id>
+            <id name="id"><column name="id"/></id>
             <basic name="name"><column name="name" nullable="false" length="255"/></basic>
             <basic name="imageUrl"><column name="image_url" length="500"/></basic>
         </attributes>
@@ -64,7 +66,7 @@
     <entity class="user.AppUser" name="AppUser">
         <table name="app_users"/>
         <attributes>
-            <id name="id"><column name="id" column-definition="UUID"/></id>
+            <id name="id"><column name="id"/></id>
             <basic name="username"><column name="username" nullable="false" length="100"/></basic>
             <basic name="email"><column name="email" nullable="false" length="255" unique="true"/></basic>
             <basic name="passwordHash"><column name="password_hash" nullable="false" length="500"/></basic>
@@ -82,9 +84,9 @@
     <entity class="interaction.SongLike" name="SongLike">
         <table name="song_likes"/>
         <attributes>
-            <id name="id"><column name="id" column-definition="UUID"/></id>
-            <basic name="userId"><column name="user_id" nullable="false" column-definition="UUID"/></basic>
-            <basic name="songId"><column name="song_id" nullable="false" column-definition="UUID"/></basic>
+            <id name="id"><column name="id"/></id>
+            <basic name="userId"><column name="user_id" nullable="false"/></basic>
+            <basic name="songId"><column name="song_id" nullable="false"/></basic>
             <basic name="likedAt"><column name="liked_at" nullable="false"/></basic>
         </attributes>
     </entity>
@@ -93,9 +95,9 @@
     <entity class="interaction.ListeningHistory" name="ListeningHistory">
         <table name="listening_histories"/>
         <attributes>
-            <id name="id"><column name="id" column-definition="UUID"/></id>
-            <basic name="userId"><column name="user_id" nullable="false" column-definition="UUID"/></basic>
-            <basic name="songId"><column name="song_id" nullable="false" column-definition="UUID"/></basic>
+            <id name="id"><column name="id"/></id>
+            <basic name="userId"><column name="user_id" nullable="false"/></basic>
+            <basic name="songId"><column name="song_id" nullable="false"/></basic>
             <basic name="listenDurationSeconds"><column name="listen_duration_seconds" nullable="false"/></basic>
             <basic name="listenedAt"><column name="listened_at" nullable="false"/></basic>
         </attributes>

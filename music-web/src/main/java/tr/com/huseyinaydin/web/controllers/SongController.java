@@ -12,12 +12,12 @@ import java.util.Map;
 @RestController
 public class SongController {
 
-    @org.springframework.beans.factory.annotation.Autowired
-    //private Object listenEventProducer;
+    private final tr.com.huseyinaydin.infrastructure.monitoring.metrics.MusicPlatformMetrics metrics;
 
-
-    // @Autowired
-    // private tr.com.huseyinaydin.domain.repositories.IElasticSongRepository elasticSongRepository;
+    public SongController(@org.springframework.beans.factory.annotation.Autowired(required = false)
+                          tr.com.huseyinaydin.infrastructure.monitoring.metrics.MusicPlatformMetrics metrics) {
+        this.metrics = metrics;
+    }
 
     @GetMapping(value = {"/Song/Search", "/api/Song/Search"})
     public ResponseEntity<java.util.List<Map<String, Object>>> search(@RequestParam(value="q", required=false) String q) {
@@ -106,9 +106,9 @@ public class SongController {
         response.put("audioUrl", urls[index]);
         response.put("title", "Song " + id);
         
-        // ML dinleme geçmişi kaydı mock
-        //listenEventProducer.sendListenEvent(user.toString(), id);
-        
+        if (metrics != null) {
+            metrics.incrementSongsPlayed(tier);
+        }
         return ResponseEntity.ok(response);
     }
 }

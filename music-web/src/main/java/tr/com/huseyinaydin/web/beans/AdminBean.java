@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.web.beans;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import jakarta.annotation.PostConstruct;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,8 @@ import java.util.List;
 @Component
 @SessionScope
 public class AdminBean implements Serializable {
+    private static final Logger log = LoggerFactory.getLogger(AdminBean.class);
+
 
     @Autowired
     private IAdminService adminService;
@@ -33,7 +38,7 @@ public class AdminBean implements Serializable {
         if (selectedRole != null && !selectedRole.isEmpty()) {
             adminService.assignRole(user.getUserId(), selectedRole);
             user.setCurrentRole(selectedRole);
-            System.out.println("[JSF AJAX] Rol güncelleme işlemi başarılı.");
+            log.info("[JSF AJAX] Rol güncelleme işlemi başarılı.");
         }
     }
 
@@ -41,7 +46,7 @@ public class AdminBean implements Serializable {
         boolean newStatus = !user.isBanned();
         adminService.toggleUserBanStatus(user.getUserId(), newStatus);
         user.setBanned(newStatus);
-        System.out.println("[JSF AJAX] Kullanıcı yasaklama/kaldırma işlemi başarılı.");
+        log.info("[JSF AJAX] Kullanıcı yasaklama/kaldırma işlemi başarılı.");
     }
 
     // Getters and Setters

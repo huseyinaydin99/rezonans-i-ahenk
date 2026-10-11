@@ -11,8 +11,11 @@ public class ProblemDetail {
     private int status;
     private String detail;
     private URI instance;
+    private String timestamp;
+    private String traceId;
 
     protected ProblemDetail() {
+        this.timestamp = java.time.Instant.now().toString();
     }
 
     public ProblemDetail(URI type, String title, int status, String detail, URI instance) {
@@ -21,6 +24,12 @@ public class ProblemDetail {
         this.status = status;
         this.detail = detail;
         this.instance = instance;
+        this.timestamp = java.time.Instant.now().toString();
+    }
+
+    public ProblemDetail(URI type, String title, int status, String detail, URI instance, String traceId) {
+        this(type, title, status, detail, instance);
+        this.traceId = traceId;
     }
 
     public URI getType() { return type; }
@@ -31,5 +40,13 @@ public class ProblemDetail {
 
     public String getDetail() { return detail; }
 
+    public String getMessage() { return detail; }
+
     public URI getInstance() { return instance; }
+
+    public String getTimestamp() { return timestamp; }
+
+    public String getTraceId() { return traceId; }
+
+    public void setTraceId(String traceId) { this.traceId = traceId; }
 }

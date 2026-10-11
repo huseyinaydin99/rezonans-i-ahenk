@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.web.beans;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import jakarta.annotation.PostConstruct;
 import org.springframework.web.context.annotation.RequestScope;
 import jakarta.faces.context.FacesContext;
@@ -15,6 +18,8 @@ import java.util.Map;
 @Component
 @RequestScope
 public class ArtistDiscoveryBean {
+    private static final Logger log = LoggerFactory.getLogger(ArtistDiscoveryBean.class);
+
 
     @Autowired
     private IArtistService artistService;
@@ -42,7 +47,7 @@ public class ArtistDiscoveryBean {
     
     // Basit JSF içi arama fonksiyonu simülasyonu
     public void searchArtists() {
-        System.out.println("Arama Yapılıyor: " + searchQuery);
+        log.info("Arama Yapılıyor: " + searchQuery);
         // Gerçekte ElasticSearch veya veritabanı sorgusu atılır
     }
 

@@ -29,9 +29,9 @@ Bu sistem, veri tutarlılığının (consistency) hayati önem taşıdığı **f
 
 Projenin derlenmesi ve ayağa kaldırılması, standart maven yaşam döngüsüne sadık kalınarak tasarlanmıştır. 
 
-1. **Derleme:** Kök dizinde `mvn clean install` komutu icra edildiğinde, yedi farklı modül kendi içerisindeki hiyerarşiye (Shared-Kernel -> Domain -> Application -> Infrastructure -> Persistence -> Web) sadık kalarak, tüm testlerini (unit, integration, pipeline behavior) koşar ve derlenir.
-2. **Profillerin Tatbiki (Environment Management):** Sistem; `dev`, `test` ve `prod` olmak üzere üç farklı profile sahiptir. Dışarıdan enjekte edilen ortam değişkenleri (`BANKING_DB_URL`, `BANKING_JWT_SECRET_KEY` vb.) aracılığıyla yapılandırılır. Geliştirme ortamında (dev) H2 in-memory veritabanı ayağa kalkarken, prod ortamında sıkı güvenlikli ve performanslı HikariCP havuzu üzerinden Oracle veritabanına bağlanır. 
-3. **Çalıştırma:** Nihai olarak `banking-web` modülünden elde edilen `war` yahut doğrudan başlatılabilir yapı, herhangi bir uygulama sunucusunda (Tomcat vb.) şaha kalkmaya hazırdır.
+1. **Derleme:** Kök dizinde `mvn clean install` komutu icra edildiğinde, modüller kendi içerisindeki hiyerarşiye sadık kalarak tüm testlerini koşar ve derlenir.
+2. **Profillerin Tatbiki (Environment Management):** Sistem; `dev`, `test` ve `prod` olmak üzere üç farklı profile sahiptir. Dışarıdan enjekte edilen ortam değişkenleri (`MUSIC_DB_URL`, `MUSIC_JWT_SECRET_KEY` vb.) aracılığıyla yapılandırılır. Geliştirme ve prod ortamında Docker Compose üzerindeki Oracle 23c Free veritabanına yüksek performanslı HikariCP havuzu üzerinden bağlanır.
+3. **Çalıştırma:** Nihai olarak `music-web` ve `music-web-thymeleaf` modüllerinden elde edilen web uygulaması, uygulama sunucusu üzerinde kesintisiz hizmet vermeye hazırdır.
 
 ---
 

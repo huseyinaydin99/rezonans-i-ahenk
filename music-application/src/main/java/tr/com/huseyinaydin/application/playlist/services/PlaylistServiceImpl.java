@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.application.playlist.services;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tr.com.huseyinaydin.application.ports.IPlaylistService;
@@ -12,26 +15,28 @@ import java.util.UUID;
 
 @Service
 public class PlaylistServiceImpl implements IPlaylistService {
+    private static final Logger log = LoggerFactory.getLogger(PlaylistServiceImpl.class);
+
 
     @Override
     @Transactional
     public void createPlaylist(CreatePlaylistDto dto) {
-        System.out.println("[PLAYLIST SERVİSİ] Kullanıcı (" + dto.getUserId() + ") için yeni çalma listesi oluşturuluyor: " + dto.getName());
+        log.info("[PLAYLIST SERVİSİ] Kullanıcı (" + dto.getUserId() + ") için yeni çalma listesi oluşturuluyor: " + dto.getName());
         // Gerçekte Playlist entity'si yaratılıp repository.save(playlist) yapılır.
-        System.out.println("-> Çalma listesi veritabanına başarıyla kaydedildi.");
+        log.info("-> Çalma listesi veritabanına başarıyla kaydedildi.");
     }
 
     @Override
     @Transactional
     public void addSongToPlaylist(String playlistId, String songId) {
-        System.out.println("[PLAYLIST SERVİSİ] Şarkı (" + songId + "), Çalma Listesine (" + playlistId + ") ekleniyor...");
+        log.info("[PLAYLIST SERVİSİ] Şarkı (" + songId + "), Çalma Listesine (" + playlistId + ") ekleniyor...");
         // Gerçekte ManyToMany ilişki (PlaylistSong) tablosuna insert atılır.
     }
 
     @Override
     @Transactional
     public void removeSongFromPlaylist(String playlistId, String songId) {
-        System.out.println("[PLAYLIST SERVİSİ] Şarkı (" + songId + "), Çalma Listesinden (" + playlistId + ") çıkarılıyor...");
+        log.info("[PLAYLIST SERVİSİ] Şarkı (" + songId + "), Çalma Listesinden (" + playlistId + ") çıkarılıyor...");
     }
 
     @Override

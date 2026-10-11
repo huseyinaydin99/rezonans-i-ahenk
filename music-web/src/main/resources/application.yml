@@ -2,9 +2,25 @@ spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
   datasource:
-    url: ${BANKING_DB_URL:jdbc:h2:mem:bankingdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}
-    username: ${BANKING_DB_USERNAME:sa}
-    password: ${BANKING_DB_PASSWORD:password}
+    url: ${MUSIC_DB_URL:jdbc:oracle:thin:@localhost:1521/FREEPDB1}
+    username: ${MUSIC_DB_USERNAME:music_app}
+    password: ${MUSIC_DB_PASSWORD:music_app_pwd}
+    driver-class-name: oracle.jdbc.OracleDriver
+  jpa:
+    database-platform: org.hibernate.dialect.OracleDialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.OracleDialect
+        id:
+          new_generator_mappings: true
+          sequence:
+            default_allocation_size: 50
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
   mail:
     password: ${BANKING_SMTP_PASSWORD:secret}
 

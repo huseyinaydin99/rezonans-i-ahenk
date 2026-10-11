@@ -114,6 +114,8 @@ services:
     ports:
       - "16686:16686" # UI
       - "9411:9411"   # Zipkin API port
+      - "4317:4317"   # OpenTelemetry OTLP gRPC port
+      - "4318:4318"   # OpenTelemetry OTLP HTTP port
     networks:
       - music-network
 

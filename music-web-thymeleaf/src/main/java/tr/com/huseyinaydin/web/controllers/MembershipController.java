@@ -26,9 +26,7 @@ public class MembershipController {
     public ResponseEntity<Map<String, Object>> buy(@RequestParam("tier") String tier, HttpServletResponse response) {
         var user = CurrentUser.get().orElse(null);
         if (user == null) {
-            Map<String, Object> err = new HashMap<>();
-            err.put("message", "Lütfen önce giriş yapın.");
-            return ResponseEntity.status(401).body(err);
+            throw new tr.com.huseyinaydin.sharedkernel.exception.AuthorizationException("buyMembership", "Lütfen önce giriş yapın.");
         }
 
         // Tier token claim'inde taşınır: yeni tier ile token yeniden üretilip cookie yenilenir.

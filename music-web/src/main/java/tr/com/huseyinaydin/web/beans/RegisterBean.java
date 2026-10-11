@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.web.beans;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,6 +15,8 @@ import java.io.IOException;
 @Component
 @RequestScope
 public class RegisterBean {
+    private static final Logger log = LoggerFactory.getLogger(RegisterBean.class);
+
 
     @Autowired
     private IRegisterService registerService;
@@ -38,7 +43,7 @@ public class RegisterBean {
             
             this.success = true;
             this.message = "Aramıza hoş geldiniz! Yönlendiriliyorsunuz...";
-            System.out.println("[JSF AJAX] Kayıt formu başarıyla işlendi.");
+            log.info("[JSF AJAX] Kayıt formu başarıyla işlendi.");
             
             try {
                 FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml");

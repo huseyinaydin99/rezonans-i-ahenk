@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.infrastructure.adapters;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import tr.com.huseyinaydin.application.ports.ISongSearchService;
 import tr.com.huseyinaydin.infrastructure.IElasticSongRepository;
@@ -12,6 +15,8 @@ import java.util.Map;
 
 @Service
 public class SongSearchAdapter implements ISongSearchService {
+    private static final Logger log = LoggerFactory.getLogger(SongSearchAdapter.class);
+
 
     private final IElasticSongRepository elasticSongRepository;
 
@@ -31,7 +36,11 @@ public class SongSearchAdapter implements ISongSearchService {
             List<ElasticSong> results = elasticSongRepository.findByTitleContainingOrArtistContaining(keyword, keyword);
             for (ElasticSong es : results) {
                 Map<String, Object> map = new HashMap<>();
-                map.put("id", Long.parseLong(es.getId()));
+                Object idVal = es.getId();
+                try {
+                    idVal = Long.parseLong(es.getId());
+                } catch (NumberFormatException ignored) {}
+                map.put("id", idVal);
                 map.put("title", es.getTitle());
                 map.put("artist", es.getArtist());
                 map.put("cover", es.getCoverUrl());
@@ -40,7 +49,7 @@ public class SongSearchAdapter implements ISongSearchService {
             }
         } catch (Exception e) {
             // Hata durumunda (örneğin Elasticsearch kapalıysa) sessizce boş döner veya fallback yapılabilir.
-            System.err.println("Elasticsearch arama hatası: " + e.getMessage());
+            log.error("Elasticsearch arama hatası: " + e.getMessage());
         }
         return filtered;
     }

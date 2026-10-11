@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.web.beans;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,6 +14,8 @@ import java.io.IOException;
 @Component
 @RequestScope
 public class ProfileBean {
+    private static final Logger log = LoggerFactory.getLogger(ProfileBean.class);
+
 
     @Autowired
     private IProfileService profileService;
@@ -38,7 +43,7 @@ public class ProfileBean {
             profileService.updateProfile(request);
             
             // Başarılı mesajı eklenebilir (FacesContext.addMessage)
-            System.out.println("[JSF] Profil kaydetme işlemi arayüzden başarıyla tetiklendi.");
+            log.info("[JSF] Profil kaydetme işlemi arayüzden başarıyla tetiklendi.");
             
         } catch (IOException e) {
             e.printStackTrace();

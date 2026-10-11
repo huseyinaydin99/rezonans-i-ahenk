@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.infrastructure.security.keycloak;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -16,6 +19,8 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class OAuth2SecurityConfig {
+    private static final Logger log = LoggerFactory.getLogger(OAuth2SecurityConfig.class);
+
     @Bean
     public JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withJwkSetUri("http://localhost:8180/realms/music-realm/protocol/openid-connect/certs").build();
@@ -30,7 +35,7 @@ public class OAuth2SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        System.out.println("[GÜVENLİK] OAuth2 Resource Server ve Keycloak entegrasyonu devrede!");
+        log.info("[GÜVENLİK] OAuth2 Resource Server ve Keycloak entegrasyonu devrede!");
         
         http
             .csrf(AbstractHttpConfigurer::disable) // Token tabanlı olduğu için CSRF kapalı

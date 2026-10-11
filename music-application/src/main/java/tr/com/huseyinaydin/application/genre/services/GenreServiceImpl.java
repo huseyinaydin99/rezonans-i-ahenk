@@ -1,5 +1,9 @@
 package tr.com.huseyinaydin.application.genre.services;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import tr.com.huseyinaydin.application.ports.IGenreService;
 import tr.com.huseyinaydin.application.genre.dtos.GenreBrowseDto;
@@ -11,10 +15,13 @@ import java.util.UUID;
 
 @Service
 public class GenreServiceImpl implements IGenreService {
+    private static final Logger log = LoggerFactory.getLogger(GenreServiceImpl.class);
+
 
     @Override
+    @Cacheable(value = "genresCache", key = "'all'")
     public List<GenreBrowseDto> getAllGenres() {
-        System.out.println("[KEŞFET (BROWSE)] Tüm müzik türleri (Genres) Hazelcast önbelleğinden (Cache) çekiliyor...");
+        log.info("[KEŞFET (BROWSE)] Tüm müzik türleri (Genres) Hazelcast önbelleğinden (Cache) çekiliyor...");
         
         List<GenreBrowseDto> genres = new ArrayList<>();
         genres.add(new GenreBrowseDto("rock-id", "Rock", "https://minio/rock.jpg", "#FF5733"));
@@ -28,8 +35,9 @@ public class GenreServiceImpl implements IGenreService {
     }
 
     @Override
+    @Cacheable(value = "genresCache", key = "#genreId")
     public GenreDetailDto getTopSongsByGenreId(String genreId) {
-        System.out.println("[ELASTICSEARCH] '" + genreId + "' türündeki en popüler şarkılar indekslerden ışık hızında getiriliyor...");
+        log.info("[ELASTICSEARCH] '" + genreId + "' türündeki en popüler şarkılar indekslerden ışık hızında getiriliyor...");
         
         List<String> mockSongs = new ArrayList<>();
         if(genreId.equals("rock-id")) {

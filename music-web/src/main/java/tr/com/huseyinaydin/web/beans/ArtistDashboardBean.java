@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.web.beans;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,6 +15,8 @@ import java.io.IOException;
 @Component
 @RequestScope
 public class ArtistDashboardBean {
+    private static final Logger log = LoggerFactory.getLogger(ArtistDashboardBean.class);
+
 
     @Autowired
     private IArtistService artistService;
@@ -43,7 +48,7 @@ public class ArtistDashboardBean {
                 
                 this.uploadMessage = "Eseriniz başarıyla yayınlandı ve takipçilerinize bildirim gönderildi!";
                 this.newSongTitle = "";
-                System.out.println("[JSF AJAX] Sanatçı şarkı yükleme işlemi arayüzden başarıyla tetiklendi.");
+                log.info("[JSF AJAX] Sanatçı şarkı yükleme işlemi arayüzden başarıyla tetiklendi.");
             } else {
                 this.uploadMessage = "Hata: Geçerli bir MP3 dosyası seçmediniz.";
             }

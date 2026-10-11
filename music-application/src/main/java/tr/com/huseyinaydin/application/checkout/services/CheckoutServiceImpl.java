@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.application.checkout.services;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tr.com.huseyinaydin.application.ports.ICheckoutService;
@@ -12,6 +15,8 @@ import java.util.UUID;
 
 @Service
 public class CheckoutServiceImpl implements ICheckoutService {
+    private static final Logger log = LoggerFactory.getLogger(CheckoutServiceImpl.class);
+
 
     private final IDomainEventDispatcher eventDispatcher;
 
@@ -22,22 +27,22 @@ public class CheckoutServiceImpl implements ICheckoutService {
     @Override
     @Transactional
     public BuyResultDto processPayment(CheckoutRequestDto request) {
-        System.out.println("[ÖDEME AĞ GEÇİDİ] Kullanıcı (" + request.getUserId() + ") için kredi kartı ödemesi başlatıldı...");
+        log.info("[ÖDEME AĞ GEÇİDİ] Kullanıcı (" + request.getUserId() + ") için kredi kartı ödemesi başlatıldı...");
         
         // Simüle Edilmiş Ödeme Doğrulaması (Payment Gateway - Stripe/Iyzico vb.)
         if (request.getCreditCardNumber() == null || request.getCreditCardNumber().length() < 16) {
             return new BuyResultDto(false, "Geçersiz Kredi Kartı numarası!", null);
         }
 
-        System.out.println("-> Kredi kartından ücret başarıyla çekildi (Simülasyon).");
+        log.info("-> Kredi kartından ücret başarıyla çekildi (Simülasyon).");
         
         // 1. Kullanıcının Tier (Paket) bilgisini veritabanında güncelle
-        System.out.println("-> Kullanıcı profili " + request.getTargetTier().name() + " paketine yükseltiliyor.");
+        log.info("-> Kullanıcı profili " + request.getTargetTier().name() + " paketine yükseltiliyor.");
         // userRepository.updateTier(...)
         
         // 2. Saga/Outbox Pattern: Fatura servisi ve bildirimler için Event fırlat
         // eventDispatcher.dispatch(new MembershipUpgradedEvent(request.getUserId(), request.getTargetTier()));
-        System.out.println("-> İşlem tamamlandı. Saga Pattern (Outbox) üzerinden 'Üyelik Yükseltildi' olayı (Event) fırlatıldı.");
+        log.info("-> İşlem tamamlandı. Saga Pattern (Outbox) üzerinden 'Üyelik Yükseltildi' olayı (Event) fırlatıldı.");
 
         String transactionId = "TRX-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         return new BuyResultDto(true, "Ödemeniz başarıyla alındı. Aramıza hoş geldiniz!", transactionId);

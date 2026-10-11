@@ -72,6 +72,11 @@ public class SecurityConfig {
                     new AntPathRequestMatcher("/js/**"),
                     new AntPathRequestMatcher("/images/**"),
                     new AntPathRequestMatcher("/webjars/**"),
+                    new AntPathRequestMatcher("/actuator/**"),
+                    new AntPathRequestMatcher("/health"),
+                    new AntPathRequestMatcher("/swagger-ui/**"),
+                    new AntPathRequestMatcher("/swagger-ui.html"),
+                    new AntPathRequestMatcher("/v3/api-docs/**"),
                     new AntPathRequestMatcher("/web-api/Like/**")
                 ).permitAll()
                 .anyRequest().authenticated()

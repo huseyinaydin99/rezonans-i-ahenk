@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.application.profile.services;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tr.com.huseyinaydin.application.ports.IProfileService;
@@ -9,6 +12,8 @@ import tr.com.huseyinaydin.sharedkernel.exception.BusinessException;
 
 @Service
 public class ProfileServiceImpl implements IProfileService {
+    private static final Logger log = LoggerFactory.getLogger(ProfileServiceImpl.class);
+
 
     private final IStorageService storageService; // MinIO'ya yüklemek için
 
@@ -19,14 +24,14 @@ public class ProfileServiceImpl implements IProfileService {
     @Override
     @Transactional
     public void updateProfile(UpdateProfileRequest request) {
-        System.out.println("[PROFİL YÖNETİMİ] " + request.getUserId() + " kullanıcısı için profil güncelleme başladı.");
+        log.info("[PROFİL YÖNETİMİ] " + request.getUserId() + " kullanıcısı için profil güncelleme başladı.");
 
         // 1. Şifre değişimi varsa kontrol et
         if (request.getNewPassword() != null && !request.getNewPassword().isEmpty()) {
             if (request.getCurrentPassword() == null || request.getCurrentPassword().isEmpty()) {
                 throw new BusinessException("ERR", "Yeni şifre belirlemek için mevcut şifrenizi girmelisiniz!");
             }
-            System.out.println("-> Kullanıcı şifresi güvenli bir şekilde (BCrypt) güncellendi.");
+            log.info("-> Kullanıcı şifresi güvenli bir şekilde (BCrypt) güncellendi.");
         }
 
         // 2. Yeni profil fotoğrafı varsa MinIO Object Storage'a yükle
@@ -37,13 +42,13 @@ public class ProfileServiceImpl implements IProfileService {
                     request.getImageSize(),
                     request.getImageContentType()
             );
-            System.out.println("-> Profil resmi MinIO'ya yüklendi. URL: " + uploadedImageUrl);
+            log.info("-> Profil resmi MinIO'ya yüklendi. URL: " + uploadedImageUrl);
         }
 
         // 3. Biyografi ve diğer alanları veritabanında (Entity) güncelle
-        System.out.println("-> Kullanıcı biyografisi güncellendi: " + request.getBio());
+        log.info("-> Kullanıcı biyografisi güncellendi: " + request.getBio());
         
         // Gerçekte: AppUser user = userRepository.findById(request.getUserId()); user.setBio(...); userRepository.save(user);
-        System.out.println("[PROFİL YÖNETİMİ] Profil başarıyla güncellendi.");
+        log.info("[PROFİL YÖNETİMİ] Profil başarıyla güncellendi.");
     }
 }

@@ -25,10 +25,7 @@ public class ApplicationUser extends Entity<UUID> {
                            byte[] passwordHash, byte[] passwordSalt, UserRole role) {
         super();
         
-        // DDD Katı İş Kuralları (Guard Clauses)
-        if (customerId == null) {
-            throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Müşteri ID (customerId) atanmamış.");
-        }
+        UUID effectiveCustomerId = customerId != null ? customerId : UUID.randomUUID();
         if (email == null || email.trim().isEmpty() || !EMAIL_PATTERN.matcher(email).matches()) {
             throw new IllegalArgumentException("❌ [DOMAIN KURAL İHLALİ]: Geçerli bir e-posta adresi girilmelidir: " + email);
         }
@@ -40,12 +37,14 @@ public class ApplicationUser extends Entity<UUID> {
         }
 
         this.id = UUID.randomUUID();
-        this.customerId = customerId;
+        this.customerId = effectiveCustomerId;
         this.email = email;
         this.passwordHash = passwordHash;
         this.passwordSalt = passwordSalt;
         this.role = role;
         this.isActive = true;
+
+        registerEvent(new tr.com.huseyinaydin.domain.events.UserRegisteredEvent(this.id, this.customerId, this.email, this.role));
     }
 
     public void changeRole(UserRole role) {

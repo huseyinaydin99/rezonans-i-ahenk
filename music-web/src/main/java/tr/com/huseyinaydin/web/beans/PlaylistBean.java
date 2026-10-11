@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.web.beans;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,6 +16,8 @@ import java.util.List;
 @Component
 @SessionScope
 public class PlaylistBean implements Serializable {
+    private static final Logger log = LoggerFactory.getLogger(PlaylistBean.class);
+
 
     @Autowired
     private IPlaylistService playlistService;
@@ -43,7 +48,7 @@ public class PlaylistBean implements Serializable {
             this.newPlaylistDescription = "";
             loadPlaylists();
             
-            System.out.println("[JSF AJAX] Yeni çalma listesi oluşturuldu ve liste arayüzde (UI) yenilendi.");
+            log.info("[JSF AJAX] Yeni çalma listesi oluşturuldu ve liste arayüzde (UI) yenilendi.");
         }
     }
 
@@ -53,7 +58,7 @@ public class PlaylistBean implements Serializable {
         this.selectedSongTitle = songTitle;
         this.successMessage = null;
         loadPlaylists(); // Kullanıcının listelerini güncel getir
-        System.out.println("[JSF AJAX] Modal hazırlandı. Seçilen Şarkı: " + songTitle);
+        log.info("[JSF AJAX] Modal hazırlandı. Seçilen Şarkı: " + songTitle);
     }
 
     // Asenkron olarak seçilen şarkıyı belirtilen listeye ekler
@@ -61,7 +66,7 @@ public class PlaylistBean implements Serializable {
         if (selectedSongId != null && playlistId != null) {
             playlistService.addSongToPlaylist(playlistId, selectedSongId);
             this.successMessage = "Şarkı başarıyla listeye eklendi!";
-            System.out.println("[JSF AJAX] '" + selectedSongTitle + "' şarkısı listeye eklendi.");
+            log.info("[JSF AJAX] '" + selectedSongTitle + "' şarkısı listeye eklendi.");
         }
     }
 

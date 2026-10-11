@@ -3,6 +3,7 @@ package tr.com.huseyinaydin.infrastructure.jobs;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -15,7 +16,13 @@ import tr.com.huseyinaydin.sharedkernel.events.DomainEvent;
 
 import java.util.List;
 
+/**
+ * Eski in-memory outbox processor işi.
+ * Kafka tabanlı OutboxRelayScheduler birincil güvenilir mesaj teslim mekanizması olduğu için
+ * çift işlemeyi engellemek adına varsayılan olarak kapalıdır.
+ */
 @Component
+@ConditionalOnProperty(name = "banking.jobs.outbox-processor.enabled", havingValue = "true", matchIfMissing = false)
 public class OutboxProcessorJob {
 
     private static final Logger log = LoggerFactory.getLogger(OutboxProcessorJob.class);

@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.infrastructure.external;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -12,6 +15,8 @@ import tr.com.huseyinaydin.application.itunes.dtos.ItunesResponseDto;
 @Primary
 @Service("itunesServiceProxy")
 public class ItunesServiceProxy implements IItunesService {
+    private static final Logger log = LoggerFactory.getLogger(ItunesServiceProxy.class);
+
 
     private final IItunesService realService;
     private final IMap<String, ItunesResponseDto> proxyCache;
@@ -34,11 +39,11 @@ public class ItunesServiceProxy implements IItunesService {
         String cacheKey = term.toLowerCase().trim() + "_" + limit;
 
         if (proxyCache.containsKey(cacheKey)) {
-            System.out.println("[PROXY VEKİL] İstek Hazelcast önbelleğinden dönülüyor...");
+            log.info("[PROXY VEKİL] İstek Hazelcast önbelleğinden dönülüyor...");
             return proxyCache.get(cacheKey);
         }
 
-        System.out.println("[PROXY VEKİL] İstek gerçek iTunes API'sine delege ediliyor...");
+        log.info("[PROXY VEKİL] İstek gerçek iTunes API'sine delege ediliyor...");
         ItunesResponseDto response = realService.searchMusic(term, limit);
 
         if (response != null && response.resultCount() > 0) {
@@ -53,8 +58,8 @@ public class ItunesServiceProxy implements IItunesService {
      * yani karşı sunucu yanıt vermediğinde bizzat burası çalışır.
      */
     public ItunesResponseDto itunesFallback(String term, int limit, Throwable t) {
-        System.err.println("[DEVRE KESİCİ AÇIK - FALLBACK] Dış iTunes API'si çöktü veya ulaşılamıyor! Hata: " + t.getMessage());
-        System.out.println("-> Uygulamanın çökmesi engellendi. Kullanıcıya boş (veya varsayılan) bir yanıt dönülüyor...");
+        log.error("[DEVRE KESİCİ AÇIK - FALLBACK] Dış iTunes API'si çöktü veya ulaşılamıyor! Hata: " + t.getMessage());
+        log.info("-> Uygulamanın çökmesi engellendi. Kullanıcıya boş (veya varsayılan) bir yanıt dönülüyor...");
         
         // Hata fırlatmak yerine sistemi ayakta tutacak varsayılan bir veri dönüyoruz.
         return new ItunesResponseDto(0, java.util.Collections.emptyList());

@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.web.beans;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import jakarta.annotation.PostConstruct;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,8 @@ import java.util.UUID;
 @Component
 @SessionScope
 public class LikeBean implements Serializable {
+    private static final Logger log = LoggerFactory.getLogger(LikeBean.class);
+
 
     @Autowired
     private ILikeService likeService;
@@ -49,10 +54,10 @@ public class LikeBean implements Serializable {
         // Global UI state'i anında güncelle (Sayfa yenilemeye gerek kalmadan)
         if (isNowLiked) {
             this.userLikedSongs.add(songIdStr);
-            System.out.println("[JSF AJAX] Şarkı FAVORİLERE EKLENDİ. (ID: " + songIdStr + ")");
+            log.info("[JSF AJAX] Şarkı FAVORİLERE EKLENDİ. (ID: " + songIdStr + ")");
         } else {
             this.userLikedSongs.remove(songIdStr);
-            System.out.println("[JSF AJAX] Şarkı FAVORİLERDEN ÇIKARILDI. (ID: " + songIdStr + ")");
+            log.info("[JSF AJAX] Şarkı FAVORİLERDEN ÇIKARILDI. (ID: " + songIdStr + ")");
         }
     }
 

@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.infrastructure.client;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -13,6 +16,8 @@ import java.io.IOException;
 
 @Component
 public class JwtBearerInterceptor implements ClientHttpRequestInterceptor {
+    private static final Logger log = LoggerFactory.getLogger(JwtBearerInterceptor.class);
+
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
@@ -21,7 +26,7 @@ public class JwtBearerInterceptor implements ClientHttpRequestInterceptor {
         
         // Eğer mevcut kullanıcının bir JWT yetkisi (Credentials) varsa, dış API isteklerine Bearer olarak ekle
         if (authentication != null && authentication.getCredentials() instanceof String jwtToken) {
-            System.out.println("Giden uzak (Remote) HTTP isteğine JWT Bearer Token ekleniyor...");
+            log.info("Giden uzak (Remote) HTTP isteğine JWT Bearer Token ekleniyor...");
             request.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken);
         }
         

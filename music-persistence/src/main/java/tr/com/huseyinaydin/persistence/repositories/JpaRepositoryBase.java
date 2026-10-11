@@ -22,17 +22,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public abstract class JpaRepositoryBase<TEntity extends tr.com.huseyinaydin.domain.common.BaseEntity<TId>, TId>
-        implements IAsyncRepository<TEntity, TId> {
+        implements IAsyncRepository<TEntity, TId>, org.springframework.context.ApplicationEventPublisherAware {
 
     protected final EntityManager entityManager;
     protected final Class<TEntity> entityClass;
     private final ObjectMapper objectMapper;
+    protected org.springframework.context.ApplicationEventPublisher eventPublisher;
 
     protected JpaRepositoryBase(EntityManager entityManager, Class<TEntity> entityClass) {
         this.entityManager = entityManager;
         this.entityClass = entityClass;
         this.objectMapper = new ObjectMapper();
         this.objectMapper.registerModule(new JavaTimeModule());
+    }
+
+    @Override
+    public void setApplicationEventPublisher(org.springframework.context.ApplicationEventPublisher eventPublisher) {
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -117,15 +123,16 @@ public abstract class JpaRepositoryBase<TEntity extends tr.com.huseyinaydin.doma
     }
 
     private void extractAndSaveDomainEvents(TEntity entity) {
-        if (!(entity instanceof tr.com.huseyinaydin.domain.common.Entity<?> domainEntity)) {
-            return; // Only aggregate roots and standard entities support events
+        if (entity == null) {
+            return;
         }
 
         try {
-            List<tr.com.huseyinaydin.sharedkernel.events.DomainEvent> events = domainEntity.pullDomainEvents();
+            List<tr.com.huseyinaydin.sharedkernel.events.DomainEvent> events = entity.pullDomainEvents();
             
             if (events != null && !events.isEmpty()) {
                 for (tr.com.huseyinaydin.sharedkernel.events.DomainEvent event : events) {
+                    // 1. Transactional Outbox Kaydı (Oracle 23c Outbox Tablosu)
                     tr.com.huseyinaydin.domain.outbox.DomainEventOutbox outbox = 
                         new tr.com.huseyinaydin.domain.outbox.DomainEventOutbox(
                             event.getEventId(),
@@ -136,11 +143,16 @@ public abstract class JpaRepositoryBase<TEntity extends tr.com.huseyinaydin.doma
                             event.getOccurredAt()
                     );
                     entityManager.persist(outbox);
+
+                    // 2. Spring Application Context Event Publishing (In-Memory decoupling / Event-Driven)
+                    if (eventPublisher != null) {
+                        eventPublisher.publishEvent(event);
+                    }
                 }
             }
         } catch (Exception e) {
             org.slf4j.LoggerFactory.getLogger(JpaRepositoryBase.class)
-                .error("Failed to serialize and save domain events for entity: {}", entity.getClass().getSimpleName(), e);
+                .error("Failed to serialize and dispatch domain events for entity: {}", entity.getClass().getSimpleName(), e);
         }
     }
 

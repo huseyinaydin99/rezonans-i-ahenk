@@ -1,8 +1,10 @@
 package tr.com.huseyinaydin.application.genre.dtos;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class GenreDetailDto {
+public class GenreDetailDto implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String genreName;
     private List<String> topSongs;
 

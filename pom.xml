@@ -37,6 +37,7 @@
 
         
         <spring.version>6.1.8</spring.version>
+        <spring-data-commons.version>3.3.0</spring-data-commons.version>
         <spring-security.version>6.3.1</spring-security.version>
 
         
@@ -172,6 +173,11 @@
                 <artifactId>spring-test</artifactId>
                 <version>${spring.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-commons</artifactId>
+                <version>${spring-data-commons.version}</version>
             </dependency>
 
             
@@ -334,6 +340,16 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-actuator</artifactId>
                 <version>${spring-boot-actuator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-prometheus</artifactId>
+                <version>${micrometer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-exporter-zipkin</artifactId>
+                <version>${opentelemetry.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.micrometer</groupId>

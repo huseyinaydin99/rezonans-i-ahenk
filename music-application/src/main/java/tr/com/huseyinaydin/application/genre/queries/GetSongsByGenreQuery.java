@@ -1,33 +1,52 @@
 package tr.com.huseyinaydin.application.genre.queries;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.song.dtos.SongResponse;
-import tr.com.huseyinaydin.domain.repositories.ISongRepository;
+import tr.com.huseyinaydin.domain.repositories.ISongReadRepository;
+import tr.com.huseyinaydin.domain.song.read.SongReadModel;
 import tr.com.huseyinaydin.sharedkernel.messaging.IQuery;
 import tr.com.huseyinaydin.sharedkernel.messaging.IQueryHandler;
+import tr.com.huseyinaydin.application.pipeline.ICacheableRequest;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-public record GetSongsByGenreQuery(UUID genreId) implements IQuery<List<SongResponse>> {
-    
+public record GetSongsByGenreQuery(UUID genreId) implements IQuery<List<SongResponse>>, ICacheableRequest {
+    private static final Logger log = LoggerFactory.getLogger(GetSongsByGenreQuery.class);
+
+    @Override
+    public String getCacheKey() {
+        return "genre:songs:" + genreId;
+    }
+
+    @Override
+    public String getCacheName() {
+        return "genresCache";
+    }
+
+    @Override
+    public long getExpirationMinutes() {
+        return 120;
+    }
+
     @Component
     public static class Handler implements IQueryHandler<GetSongsByGenreQuery, List<SongResponse>> {
-        private final ISongRepository songRepository;
+        private final ISongReadRepository readRepository;
 
-        public Handler(ISongRepository songRepository) {
-            this.songRepository = songRepository;
+        public Handler(ISongReadRepository readRepository) {
+            this.readRepository = readRepository;
         }
 
         @Override
         public List<SongResponse> handle(GetSongsByGenreQuery query) {
-            // Business Rule: Ensure genre exists
-            // In a real app, songRepository.findByGenreId(query.genreId()) would be called.
-            System.out.println("Fetching all songs for Genre ID: " + query.genreId());
-            
-            // Simulating returning data for architecture demo
-            return Collections.emptyList();
+            log.info("Fetching songs for Genre ID via CQRS Read Model: {}", query.genreId());
+            List<SongReadModel> readModels = readRepository.findByGenreId(query.genreId());
+            return readModels.stream()
+                    .map(SongResponse::fromReadModel)
+                    .collect(Collectors.toList());
         }
     }
 }

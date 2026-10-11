@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.infrastructure.gateway.config;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -11,10 +14,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @org.springframework.context.annotation.Profile("gateway")
 public class GatewayConfig {
+    private static final Logger log = LoggerFactory.getLogger(GatewayConfig.class);
+
 
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
-        System.out.println("[API GATEWAY] Yönlendirme (Routing) kuralları belleğe yükleniyor...");
+        log.info("[API GATEWAY] Yönlendirme (Routing) kuralları belleğe yükleniyor...");
         
         return builder.routes()
                 // 1. Arama İstekleri -> Elasticsearch Servisine (Örnek port 8081)

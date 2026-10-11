@@ -1,5 +1,8 @@
 package tr.com.huseyinaydin.application.auth.services;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tr.com.huseyinaydin.application.ports.IRegisterService;
@@ -15,6 +18,8 @@ import java.util.Optional;
 
 @Service
 public class RegisterServiceImpl implements IRegisterService {
+    private static final Logger log = LoggerFactory.getLogger(RegisterServiceImpl.class);
+
 
     private final IApplicationUserRepository userRepository;
     private final IPasswordHashService passwordHashService;
@@ -27,7 +32,7 @@ public class RegisterServiceImpl implements IRegisterService {
     @Override
     @Transactional
     public void registerNewUser(RegisterRequestDto request) {
-        System.out.println("[KAYIT SİSTEMİ] Yeni kullanıcı ('" + request.getEmail() + "') için süreç başlatıldı.");
+        log.info("[KAYIT SİSTEMİ] Yeni kullanıcı ('" + request.getEmail() + "') için süreç başlatıldı.");
         
         if (request.getPassword() == null || request.getPassword().length() < 6) {
             throw new BusinessException("ERR", "Şifreniz en az 6 karakter olmalıdır!");
@@ -51,6 +56,6 @@ public class RegisterServiceImpl implements IRegisterService {
         
         userRepository.save(user);
         
-        System.out.println("-> Yerel PostgreSQL veritabanında 'AppUser' varlığı başarıyla oluşturuldu.");
+        log.info("-> Oracle 23c veritabanında 'AppUser' varlığı başarıyla oluşturuldu.");
     }
 }
