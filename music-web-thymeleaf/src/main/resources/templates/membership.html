@@ -76,7 +76,9 @@
         <script>
             async function buyPackage(tier) {
                 try {
-                    const res = await fetch('/music-credit-system/api/Membership/Buy?tier=' + tier, { method: 'POST', credentials: 'same-origin' });
+                    const buyUrl = '[[@{/api/Membership/Buy}]]' + '?tier=' + tier;
+                    const loginUrl = '[[@{/login}]]';
+                    const res = await fetch(buyUrl, { method: 'POST', credentials: 'same-origin' });
                     if (res.ok) {
                         const data = await res.json();
                         document.getElementById('currentTier').innerText = data.tier;
@@ -85,9 +87,9 @@
                         const data = await res.json();
                         if (res.status === 401) {
                             if (typeof Turbo !== 'undefined') {
-                                Turbo.visit('/music-credit-system/login');
+                                Turbo.visit(loginUrl);
                             } else {
-                                window.location.href = '/music-credit-system/login';
+                                window.location.href = loginUrl;
                             }
                         } else {
                             notify(data.message || 'Satın alma başarısız.', 'error');

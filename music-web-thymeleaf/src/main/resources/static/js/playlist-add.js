@@ -35,7 +35,7 @@ async function loadPlaylistOptions() {
         if (res.status === 401) {
             closePlaylistModal();
             notify('Playlist için giriş yapmalısınız.', 'info');
-            window.location.href = '/music-credit-system/login.xhtml';
+            window.location.href = '/login';
             return;
         }
 

@@ -34,6 +34,7 @@ public class OutboxRelayScheduler {
     private final ObjectMapper objectMapper;
     private final tr.com.huseyinaydin.infrastructure.monitoring.metrics.MusicPlatformMetrics metrics;
 
+    @Autowired
     public OutboxRelayScheduler(IOutboxRepository outboxRepository,
                                 @Autowired(required = false) KafkaTemplate<String, Object> kafkaTemplate,
                                 ObjectMapper objectMapper,

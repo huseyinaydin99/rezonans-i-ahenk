@@ -15,6 +15,8 @@ public class OperationClaim extends Entity<UUID> {
         super();
         this.id = UUID.randomUUID();
         this.name = name;
+        this.createdDate = java.time.LocalDateTime.now();
+        this.version = 0L;
     }
 
     public String getName() { return name; }

@@ -71,10 +71,24 @@ public class ApplicationUser extends Entity<UUID> {
         this.isActive = false;
     }
 
+    public void setId(UUID id) { this.id = id; }
     public UUID getCustomerId() { return customerId; }
+    public void setCustomerId(UUID customerId) { this.customerId = customerId; }
+
     public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
     public byte[] getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(byte[] passwordHash) { this.passwordHash = passwordHash; }
+
     public byte[] getPasswordSalt() { return passwordSalt; }
+    public void setPasswordSalt(byte[] passwordSalt) { this.passwordSalt = passwordSalt; }
+
     public boolean isActive() { return isActive; }
+    public boolean getIsActive() { return isActive; }
+    public void setIsActive(boolean isActive) { this.isActive = isActive; }
+    public void setActive(boolean active) { this.isActive = active; }
+
     public UserRole getRole() { return role; }
+    public void setRole(UserRole role) { this.role = role; }
 }

@@ -25,7 +25,7 @@ public class EmailConfig {
     @Value("${spring.mail.username:}")
     private String username;
 
-    @Value("${spring.mail.password}")
+    @Value("${spring.mail.password:secret}")
     private String password;
 
     @Bean

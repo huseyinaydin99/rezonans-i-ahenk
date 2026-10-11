@@ -32,10 +32,21 @@ public class RefreshToken {
     }
 
     public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
+
     public UUID getUserId() { return userId; }
+    public void setUserId(UUID userId) { this.userId = userId; }
+
     public String getToken() { return token; }
+    public void setToken(String token) { this.token = token; }
+
     public LocalDateTime getExpiration() { return expiration; }
+    public void setExpiration(LocalDateTime expiration) { this.expiration = expiration; }
+
     public boolean isRevoked() { return isRevoked; }
+    public boolean getIsRevoked() { return isRevoked; }
+    public void setIsRevoked(boolean isRevoked) { this.isRevoked = isRevoked; }
+    public void setRevoked(boolean revoked) { this.isRevoked = revoked; }
 
     public void revoke() { this.isRevoked = true; }
 

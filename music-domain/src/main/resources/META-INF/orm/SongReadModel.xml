@@ -4,7 +4,7 @@
                  xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence/orm https://jakarta.ee/xml/ns/persistence/orm_3_1.xsd"
                  version="3.1">
     
-    <entity class="tr.com.huseyinaydin.domain.song.read.SongReadModel" name="SongReadModel">
+    <entity class="tr.com.huseyinaydin.domain.song.read.SongReadModel" name="SongReadModel" access="FIELD">
         <table name="v_song_catalog"/>
         <attributes>
             <id name="id">

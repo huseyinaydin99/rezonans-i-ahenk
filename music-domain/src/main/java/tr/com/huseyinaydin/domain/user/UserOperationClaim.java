@@ -17,6 +17,8 @@ public class UserOperationClaim extends Entity<UUID> {
         this.id = UUID.randomUUID();
         this.userId = userId;
         this.operationClaimId = operationClaimId;
+        this.createdDate = java.time.LocalDateTime.now();
+        this.version = 0L;
     }
 
     public UUID getUserId() { return userId; }

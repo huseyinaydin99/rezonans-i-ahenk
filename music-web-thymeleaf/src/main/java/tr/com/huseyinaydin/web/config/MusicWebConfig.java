@@ -23,6 +23,7 @@ import java.util.List;
 @Configuration
 @EnableWebMvc
 @org.springframework.cache.annotation.EnableCaching
+@org.springframework.context.annotation.PropertySource(value = "classpath:application.properties", ignoreResourceNotFound = true)
 @ComponentScan(basePackages = "tr.com.huseyinaydin.web", excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class))
 @Import(OpenApiConfig.class)
 public class MusicWebConfig implements WebMvcConfigurer {

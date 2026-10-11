@@ -7,12 +7,6 @@
         version="3.1">
 
     
-    <mapped-superclass class="tr.com.huseyinaydin.domain.common.Entity" access="FIELD">
-
-        <attributes>
-            <transient name="domainEvents"/>
-        </attributes>
-
-    </mapped-superclass>
+    <mapped-superclass class="tr.com.huseyinaydin.domain.common.Entity" access="FIELD"/>
 
 </entity-mappings>

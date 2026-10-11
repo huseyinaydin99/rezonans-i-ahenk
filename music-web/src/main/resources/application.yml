@@ -18,9 +18,10 @@ spring:
           sequence:
             default_allocation_size: 50
         jdbc:
-          batch_size: 50
-        order_inserts: true
-        order_updates: true
+          batch_size: 0
+          batch_versioned_data: false
+        order_inserts: false
+        order_updates: false
   mail:
     password: ${BANKING_SMTP_PASSWORD:secret}
 
@@ -45,3 +46,23 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+music:
+  playback:
+    urls:
+      - https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3
+      - https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3
+      - https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3
+      - https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3
+      - https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3
+  tiers:
+    levels:
+      Basic: 0
+      Gold: 1
+      Premium: 2
+      Elit: 3
+    songs:
+      3: Premium
+      4: Premium
+      5: Elit
+

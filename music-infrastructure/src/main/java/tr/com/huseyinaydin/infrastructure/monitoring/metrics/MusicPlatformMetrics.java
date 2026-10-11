@@ -23,10 +23,21 @@ public class MusicPlatformMetrics {
         meterRegistry.gauge("music.sessions.active", activeListeningSessions);
     }
 
+    public void incrementSongsPlayed() {
+        incrementSongsPlayed("General");
+    }
+
     public void incrementSongsPlayed(String genre) {
         Counter.builder("music.songs.streamed.total")
                 .description("Toplam çalınan/dinlenen şarkı sayısı")
                 .tag("genre", genre != null ? genre : "Unknown")
+                .register(meterRegistry)
+                .increment();
+    }
+
+    public void incrementMembershipsUpgraded() {
+        Counter.builder("music.memberships.upgraded.total")
+                .description("Premium veya Elite pakete geçen toplam kullanıcı sayısı")
                 .register(meterRegistry)
                 .increment();
     }

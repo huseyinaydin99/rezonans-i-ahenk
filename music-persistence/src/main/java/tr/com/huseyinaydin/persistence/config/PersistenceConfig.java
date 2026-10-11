@@ -21,6 +21,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
+@org.springframework.context.annotation.PropertySource(value = "classpath:application.properties", ignoreResourceNotFound = true)
 @org.springframework.context.annotation.ComponentScan(basePackages = "tr.com.huseyinaydin.persistence")
 @org.springframework.transaction.annotation.EnableTransactionManagement
 public class PersistenceConfig {
@@ -55,6 +56,7 @@ public class PersistenceConfig {
         config.setDriverClassName(driverClassName);
         config.setUsername(dbUsername);
         config.setPassword(dbPassword);
+        config.setAutoCommit(false);
         config.setMaximumPoolSize(20);
         config.setMinimumIdle(5);
         config.setConnectionTimeout(30_000);
@@ -122,14 +124,13 @@ public class PersistenceConfig {
         props.setProperty("hibernate.show_sql", showSql);
         
         props.setProperty("hibernate.format_sql", "true");
-        props.setProperty("hibernate.jdbc.batch_size", "50");
-        props.setProperty("hibernate.order_inserts", "true");
-        props.setProperty("hibernate.order_updates", "true");
-        props.setProperty("hibernate.jdbc.batch_versioned_data", "true");
+        props.setProperty("hibernate.jdbc.batch_size", "0");
+        props.setProperty("hibernate.order_inserts", "false");
+        props.setProperty("hibernate.order_updates", "false");
+        props.setProperty("hibernate.jdbc.batch_versioned_data", "false");
         props.setProperty("hibernate.id.new_generator_mappings", "true");
         props.setProperty("hibernate.id.sequence.default_allocation_size", "50");
         props.setProperty("hibernate.generate_statistics", "false");
-        props.setProperty("hibernate.connection.provider_disables_autocommit", "true");
         return props;
     }
 }

@@ -17,8 +17,13 @@ public class ListenEventConsumer {
     // veya try-catch yapısı kullanılabilir. Projede Cassandra aktifse enjekte edilir.
     private final IListenHistoryCassandraRepository cassandraRepository;
 
-    public ListenEventConsumer(IListenHistoryCassandraRepository cassandraRepository) {
+    @org.springframework.beans.factory.annotation.Autowired
+    public ListenEventConsumer(@org.springframework.beans.factory.annotation.Autowired(required = false) IListenHistoryCassandraRepository cassandraRepository) {
         this.cassandraRepository = cassandraRepository;
+    }
+
+    public ListenEventConsumer() {
+        this.cassandraRepository = null;
     }
 
     @KafkaListener(topics = "song-listen-events", groupId = "analytics-group")
@@ -32,9 +37,12 @@ public class ListenEventConsumer {
             ListenHistoryEntity history = new ListenHistoryEntity(userId, songId, timestamp);
             
             // Veriyi Cassandra'ya kaydet (Spark için Big Data Data Pipeline)
-            cassandraRepository.save(history);
-            
-            logger.info("✅ [DATA PIPELINE] Dinleme logu Cassandra Analytics tablosuna yazıldı: User={}, Song={}", userId, songId);
+            if (cassandraRepository != null) {
+                cassandraRepository.save(history);
+                logger.info("✅ [DATA PIPELINE] Dinleme logu Cassandra Analytics tablosuna yazıldı: User={}, Song={}", userId, songId);
+            } else {
+                logger.info("ℹ️ [DATA PIPELINE] Dinleme logu işlendi (Cassandra inaktif): User={}, Song={}", userId, songId);
+            }
         } catch (Exception e) {
             logger.error("❌ [DATA PIPELINE] Kafka mesajı işlenirken hata oluştu (Cassandra bağlantısı veya format hatası): {}", e.getMessage());
         }

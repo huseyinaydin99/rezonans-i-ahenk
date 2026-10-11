@@ -33,6 +33,7 @@ import java.util.Properties;
  * Jaeger, Zipkin ve OpenTelemetry (OTLP) entegrasyonlarını sağlar.
  */
 @Configuration
+@org.springframework.context.annotation.PropertySource(value = "classpath:application.properties", ignoreResourceNotFound = true)
 public class TracingConfig {
 
     @Bean
@@ -44,6 +45,10 @@ public class TracingConfig {
         if (properties != null) {
             configurer.setProperties(properties);
         }
+        configurer.setLocations(new ClassPathResource("application.properties"));
+        configurer.setLocalOverride(true);
+        configurer.setIgnoreResourceNotFound(true);
+        configurer.setIgnoreUnresolvablePlaceholders(true);
         return configurer;
     }
 

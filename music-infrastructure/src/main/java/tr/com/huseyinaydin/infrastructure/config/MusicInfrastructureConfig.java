@@ -35,6 +35,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @Configuration
 @EnableCaching
+@org.springframework.context.annotation.PropertySource(value = "classpath:application.properties", ignoreResourceNotFound = true)
 @org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories(basePackages = "tr.com.huseyinaydin.infrastructure")
 @ComponentScan(basePackages = "tr.com.huseyinaydin.infrastructure")
 @EnableAspectJAutoProxy

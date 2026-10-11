@@ -30,10 +30,11 @@ public class MusicRecommendationServiceImpl implements IMusicRecommendationServi
     private final ISongReadRepository songReadRepository;
     private final tr.com.huseyinaydin.infrastructure.monitoring.metrics.MusicPlatformMetrics metrics;
 
+    @Autowired
     public MusicRecommendationServiceImpl(
             @Autowired(required = false) IUserRecommendationCassandraRepository recommendationCassandraRepository,
-            SparkRecommendationJob sparkRecommendationJob,
-            ISongReadRepository songReadRepository,
+            @Autowired(required = false) SparkRecommendationJob sparkRecommendationJob,
+            @Autowired(required = false) ISongReadRepository songReadRepository,
             @Autowired(required = false) tr.com.huseyinaydin.infrastructure.monitoring.metrics.MusicPlatformMetrics metrics) {
         this.recommendationCassandraRepository = recommendationCassandraRepository;
         this.sparkRecommendationJob = sparkRecommendationJob;
@@ -46,6 +47,10 @@ public class MusicRecommendationServiceImpl implements IMusicRecommendationServi
             SparkRecommendationJob sparkRecommendationJob,
             ISongReadRepository songReadRepository) {
         this(recommendationCassandraRepository, sparkRecommendationJob, songReadRepository, null);
+    }
+
+    public MusicRecommendationServiceImpl() {
+        this(null, null, null, null);
     }
 
     @Override
@@ -76,20 +81,24 @@ public class MusicRecommendationServiceImpl implements IMusicRecommendationServi
 
         // 2. Aşama: Cassandra'da kayıt yoksa (Cold Start / Yeni Kullanıcı), arka planda asenkron Spark analizini tetikle
         log.info("🤖 [COLD START / ASYNC SPARK] Kullanıcı ({}) için Cassandra'da önbellek bulunamadı. Arka planda Spark AI modeli tetikleniyor...", userId);
-        try {
-            sparkRecommendationJob.generateAndPersistRecommendationsAsync(userId, safeLimit);
-        } catch (Exception e) {
-            log.warn("Asenkron Spark işi tetiklenirken hata: {}", e.getMessage());
+        if (sparkRecommendationJob != null) {
+            try {
+                sparkRecommendationJob.generateAndPersistRecommendationsAsync(userId, safeLimit);
+            } catch (Exception e) {
+                log.warn("Asenkron Spark işi tetiklenirken hata: {}", e.getMessage());
+            }
         }
 
         // 3. Aşama: Anlık yanıt için CQRS Read kataloğundaki en popüler şarkıları dön (Zero Empty Result)
-        List<SongReadModel> catalog = songReadRepository.findAll(0, safeLimit);
-        if (!catalog.isEmpty()) {
-            log.info("🎵 [FALLBACK ENGINE] Gerçek katalog üzerinden {} adet popüler şarkı önerisi kullanıcıya sunuldu.", catalog.size());
-            if (metrics != null) {
-                metrics.incrementRecommendations("Catalog-Fallback");
+        if (songReadRepository != null) {
+            List<SongReadModel> catalog = songReadRepository.findAll(0, safeLimit);
+            if (catalog != null && !catalog.isEmpty()) {
+                log.info("🎵 [FALLBACK ENGINE] Gerçek katalog üzerinden {} adet popüler şarkı önerisi kullanıcıya sunuldu.", catalog.size());
+                if (metrics != null) {
+                    metrics.incrementRecommendations("Catalog-Fallback");
+                }
+                return catalog.stream().map(SongReadModel::getId).collect(Collectors.toList());
             }
-            return catalog.stream().map(SongReadModel::getId).collect(Collectors.toList());
         }
 
         return Collections.emptyList();

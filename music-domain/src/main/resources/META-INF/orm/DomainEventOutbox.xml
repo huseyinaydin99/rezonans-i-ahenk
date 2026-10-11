@@ -7,7 +7,7 @@
 
     <sequence-generator name="SEQ_DOMAIN_EVENT_OUTBOX_GEN" sequence-name="SEQ_DOMAIN_EVENT_OUTBOX" allocation-size="50"/>
 
-    <entity class="tr.com.huseyinaydin.domain.outbox.DomainEventOutbox" name="DomainEventOutbox">
+    <entity class="tr.com.huseyinaydin.domain.outbox.DomainEventOutbox" name="DomainEventOutbox" access="FIELD">
         <table name="domain_event_outbox"/>
         <attributes>
             <id name="id">

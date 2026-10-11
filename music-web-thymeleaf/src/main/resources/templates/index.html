@@ -85,7 +85,8 @@
             
             window.addEventListener('DOMContentLoaded', async function () {
                 try {
-                    const res = await fetch('/music-credit-system/recommendations');
+                    const recUrl = '[[@{/recommendations}]]';
+                    const res = await fetch(recUrl);
                     const html = await res.text();
                     document.getElementById('recommendations').innerHTML = html;
                     initHeroScrollNav('recommendations', 'recPrevBtn', 'recNextBtn');

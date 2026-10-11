@@ -38,9 +38,18 @@ public abstract class Customer extends Entity<UUID> {
     }
 
     public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+
     public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
     public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
     public boolean isActive() { return isActive; }
+    public boolean getIsActive() { return isActive; }
+    public void setIsActive(boolean isActive) { this.isActive = isActive; }
+    public void setActive(boolean active) { this.isActive = active; }
 
     public abstract String getFullName();
 }

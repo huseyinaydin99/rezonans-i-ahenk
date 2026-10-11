@@ -18,14 +18,23 @@ public class PlaybackAdapter implements IPlaybackService {
 
     private final ListenEventProducer listenEventProducer;
 
-    @Value("${music.playback.urls}")
+    @Value("${music.playback.urls:https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3,https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3,https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3,https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3,https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3}")
     private List<String> urls;
 
     // application.properties'ten (music.tiers.levels.*) çekilen veriler
-    private Map<String, Integer> levels = new HashMap<>();
+    private Map<String, Integer> levels = new HashMap<>() {{
+        put("Basic", 0);
+        put("Gold", 1);
+        put("Premium", 2);
+        put("Elit", 3);
+    }};
 
     // application.properties'ten (music.tiers.songs.*) çekilen veriler
-    private Map<String, String> songs = new HashMap<>();
+    private Map<String, String> songs = new HashMap<>() {{
+        put("3", "Premium");
+        put("4", "Premium");
+        put("5", "Elit");
+    }};
 
     public PlaybackAdapter(ListenEventProducer listenEventProducer) {
         this.listenEventProducer = listenEventProducer;
