@@ -5,4 +5,6 @@ import java.util.Map;
 
 public interface ISongSearchService {
     List<Map<String, Object>> searchSongs(String keyword);
+    Map<String, Object> getSongById(Long songId);
+    List<Map<String, Object>> getSongsByIds(List<Long> songIds);
 }

@@ -8,9 +8,9 @@
         <div class="fv-header">
             <div>
                 <h1 class="fv-title">Favorilerim</h1>
-                <p class="fv-subtitle">Beğendiğin tüm parçalar. 3 şarkı.</p>
+                <p class="fv-subtitle">Beğendiğin tüm parçalar. <span th:text="${likedCount != null ? likedCount : 0}">0</span> şarkı.</p>
             </div>
-            <div class="fv-actions">
+            <div class="fv-actions" th:if="${likedSongs != null and !likedSongs.isEmpty()}">
                 <button type="button" class="fv-btn-playall" onclick="playAllOnPage()">
                     <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
                     Tümünü Çal
@@ -21,52 +21,35 @@
             </div>
         </div>
 
-        <div class="fv-list">
-            <div class="fv-row">
+        <div th:if="${likedSongs == null or likedSongs.isEmpty()}" style="text-align: center; padding: 48px 20px; background: rgba(255, 255, 255, 0.02); border-radius: 12px; border: 1px dashed rgba(255, 255, 255, 0.1); margin-top: 24px;">
+            <span class="material-symbols-outlined" style="font-size: 56px; color: #6c757d; margin-bottom: 12px;">favorite_border</span>
+            <h3 style="color: #fff; font-size: 20px; margin-bottom: 8px;">Henüz favori şarkınız yok</h3>
+            <p style="color: #9aa0a6; max-width: 420px; margin: 0 auto 20px auto; font-size: 14px;">Müzik kartlarındaki kalp ikonuna basarak sevdiğiniz parçaları bu listeye ekleyebilirsiniz.</p>
+            <a th:href="@{/}" class="btn btn-outline-light px-4 py-2" style="border-radius: 8px; font-weight: 500;">Müzikleri Keşfet</a>
+        </div>
+
+        <div th:if="${likedSongs != null and !likedSongs.isEmpty()}" class="fv-list">
+            <div th:each="song : ${likedSongs}" class="fv-row">
                 <div class="fv-row-main">
                     <div class="fv-cover">
-                        <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&amp;fit=crop&amp;w=100&amp;q=80" alt="Starboy" />
+                        <img th:src="${song.cover != null ? song.cover : 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300'}" th:alt="${song.title}" />
                         <div class="fv-cover-overlay queue-item"
-                             data-song-id="6"
-                             data-song-title="Starboy"
-                             data-song-artist="The Weeknd"
-                             onclick="player.playFrom(6)">
-                            <span class="material-symbols-outlined">play_arrow</span>
+                             th:data-song-id="${song.id}"
+                             th:data-song-title="${song.title}"
+                             th:data-song-artist="${song.artist}"
+                             th:onclick="|player.playFrom(${song.id})|">
+                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
                         </div>
                     </div>
                     <div class="fv-row-info">
-                        <span class="fv-row-title">Starboy</span>
-                        <span class="fv-row-artist">The Weeknd</span>
+                        <span class="fv-row-title" th:text="${song.title}"></span>
+                        <span class="fv-row-artist" th:text="${song.artist}"></span>
                     </div>
                 </div>
                 <div class="fv-row-meta">
-                    <span class="fv-duration">3:50</span>
-                    <span class="fv-badge fv-badge--1">Basic</span>
-                    <button class="fv-icon-btn like-btn text-danger" data-song-id="6" onclick="toggleLike(6, this)" title="Beğeniyi kaldır">&#9829;</button>
-                </div>
-            </div>
-            
-            <div class="fv-row">
-                <div class="fv-row-main">
-                    <div class="fv-cover">
-                        <img src="https://images.unsplash.com/photo-1493225457124-a1a2a53b51ee?auto=format&amp;fit=crop&amp;w=100&amp;q=80" alt="Vampire" />
-                        <div class="fv-cover-overlay queue-item"
-                             data-song-id="4"
-                             data-song-title="Vampire"
-                             data-song-artist="Olivia Rodrigo"
-                             onclick="player.playFrom(4)">
-                            <span class="material-symbols-outlined">play_arrow</span>
-                        </div>
-                    </div>
-                    <div class="fv-row-info">
-                        <span class="fv-row-title">Vampire</span>
-                        <span class="fv-row-artist">Olivia Rodrigo</span>
-                    </div>
-                </div>
-                <div class="fv-row-meta">
-                    <span class="fv-duration">3:39</span>
-                    <span class="fv-badge fv-badge--2">Gold</span>
-                    <button class="fv-icon-btn like-btn text-danger" data-song-id="4" onclick="toggleLike(4, this)" title="Beğeniyi kaldır">&#9829;</button>
+                    <span class="fv-duration" th:text="${song.duration != null ? song.duration : '3:30'}"></span>
+                    <span class="fv-badge" th:classappend="${song.tier == 'Premium'} ? 'fv-badge--2' : (${song.tier == 'Elit'} ? 'fv-badge--3' : 'fv-badge--1')" th:text="${song.tier != null ? song.tier : 'Basic'}"></span>
+                    <button class="fv-icon-btn like-btn text-danger" th:data-song-id="${song.id}" th:onclick="|toggleLike(${song.id}, this)|" title="Beğeniyi kaldır">&#9829;</button>
                 </div>
             </div>
         </div>

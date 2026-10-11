@@ -29,6 +29,17 @@ window.toggleLike = async function(songId, btn) {
             // Sunucudan gelen kesin duruma eşitle
             setHeart(btn, data.liked);
             notify(data.liked ? 'Şarkı favorilere eklendi.' : 'Şarkı favorilerden çıkarıldı.', 'success', 2000);
+
+            // Eğer favoriler sayfasındaysak ve şarkı çıkarıldıysa satırı görsel olarak soluklaştır
+            const fvRow = btn.closest('.fv-row');
+            if (fvRow) {
+                if (!data.liked) {
+                    fvRow.style.opacity = '0.35';
+                    fvRow.style.transition = 'opacity 0.3s ease';
+                } else {
+                    fvRow.style.opacity = '1';
+                }
+            }
         } else {
             // Sunucu hatası varsa geri al
             setHeart(btn, isCurrentlyLiked);
@@ -68,7 +79,7 @@ window.initLikes = async function() {
         if (!res.ok) return;   // giriş yoksa sessiz geç
         
         const likedIds = await res.json();
-        const likedSet = new Set(likedIds);
+        const likedSet = new Set((likedIds || []).map(Number));
 
         buttons.forEach(btn => {
             const idAttr = btn.getAttribute('data-song-id');
@@ -80,10 +91,11 @@ window.initLikes = async function() {
     } catch (e) {
         console.error("Favoriler yüklenemedi", e);
     }
-}
+};
 
-// Event bağlamaları (Global yapılar)
+// Event bağlamaları (Hem Turbo SPA geçişleri hem normal sayfa yüklemeleri)
 document.addEventListener('turbo:load', initLikes);
-window.addEventListener('DOMContentLoaded', () => {
-    if (typeof Turbo === 'undefined') initLikes();
-});
+document.addEventListener('DOMContentLoaded', initLikes);
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initLikes();
+}

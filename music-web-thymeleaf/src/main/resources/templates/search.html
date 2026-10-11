@@ -39,7 +39,12 @@
                     <span th:if="${song.genre != null}" class="text-secondary" style="font-size: 0.85em;" th:text="' • ' + ${song.genre}"></span>
                 </p>
                 <div class="mg-card-actions">
-                    <button class="mg-icon-btn like-btn text-muted" th:data-song-id="${song.id}" th:onclick="|toggleLike(${song.id}, this)|" title="Beğen">&#9825;</button>
+                    <button class="mg-icon-btn like-btn" 
+                            th:classappend="${likedSongIds != null and likedSongIds.contains(song.id)} ? 'text-danger' : 'text-muted'"
+                            th:data-song-id="${song.id}" 
+                            th:onclick="|toggleLike(${song.id}, this)|" 
+                            th:title="${likedSongIds != null and likedSongIds.contains(song.id)} ? 'Beğeniyi kaldır' : 'Beğen'"
+                            th:text="${likedSongIds != null and likedSongIds.contains(song.id)} ? '♥' : '♡'">&#9825;</button>
                     <button class="mg-icon-btn" th:onclick="|addToPlaylist(${song.id})|" title="Playlist'e ekle">
                         <span class="material-symbols-outlined">playlist_add</span>
                     </button>
