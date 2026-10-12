@@ -51,7 +51,7 @@
             <div th:each="song : ${songs}" class="fv-row">
                 <div class="fv-row-main">
                     <div class="fv-cover">
-                        <img th:src="${song.cover != null ? song.cover : 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300'}" th:alt="${song.title}" />
+                        <img th:src="${song.cover != null ? song.cover : @{/images/default-cover.svg}}" th:alt="${song.title}" onerror="window.onImageError(this, 'song')" />
                         <div class="fv-cover-overlay queue-item"
                              th:data-song-id="${song.id}"
                              th:data-song-title="${song.title}"

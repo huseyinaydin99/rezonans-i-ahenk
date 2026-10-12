@@ -2,7 +2,7 @@
     <th:block th:each="song : ${personalizedRecommendations}">
         <div class="mg-card mg-card--tier-1">
             <div class="mg-card-cover">
-                <img th:src="${song.coverUrl != null ? song.coverUrl : 'https://via.placeholder.com/150'}" th:alt="${song.title}" />
+                <img th:src="${song.coverUrl != null ? song.coverUrl : @{/images/default-cover.svg}}" th:alt="${song.title}" onerror="window.onImageError(this, 'song')" />
                 <div class="mg-card-play-overlay">
                     <button class="mg-card-play queue-item" 
                             th:data-song-id="${song.songId}" 

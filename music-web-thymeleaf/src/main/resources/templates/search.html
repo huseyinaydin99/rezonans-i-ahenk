@@ -18,7 +18,7 @@
             <div th:each="song : ${songs}" 
                  th:class="'mg-card ' + (${song.tier == 'Premium'} ? 'mg-card--tier-2' : (${song.tier == 'Elit'} ? 'mg-card--tier-3' : 'mg-card--tier-1'))">
                 <div class="mg-card-cover">
-                    <img th:src="${song.cover != null ? song.cover : 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300'}" th:alt="${song.title}" />
+                    <img th:src="${song.cover != null ? song.cover : @{/images/default-cover.svg}}" th:alt="${song.title}" onerror="window.onImageError(this, 'song')" />
                     <div class="mg-card-play-overlay">
                         <button class="mg-card-play queue-item" 
                                 th:data-song-id="${song.id}" 

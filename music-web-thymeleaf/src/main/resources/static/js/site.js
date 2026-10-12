@@ -39,12 +39,13 @@ function initAutocomplete() {
                 data.forEach(song => {
                     const tierBadge = song.tier ? `<span style="font-size: 10px; background: rgba(0, 255, 204, 0.2); color: #00ffcc; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">${song.tier}</span>` : '';
                     const genreInfo = song.genre ? `<span style="color: #6c757d; font-size: 11px; margin-left: 6px;">• ${song.genre}</span>` : '';
-                    const coverImg = song.cover || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300';
+                    const defaultSvg = window.getAppUrl ? window.getAppUrl('/images/default-cover.svg') : '/images/default-cover.svg';
+                    const coverImg = song.cover || defaultSvg;
                     const targetUrl = baseSearchPage + '?q=' + encodeURIComponent(song.title);
 
                     html += `
                         <a href="${targetUrl}" style="display: flex; align-items: center; padding: 10px 14px; text-decoration: none; border-bottom: 1px solid #2a2e39; transition: background 0.2s;">
-                            <img src="${coverImg}" alt="${song.title}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover; margin-right: 12px; flex-shrink: 0;">
+                            <img src="${coverImg}" alt="${song.title}" onerror="window.onImageError(this, 'song')" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover; margin-right: 12px; flex-shrink: 0;">
                             <div style="flex: 1; min-width: 0;">
                                 <div style="color: #fff; font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                     ${song.title} ${tierBadge}
@@ -87,6 +88,28 @@ function initAutocomplete() {
     });
 }
 
+// --- Global Image Fallback & Rescue Handler ---
+window.onImageError = function(img, type) {
+    if (!img || img.dataset.fallbackApplied === 'true') return;
+    img.dataset.fallbackApplied = 'true';
+    const fallbackPath = (type === 'artist') ? '/images/default-artist.svg' : '/images/default-cover.svg';
+    const resolvedUrl = window.getAppUrl ? window.getAppUrl(fallbackPath) : fallbackPath;
+    img.src = resolvedUrl;
+};
+
+// Global capture-phase error listener for images (image error events do not bubble)
+document.addEventListener('error', function(event) {
+    if (event.target && event.target.tagName === 'IMG') {
+        const img = event.target;
+        if (img.dataset.fallbackApplied === 'true') return;
+        const isArtist = img.classList.contains('al-avatar') ||
+                         img.classList.contains('hero-avatar') ||
+                         img.closest('.al-avatar') !== null ||
+                         (img.alt && img.alt.toLowerCase().includes('sanatçı'));
+        window.onImageError(img, isArtist ? 'artist' : 'song');
+    }
+}, true);
+
 // Güvenli başlatıcı: hem DOMContentLoaded, hem Turbo, hem de direkt hazır olma durumunu kapsar
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initAutocomplete);
@@ -94,3 +117,4 @@ if (document.readyState === 'loading') {
     initAutocomplete();
 }
 document.addEventListener('turbo:load', initAutocomplete);
+

@@ -17,10 +17,69 @@
             </div>
         </div>
         <div class="al-grid" id="artistGrid">
-            <!-- Mock Data -->
-            <a th:href="@{/artist-details(id=1)}" class="al-card" data-name="the weeknd">
+            <a th:href="@{/search(q='Depeche Mode')}" class="al-card" data-name="depeche mode">
                 <div class="al-avatar">
-                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&amp;fit=crop&amp;w=200&amp;q=80" alt="The Weeknd" />
+                    <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&amp;fit=crop&amp;w=300&amp;q=80" alt="Depeche Mode" onerror="window.onImageError(this, 'artist')" />
+                </div>
+                <div class="al-name">
+                    <span>Depeche Mode</span>
+                    <span class="material-symbols-outlined al-verified" style="font-variation-settings: 'FILL' 1;" title="Doğrulanmış">verified</span>
+                </div>
+                <p class="al-listeners">12.450.000 Aylık Dinleyici</p>
+            </a>
+            <a th:href="@{/search(q='The Midnight')}" class="al-card" data-name="the midnight">
+                <div class="al-avatar">
+                    <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&amp;fit=crop&amp;w=300&amp;q=80" alt="The Midnight" onerror="window.onImageError(this, 'artist')" />
+                </div>
+                <div class="al-name">
+                    <span>The Midnight</span>
+                    <span class="material-symbols-outlined al-verified" style="font-variation-settings: 'FILL' 1;" title="Doğrulanmış">verified</span>
+                </div>
+                <p class="al-listeners">4.850.000 Aylık Dinleyici</p>
+            </a>
+            <a th:href="@{/search(q='Dua Lipa')}" class="al-card" data-name="dua lipa">
+                <div class="al-avatar">
+                    <img src="https://images.unsplash.com/photo-1520523839898-507121c21528?auto=format&amp;fit=crop&amp;w=300&amp;q=80" alt="Dua Lipa" onerror="window.onImageError(this, 'artist')" />
+                </div>
+                <div class="al-name">
+                    <span>Dua Lipa</span>
+                    <span class="material-symbols-outlined al-verified" style="font-variation-settings: 'FILL' 1;" title="Doğrulanmış">verified</span>
+                </div>
+                <p class="al-listeners">78.320.000 Aylık Dinleyici</p>
+            </a>
+            <a th:href="@{/search(q='FM-84')}" class="al-card" data-name="fm-84">
+                <div class="al-avatar">
+                    <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&amp;fit=crop&amp;w=300&amp;q=80" alt="FM-84" onerror="window.onImageError(this, 'artist')" />
+                </div>
+                <div class="al-name">
+                    <span>FM-84</span>
+                    <span class="material-symbols-outlined al-verified" style="font-variation-settings: 'FILL' 1;" title="Doğrulanmış">verified</span>
+                </div>
+                <p class="al-listeners">2.150.000 Aylık Dinleyici</p>
+            </a>
+            <a th:href="@{/search(q='Kavinsky')}" class="al-card" data-name="kavinsky">
+                <div class="al-avatar">
+                    <img src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&amp;fit=crop&amp;w=300&amp;q=80" alt="Kavinsky" onerror="window.onImageError(this, 'artist')" />
+                </div>
+                <div class="al-name">
+                    <span>Kavinsky</span>
+                    <span class="material-symbols-outlined al-verified" style="font-variation-settings: 'FILL' 1;" title="Doğrulanmış">verified</span>
+                </div>
+                <p class="al-listeners">6.700.000 Aylık Dinleyici</p>
+            </a>
+            <a th:href="@{/search(q='Lazerhawk')}" class="al-card" data-name="lazerhawk">
+                <div class="al-avatar">
+                    <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&amp;fit=crop&amp;w=300&amp;q=80" alt="Lazerhawk" onerror="window.onImageError(this, 'artist')" />
+                </div>
+                <div class="al-name">
+                    <span>Lazerhawk</span>
+                    <span class="material-symbols-outlined al-verified" style="font-variation-settings: 'FILL' 1;" title="Doğrulanmış">verified</span>
+                </div>
+                <p class="al-listeners">1.890.000 Aylık Dinleyici</p>
+            </a>
+            <a th:href="@{/search(q='The Weeknd')}" class="al-card" data-name="the weeknd">
+                <div class="al-avatar">
+                    <img src="https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&amp;fit=crop&amp;w=300&amp;q=80" alt="The Weeknd" onerror="window.onImageError(this, 'artist')" />
                 </div>
                 <div class="al-name">
                     <span>The Weeknd</span>
@@ -28,9 +87,19 @@
                 </div>
                 <p class="al-listeners">108.450.000 Aylık Dinleyici</p>
             </a>
-            <a th:href="@{/artist-details(id=1)}" class="al-card" data-name="ed sheeran">
+            <a th:href="@{/search(q='Lachi James')}" class="al-card" data-name="lachi james">
                 <div class="al-avatar">
-                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&amp;fit=crop&amp;w=200&amp;q=80" alt="Ed Sheeran" />
+                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&amp;fit=crop&amp;w=300&amp;q=80" alt="Lachi James" onerror="window.onImageError(this, 'artist')" />
+                </div>
+                <div class="al-name">
+                    <span>Lachi James</span>
+                    <span class="material-symbols-outlined al-verified" style="font-variation-settings: 'FILL' 1;" title="Doğrulanmış">verified</span>
+                </div>
+                <p class="al-listeners">980.000 Aylık Dinleyici</p>
+            </a>
+            <a th:href="@{/search(q='Ed Sheeran')}" class="al-card" data-name="ed sheeran">
+                <div class="al-avatar">
+                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&amp;fit=crop&amp;w=300&amp;q=80" alt="Ed Sheeran" onerror="window.onImageError(this, 'artist')" />
                 </div>
                 <div class="al-name">
                     <span>Ed Sheeran</span>
@@ -38,15 +107,35 @@
                 </div>
                 <p class="al-listeners">85.320.000 Aylık Dinleyici</p>
             </a>
-            <a th:href="@{/artist-details(id=1)}" class="al-card" data-name="queen">
+            <a th:href="@{/search(q='Queen')}" class="al-card" data-name="queen">
                 <div class="al-avatar">
-                    <img src="https://images.unsplash.com/photo-1493225457124-a1a2a53b51ee?auto=format&amp;fit=crop&amp;w=200&amp;q=80" alt="Queen" />
+                    <img src="https://images.unsplash.com/photo-1493225457124-a1a2a53b51ee?auto=format&amp;fit=crop&amp;w=300&amp;q=80" alt="Queen" onerror="window.onImageError(this, 'artist')" />
                 </div>
                 <div class="al-name">
                     <span>Queen</span>
                     <span class="material-symbols-outlined al-verified" style="font-variation-settings: 'FILL' 1;" title="Doğrulanmış">verified</span>
                 </div>
                 <p class="al-listeners">45.120.000 Aylık Dinleyici</p>
+            </a>
+            <a th:href="@{/search(q='Miles Davis')}" class="al-card" data-name="miles davis">
+                <div class="al-avatar">
+                    <img src="https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&amp;fit=crop&amp;w=300&amp;q=80" alt="Miles Davis" onerror="window.onImageError(this, 'artist')" />
+                </div>
+                <div class="al-name">
+                    <span>Miles Davis</span>
+                    <span class="material-symbols-outlined al-verified" style="font-variation-settings: 'FILL' 1;" title="Doğrulanmış">verified</span>
+                </div>
+                <p class="al-listeners">3.450.000 Aylık Dinleyici</p>
+            </a>
+            <a th:href="@{/search(q='Dave Brubeck')}" class="al-card" data-name="dave brubeck">
+                <div class="al-avatar">
+                    <img src="https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&amp;fit=crop&amp;w=300&amp;q=80" alt="Dave Brubeck" onerror="window.onImageError(this, 'artist')" />
+                </div>
+                <div class="al-name">
+                    <span>Dave Brubeck</span>
+                    <span class="material-symbols-outlined al-verified" style="font-variation-settings: 'FILL' 1;" title="Doğrulanmış">verified</span>
+                </div>
+                <p class="al-listeners">2.120.000 Aylık Dinleyici</p>
             </a>
         </div>
         <p class="al-empty" id="artistEmpty" style="display:none;">Aramanla eşleşen sanatçı bulunamadı.</p>

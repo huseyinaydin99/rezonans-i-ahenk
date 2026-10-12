@@ -169,6 +169,18 @@ public class WebController {
         return "artists";
     }
 
+    @GetMapping({"/artist-details", "/artist-details.xhtml"})
+    public String artistDetails(@RequestParam(value = "name", required = false) String name,
+                                @RequestParam(value = "id", required = false) String id) {
+        if (tr.com.huseyinaydin.web.security.CurrentUser.get().isEmpty()) {
+            return "redirect:/login";
+        }
+        if (name != null && !name.isBlank()) {
+            return "redirect:/search?q=" + java.net.URLEncoder.encode(name.trim(), java.nio.charset.StandardCharsets.UTF_8);
+        }
+        return "redirect:/artists";
+    }
+
     @GetMapping({"/genres", "/genres.xhtml"})
     public String genres() {
         if (tr.com.huseyinaydin.web.security.CurrentUser.get().isEmpty()) {

@@ -56,7 +56,17 @@ if (!window.player) {
                 this._attempts = 0;
                 this.audio.src = data.audioUrl;
                 this.el('gp-title').innerText = data.title;
-                this.el('gp-artist').innerText = song.artist || '';
+                this.el('gp-artist').innerText = data.artist || song.artist || '';
+
+                const coverEl = this.el('gp-cover');
+                const iconEl = this.el('gp-thumb-icon');
+                if (coverEl) {
+                    const coverSrc = data.cover || (window.getAppUrl ? window.getAppUrl('/images/default-cover.svg') : '/images/default-cover.svg');
+                    coverEl.src = coverSrc;
+                    coverEl.style.display = 'block';
+                    if (iconEl) iconEl.style.display = 'none';
+                }
+
                 this.el('globalPlayer').style.display = 'block';
                 this.audio.play();
                 return;
