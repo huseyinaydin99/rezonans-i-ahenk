@@ -32,24 +32,24 @@
             <div th:each="song : ${likedSongs}" class="fv-row">
                 <div class="fv-row-main">
                     <div class="fv-cover">
-                        <img th:src="${song.cover != null ? song.cover : @{/images/default-cover.svg}}" th:alt="${song.title}" onerror="window.onImageError(this, 'song')" />
+                        <img th:src="${song['cover'] != null and !#strings.isEmpty(song['cover'])} ? ${song['cover']} : @{/images/default-cover.svg}" th:alt="${song['title']}" onerror="window.onImageError(this, 'song')" />
                         <div class="fv-cover-overlay queue-item"
-                             th:data-song-id="${song.id}"
-                             th:data-song-title="${song.title}"
-                             th:data-song-artist="${song.artist}"
-                             th:onclick="|player.playFrom(${song.id})|">
+                             th:data-song-id="${song['id']}"
+                             th:data-song-title="${song['title']}"
+                             th:data-song-artist="${song['artist']}"
+                             th:onclick="|player.playFrom(${song['id']})|">
                             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
                         </div>
                     </div>
                     <div class="fv-row-info">
-                        <span class="fv-row-title" th:text="${song.title}"></span>
-                        <span class="fv-row-artist" th:text="${song.artist}"></span>
+                        <span class="fv-row-title" th:text="${song['title']}"></span>
+                        <span class="fv-row-artist" th:text="${song['artist']}"></span>
                     </div>
                 </div>
                 <div class="fv-row-meta">
-                    <span class="fv-duration" th:text="${song.duration != null ? song.duration : '3:30'}"></span>
-                    <span class="fv-badge" th:classappend="${song.tier == 'Premium'} ? 'fv-badge--2' : (${song.tier == 'Elit'} ? 'fv-badge--3' : 'fv-badge--1')" th:text="${song.tier != null ? song.tier : 'Basic'}"></span>
-                    <button class="fv-icon-btn like-btn text-danger" th:data-song-id="${song.id}" th:onclick="|toggleLike(${song.id}, this)|" title="Beğeniyi kaldır">&#9829;</button>
+                    <span class="fv-duration" th:text="${song['duration'] != null ? song['duration'] : '3:30'}"></span>
+                    <span class="fv-badge" th:classappend="${song['tier'] == 'Premium'} ? 'fv-badge--2' : (${song['tier'] == 'Elit'} ? 'fv-badge--3' : 'fv-badge--1')" th:text="${song['tier'] != null ? song['tier'] : 'Basic'}"></span>
+                    <button class="fv-icon-btn like-btn text-danger" th:data-song-id="${song['id']}" th:onclick="|toggleLike(${song['id']}, this)|" title="Beğeniyi kaldır">&#9829;</button>
                 </div>
             </div>
         </div>
