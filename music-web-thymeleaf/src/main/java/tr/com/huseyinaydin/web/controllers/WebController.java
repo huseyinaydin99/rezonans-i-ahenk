@@ -161,11 +161,17 @@ public class WebController {
         }
     }
 
+    @Autowired(required = false)
+    private tr.com.huseyinaydin.application.ports.IArtistService artistService;
+
     @GetMapping({"/artists", "/artists.xhtml"})
-    public String artists() {
+    public String artists(Model model) {
         if (tr.com.huseyinaydin.web.security.CurrentUser.get().isEmpty()) {
             return "redirect:/login";
         }
+        java.util.List<tr.com.huseyinaydin.application.artist.dtos.ResultArtistDto> artists =
+                (artistService != null) ? artistService.getFeaturedArtists() : java.util.Collections.emptyList();
+        model.addAttribute("artists", artists);
         return "artists";
     }
 

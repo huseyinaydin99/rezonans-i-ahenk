@@ -73,13 +73,19 @@ public class ArtistServiceImpl implements IArtistService {
     // --- YENİ EKLENEN VİTRİN METOTLARI ---
     @Override
     public List<ResultArtistDto> getFeaturedArtists() {
-        // Gerçekte veritabanı veya Elasticsearch'ten en çok dinlenen sanatçılar çekilir
         return Arrays.asList(
-            new ResultArtistDto("A1", "The Weeknd", "https://i.scdn.co/image/ab6761610000e5eb2a433291244bb49afaf82a5c", 112000000, true),
-            new ResultArtistDto("A2", "Taylor Swift", "https://i.scdn.co/image/ab6761610000e5eb5a00969a4698c3132a15fbb0", 98000000, true),
-            new ResultArtistDto("A3", "Daft Punk", "https://i.scdn.co/image/ab6761610000e5ebc3b0eb6014e7a7605dcc1b50", 45000000, false),
-            new ResultArtistDto("A4", "Hans Zimmer", "https://i.scdn.co/image/ab6761610000e5eb00921092161ce3dc16a3fcfa", 12000000, true),
-            new ResultArtistDto("A5", "Adele", "https://i.scdn.co/image/ab6761610000e5eb68f6e5892075d7f22615bd17", 65000000, true)
+            new ResultArtistDto("art-1", "The Midnight & Nikki Flores", "/images/artists/midnight-cockpit.svg", 1893317L, true),
+            new ResultArtistDto("art-2", "The Midnight", "/images/artists/midnight-cockpit.svg", 1002914L, true),
+            new ResultArtistDto("art-3", "Royalty Free Music Background", "/images/artists/neon-square.svg", 120823L, true),
+            new ResultArtistDto("art-4", "Zee-ker", "/images/artists/midnight-sax.svg", 310813L, true),
+            new ResultArtistDto("art-5", "Lachi James", "/images/artists/synthwave-triangle.svg", 760472L, true),
+            new ResultArtistDto("art-6", "Serene Serene", "/images/artists/cyber-portrait.svg", 552636L, true),
+            new ResultArtistDto("art-7", "Kavinsky", "/images/artists/kavinsky.svg", 199068L, true),
+            new ResultArtistDto("art-8", "Kavinsky, Angèle & Phoenix", "/images/artists/nightcall-group.svg", 464858L, true),
+            new ResultArtistDto("art-9", "FM-84 & Ollie Wride", "/images/artists/retro-sun.svg", 983997L, true),
+            new ResultArtistDto("art-10", "FM-84", "/images/artists/retro-sun.svg", 1617667L, true),
+            new ResultArtistDto("art-11", "FM-84, Timecop1983 & Josh Dally", "/images/artists/retro-sun.svg", 729879L, true),
+            new ResultArtistDto("art-12", "Lazerhawk", "/images/artists/lazerhawk-car.svg", 1535130L, true)
         );
     }
 

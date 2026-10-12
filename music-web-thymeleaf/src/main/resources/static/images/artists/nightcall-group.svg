@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="nightG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#05192d" />
+      <stop offset="100%" stop-color="#020914" />
+    </linearGradient>
+    <filter id="nightGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3.5" result="b" />
+      <feMerge>
+        <feMergeNode in="b" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="200" height="200" rx="100" fill="url(#nightG)" />
+  <circle cx="100" cy="100" r="92" fill="none" stroke="rgba(0, 242, 254, 0.4)" stroke-width="2" />
+
+  <!-- Blue Lightning / Beams Background -->
+  <path d="M 60 30 L 75 75 L 68 85 L 85 125" stroke="#00f2fe" stroke-width="2" fill="none" opacity="0.6" filter="url(#nightGlow)" />
+  <path d="M 140 30 L 125 75 L 132 85 L 115 125" stroke="#00f2fe" stroke-width="2" fill="none" opacity="0.6" filter="url(#nightGlow)" />
+
+  <!-- 3 Silhouettes (Nightcall Style) -->
+  <!-- Left Figure -->
+  <circle cx="68" cy="100" r="12" fill="#0d1f33" />
+  <path d="M 50 145 C 50 120, 86 120, 86 145 Z" fill="#0d1f33" />
+  
+  <!-- Right Figure -->
+  <circle cx="132" cy="100" r="12" fill="#0d1f33" />
+  <path d="M 114 145 C 114 120, 150 120, 150 145 Z" fill="#0d1f33" />
+
+  <!-- Center Lead Figure (Kavinsky) -->
+  <circle cx="100" cy="92" r="15" fill="#132a45" stroke="#00f2fe" stroke-width="1.5" />
+  <!-- Glowing Red Shades -->
+  <rect x="91" y="90" width="18" height="5" rx="1.5" fill="#ff2a85" filter="url(#nightGlow)" />
+  <path d="M 78 150 C 78 115, 122 115, 122 150 Z" fill="#132a45" stroke="#00f2fe" stroke-width="1" />
+
+  <!-- Bottom Text -->
+  <text x="100" y="170" text-anchor="middle" font-family="'Syne', sans-serif" font-weight="800" font-size="9" letter-spacing="2" fill="#00f2fe">NIGHTCALL</text>
+</svg>

@@ -20,4 +20,8 @@ public class ResultArtistDto {
     public String getImageUrl() { return imageUrl; }
     public long getMonthlyListeners() { return monthlyListeners; }
     public boolean isVerified() { return verified; }
+
+    public String getFormattedMonthlyListeners() {
+        return String.format(new java.util.Locale("tr", "TR"), "%,d", monthlyListeners) + " AYLIK DİNLENİYİCİ";
+    }
 }
