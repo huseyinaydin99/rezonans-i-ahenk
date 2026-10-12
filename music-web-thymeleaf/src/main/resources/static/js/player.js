@@ -49,8 +49,12 @@ if (!window.player) {
         if (this.index < 0 || this.index >= this.queue.length) return;
         const song = this.queue[this.index];
         try {
-            const playUrl = window.getAppUrl ? window.getAppUrl('/api/Song/Play/' + song.id) : ('/api/Song/Play/' + song.id);
-            const res = await fetch(playUrl, { credentials: 'same-origin' });
+            const playUrl = window.getAppUrl ? window.getAppUrl('/api/songs/' + song.id + '/play') : ('/api/songs/' + song.id + '/play');
+            const res = await fetch(playUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin'
+            });
             if (res.status === 200) {
                 const data = await res.json();
                 this._attempts = 0;
@@ -81,7 +85,14 @@ if (!window.player) {
                 if (auto) {
                     this.skipForward();        // otomatik ilerlerken erişilemeyeni atla
                 } else {
-                    notify(data.message, 'error');
+                    const reqTier = data.requiredTier || 'üst seviye';
+                    const msg = data.message || ('Bu parçayı dinleyebilmek için en az ' + reqTier + ' paketi gereklidir.');
+                    notify(msg, 'warning', 4000);
+                    setTimeout(() => {
+                        if (confirm(msg + '\n\nPaketinizi hemen yükseltip bu parçayı kesintisiz dinlemek için Üyelik sayfasına gitmek ister misiniz?')) {
+                            window.location.href = window.getAppUrl ? window.getAppUrl('/membership') : '/membership';
+                        }
+                    }, 250);
                 }
                 return;
             }

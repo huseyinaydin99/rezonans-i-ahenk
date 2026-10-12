@@ -38,6 +38,7 @@ public class SecurityConfig {
                     new AntPathRequestMatcher("/api/v1/auth/**"),
                     new AntPathRequestMatcher("/health"),
                     new AntPathRequestMatcher("/api/Song/**"),
+                    new AntPathRequestMatcher("/api/songs/**"),
                     new AntPathRequestMatcher("/api/v1/search/**"),
                     new AntPathRequestMatcher("/api/v1/playlists/**")
                 ).permitAll()
