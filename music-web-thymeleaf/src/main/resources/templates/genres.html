@@ -1,67 +1,337 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Boyutları Keşfet - Türler - Rezonans-ı Ahenk</title>
+</head>
 <body>
-
-    <div layout:fragment="title">Türler</div>
     <div layout:fragment="content">
-        <div class="gn-header">
-            <h2 class="gn-title">Boyutları Keşfet</h2>
-            <p class="gn-subtitle">Frekans ızgarasına dal. Bir tür seç, o dünyaya geçiş yap.</p>
-        </div>
-        <div class="gn-grid">
-            <a th:href="@{/search(q='Synthwave')}" class="gn-card gn-card--has-image" style="background-image:url('https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&amp;fit=crop&amp;w=400&amp;q=80');">
-                <div class="gn-card-overlay"></div>
-                <div class="gn-card-content">
-                    <h3 class="gn-card-name">Synthwave</h3>
-                    <div class="gn-card-meta">
-                        <span class="gn-card-tag">#SYNTHWAVE</span>
-                        <span class="gn-card-count">21 şarkı</span>
+        <style>
+            .gn-container {
+                max-width: 1300px;
+                margin: 0 auto;
+                padding-bottom: 3rem;
+            }
+            .gn-header {
+                margin-bottom: 2.5rem;
+            }
+            .gn-title {
+                font-family: 'Syne', sans-serif;
+                font-weight: 800;
+                font-size: clamp(2rem, 4.5vw, 2.8rem);
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: #ff479c;
+                text-shadow: 0 0 20px rgba(255, 71, 156, 0.6), 0 0 40px rgba(255, 71, 156, 0.25);
+                margin-bottom: 0.5rem;
+            }
+            .gn-subtitle {
+                font-family: 'DM Sans', sans-serif;
+                color: #9aa0a6;
+                font-size: 1rem;
+                opacity: 0.9;
+                margin: 0;
+            }
+
+            .gn-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1.5rem;
+            }
+            @media (max-width: 1100px) {
+                .gn-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            @media (max-width: 600px) {
+                .gn-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .gn-card {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                min-height: 220px;
+                border-radius: 18px;
+                padding: 1.5rem 1.4rem;
+                text-decoration: none;
+                overflow: hidden;
+                transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+                background-color: #12141c;
+            }
+            .gn-card:hover {
+                transform: translateY(-5px);
+                text-decoration: none;
+            }
+
+            .gn-waveform-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex: 1;
+                min-height: 100px;
+            }
+            .gn-waveform {
+                width: 72px;
+                height: 72px;
+                transition: transform 0.3s ease, filter 0.3s ease, color 0.3s ease;
+            }
+            .gn-card:hover .gn-waveform {
+                transform: scale(1.1);
+            }
+
+            .gn-card-content {
+                display: flex;
+                flex-direction: column;
+                gap: 0.45rem;
+            }
+            .gn-card-name {
+                font-family: 'Syne', sans-serif;
+                font-weight: 700;
+                font-size: 1.35rem;
+                margin: 0;
+                letter-spacing: -0.01em;
+                transition: color 0.2s ease, text-shadow 0.2s ease;
+            }
+            .gn-card-meta {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .gn-card-tag {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 0.72rem;
+                font-weight: 700;
+                letter-spacing: 0.06em;
+                padding: 0.22rem 0.55rem;
+                border-radius: 5px;
+                border: 1px solid rgba(255, 255, 255, 0.4);
+                background: rgba(0, 0, 0, 0.25);
+                display: inline-block;
+                line-height: 1.2;
+            }
+            .gn-card-count {
+                font-family: 'DM Sans', sans-serif;
+                font-size: 0.85rem;
+                color: rgba(255, 255, 255, 0.65);
+                font-weight: 500;
+            }
+
+            /* --- 1. POP KART TEMASI --- */
+            .gn-card--pop {
+                background: #22182b;
+                border: 1px solid rgba(236, 72, 153, 0.22);
+            }
+            .gn-card--pop .gn-waveform { color: #442654; }
+            .gn-card--pop .gn-card-name { color: #ffffff; }
+            .gn-card--pop .gn-card-tag { color: #fdf2f8; border-color: rgba(253, 242, 248, 0.5); }
+            .gn-card--pop:hover {
+                border-color: rgba(236, 72, 153, 0.75);
+                box-shadow: 0 0 25px rgba(236, 72, 153, 0.35);
+            }
+            .gn-card--pop:hover .gn-waveform {
+                color: #703388;
+                filter: drop-shadow(0 0 10px rgba(236, 72, 153, 0.6));
+            }
+            .gn-card--pop:hover .gn-card-name {
+                text-shadow: 0 0 12px rgba(236, 72, 153, 0.5);
+            }
+
+            /* --- 2. ROCK KART TEMASI --- */
+            .gn-card--rock {
+                background: #13262d;
+                border: 1px solid rgba(0, 227, 253, 0.22);
+            }
+            .gn-card--rock .gn-waveform { color: #1c424a; }
+            .gn-card--rock .gn-card-name { color: #ffffff; }
+            .gn-card--rock .gn-card-tag { color: #ecfeff; border-color: rgba(236, 254, 255, 0.5); }
+            .gn-card--rock:hover {
+                border-color: rgba(0, 227, 253, 0.75);
+                box-shadow: 0 0 25px rgba(0, 227, 253, 0.35);
+            }
+            .gn-card--rock:hover .gn-waveform {
+                color: #276977;
+                filter: drop-shadow(0 0 10px rgba(0, 227, 253, 0.6));
+            }
+            .gn-card--rock:hover .gn-card-name {
+                text-shadow: 0 0 12px rgba(0, 227, 253, 0.5);
+            }
+
+            /* --- 3. JAZZ KART TEMASI --- */
+            .gn-card--jazz {
+                background: #162033;
+                border: 1px solid rgba(99, 102, 241, 0.22);
+            }
+            .gn-card--jazz .gn-waveform { color: #263554; }
+            .gn-card--jazz .gn-card-name { color: #ffffff; }
+            .gn-card--jazz .gn-card-tag { color: #eef2ff; border-color: rgba(238, 242, 255, 0.5); }
+            .gn-card--jazz:hover {
+                border-color: rgba(99, 102, 241, 0.75);
+                box-shadow: 0 0 25px rgba(99, 102, 241, 0.35);
+            }
+            .gn-card--jazz:hover .gn-waveform {
+                color: #3b5383;
+                filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.6));
+            }
+            .gn-card--jazz:hover .gn-card-name {
+                text-shadow: 0 0 12px rgba(99, 102, 241, 0.5);
+            }
+
+            /* --- 4. ELEKTRONIK KART TEMASI --- */
+            .gn-card--elektronik {
+                background: #2b2314;
+                border: 1px solid rgba(234, 179, 8, 0.28);
+            }
+            .gn-card--elektronik .gn-waveform { color: #4d3d19; }
+            .gn-card--elektronik .gn-card-name { color: #facc15; }
+            .gn-card--elektronik .gn-card-tag { color: #facc15; border-color: #facc15; }
+            .gn-card--elektronik:hover {
+                border-color: rgba(250, 204, 21, 0.85);
+                box-shadow: 0 0 25px rgba(234, 179, 8, 0.4);
+            }
+            .gn-card--elektronik:hover .gn-waveform {
+                color: #786227;
+                filter: drop-shadow(0 0 10px rgba(250, 204, 21, 0.6));
+            }
+            .gn-card--elektronik:hover .gn-card-name {
+                text-shadow: 0 0 14px rgba(250, 204, 21, 0.65);
+            }
+
+            /* --- 5. SYNTHWAVE KART TEMASI --- */
+            .gn-card--synthwave {
+                background: #291525;
+                border: 1px solid rgba(255, 42, 133, 0.32);
+            }
+            .gn-card--synthwave .gn-waveform { color: #531f47; }
+            .gn-card--synthwave .gn-card-name {
+                color: #ff2a85;
+                font-family: 'Syne', sans-serif;
+                letter-spacing: 0.02em;
+            }
+            .gn-card--synthwave .gn-card-tag { color: #ff2a85; border-color: #ff2a85; }
+            .gn-card--synthwave:hover {
+                border-color: rgba(255, 42, 133, 0.85);
+                box-shadow: 0 0 25px rgba(255, 42, 133, 0.45);
+            }
+            .gn-card--synthwave:hover .gn-waveform {
+                color: #872e72;
+                filter: drop-shadow(0 0 10px rgba(255, 42, 133, 0.7));
+            }
+            .gn-card--synthwave:hover .gn-card-name {
+                text-shadow: 0 0 15px rgba(255, 42, 133, 0.7);
+            }
+        </style>
+
+        <div class="gn-container">
+            <div class="gn-header">
+                <h1 class="gn-title">BOYUTLARI KEŞFET</h1>
+                <p class="gn-subtitle">Frekans ızgarasına dal. Bir tür seç, o dünyaya geçiş yap.</p>
+            </div>
+
+            <div class="gn-grid">
+                <!-- 1. POP -->
+                <a th:href="@{/search(q='Pop')}" class="gn-card gn-card--pop" title="Pop türündeki parçaları keşfet">
+                    <div class="gn-waveform-container">
+                        <svg class="gn-waveform" viewBox="0 0 80 80" fill="currentColor">
+                            <rect x="4" y="24" width="8" height="32" rx="4" />
+                            <rect x="20" y="14" width="8" height="52" rx="4" />
+                            <rect x="36" y="4" width="8" height="72" rx="4" />
+                            <rect x="52" y="14" width="8" height="52" rx="4" />
+                            <rect x="68" y="24" width="8" height="32" rx="4" />
+                        </svg>
                     </div>
-                </div>
-            </a>
-            <a th:href="@{/search(q='Elektronik')}" class="gn-card gn-card--has-image" style="background-image:url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&amp;fit=crop&amp;w=400&amp;q=80');">
-                <div class="gn-card-overlay"></div>
-                <div class="gn-card-content">
-                    <h3 class="gn-card-name">Elektronik</h3>
-                    <div class="gn-card-meta">
-                        <span class="gn-card-tag">#ELEKTRONIK</span>
-                        <span class="gn-card-count">12 şarkı</span>
+                    <div class="gn-card-content">
+                        <h3 class="gn-card-name">Pop</h3>
+                        <div class="gn-card-meta">
+                            <span class="gn-card-tag">#POP</span>
+                            <span class="gn-card-count" th:text="${(genreCounts != null and genreCounts.containsKey('Pop')) ? genreCounts.get('Pop') + ' şarkı' : '11 şarkı'}">11 şarkı</span>
+                        </div>
                     </div>
-                </div>
-            </a>
-            <a th:href="@{/search(q='Pop')}" class="gn-card gn-card--has-image" style="background-image:url('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&amp;fit=crop&amp;w=400&amp;q=80');">
-                <div class="gn-card-overlay"></div>
-                <div class="gn-card-content">
-                    <h3 class="gn-card-name">Pop</h3>
-                    <div class="gn-card-meta">
-                        <span class="gn-card-tag">#POP</span>
-                        <span class="gn-card-count">11 şarkı</span>
+                </a>
+
+                <!-- 2. ROCK -->
+                <a th:href="@{/search(q='Rock')}" class="gn-card gn-card--rock" title="Rock türündeki parçaları keşfet">
+                    <div class="gn-waveform-container">
+                        <svg class="gn-waveform" viewBox="0 0 80 80" fill="currentColor">
+                            <rect x="4" y="24" width="8" height="32" rx="4" />
+                            <rect x="20" y="14" width="8" height="52" rx="4" />
+                            <rect x="36" y="4" width="8" height="72" rx="4" />
+                            <rect x="52" y="14" width="8" height="52" rx="4" />
+                            <rect x="68" y="24" width="8" height="32" rx="4" />
+                        </svg>
                     </div>
-                </div>
-            </a>
-            <a th:href="@{/search(q='Rock')}" class="gn-card gn-card--has-image" style="background-image:url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&amp;fit=crop&amp;w=400&amp;q=80');">
-                <div class="gn-card-overlay"></div>
-                <div class="gn-card-content">
-                    <h3 class="gn-card-name">Rock</h3>
-                    <div class="gn-card-meta">
-                        <span class="gn-card-tag">#ROCK</span>
-                        <span class="gn-card-count">6 şarkı</span>
+                    <div class="gn-card-content">
+                        <h3 class="gn-card-name">Rock</h3>
+                        <div class="gn-card-meta">
+                            <span class="gn-card-tag">#ROCK</span>
+                            <span class="gn-card-count" th:text="${(genreCounts != null and genreCounts.containsKey('Rock')) ? genreCounts.get('Rock') + ' şarkı' : '6 şarkı'}">6 şarkı</span>
+                        </div>
                     </div>
-                </div>
-            </a>
-            <a th:href="@{/search(q='Jazz')}" class="gn-card gn-card--has-image" style="background-image:url('https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&amp;fit=crop&amp;w=400&amp;q=80');">
-                <div class="gn-card-overlay"></div>
-                <div class="gn-card-content">
-                    <h3 class="gn-card-name">Jazz</h3>
-                    <div class="gn-card-meta">
-                        <span class="gn-card-tag">#JAZZ</span>
-                        <span class="gn-card-count">5 şarkı</span>
+                </a>
+
+                <!-- 3. JAZZ -->
+                <a th:href="@{/search(q='Jazz')}" class="gn-card gn-card--jazz" title="Jazz türündeki parçaları keşfet">
+                    <div class="gn-waveform-container">
+                        <svg class="gn-waveform" viewBox="0 0 80 80" fill="currentColor">
+                            <rect x="4" y="24" width="8" height="32" rx="4" />
+                            <rect x="20" y="14" width="8" height="52" rx="4" />
+                            <rect x="36" y="4" width="8" height="72" rx="4" />
+                            <rect x="52" y="14" width="8" height="52" rx="4" />
+                            <rect x="68" y="24" width="8" height="32" rx="4" />
+                        </svg>
                     </div>
-                </div>
-            </a>
+                    <div class="gn-card-content">
+                        <h3 class="gn-card-name">Jazz</h3>
+                        <div class="gn-card-meta">
+                            <span class="gn-card-tag">#JAZZ</span>
+                            <span class="gn-card-count" th:text="${(genreCounts != null and genreCounts.containsKey('Jazz')) ? genreCounts.get('Jazz') + ' şarkı' : '0 şarkı'}">0 şarkı</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- 4. ELEKTRONİK -->
+                <a th:href="@{/search(q='Elektronik')}" class="gn-card gn-card--elektronik" title="Elektronik türündeki parçaları keşfet">
+                    <div class="gn-waveform-container">
+                        <svg class="gn-waveform" viewBox="0 0 80 80" fill="currentColor">
+                            <rect x="4" y="24" width="8" height="32" rx="4" />
+                            <rect x="20" y="14" width="8" height="52" rx="4" />
+                            <rect x="36" y="4" width="8" height="72" rx="4" />
+                            <rect x="52" y="14" width="8" height="52" rx="4" />
+                            <rect x="68" y="24" width="8" height="32" rx="4" />
+                        </svg>
+                    </div>
+                    <div class="gn-card-content">
+                        <h3 class="gn-card-name">Elektronik</h3>
+                        <div class="gn-card-meta">
+                            <span class="gn-card-tag">#ELEKTRONIK</span>
+                            <span class="gn-card-count" th:text="${(genreCounts != null and genreCounts.containsKey('Elektronik')) ? genreCounts.get('Elektronik') + ' şarkı' : '6 şarkı'}">6 şarkı</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- 5. SYNTHWAVE -->
+                <a th:href="@{/search(q='Synthwave')}" class="gn-card gn-card--synthwave" title="Synthwave türündeki parçaları keşfet">
+                    <div class="gn-waveform-container">
+                        <svg class="gn-waveform" viewBox="0 0 80 80" fill="currentColor">
+                            <rect x="4" y="24" width="8" height="32" rx="4" />
+                            <rect x="20" y="14" width="8" height="52" rx="4" />
+                            <rect x="36" y="4" width="8" height="72" rx="4" />
+                            <rect x="52" y="14" width="8" height="52" rx="4" />
+                            <rect x="68" y="24" width="8" height="32" rx="4" />
+                        </svg>
+                    </div>
+                    <div class="gn-card-content">
+                        <h3 class="gn-card-name">Synthwave</h3>
+                        <div class="gn-card-meta">
+                            <span class="gn-card-tag">#SYNTHWAVE</span>
+                            <span class="gn-card-count" th:text="${(genreCounts != null and genreCounts.containsKey('Synthwave')) ? genreCounts.get('Synthwave') + ' şarkı' : '21 şarkı'}">21 şarkı</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
-
-
 </body>
 </html>

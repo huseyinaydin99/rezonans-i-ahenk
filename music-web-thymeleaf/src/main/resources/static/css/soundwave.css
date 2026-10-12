@@ -1321,22 +1321,22 @@ a.text-decoration-none.text-dark:hover { color: var(--text-primary) !important; 
 .gn-card-count { color: var(--mg-on-surface); opacity: 0.8; font-size: 0.85rem; white-space: nowrap; }
 
 /* 4'lü renk döngüsü: pembe / camgöbeği / mor / altın */
-.gn-card:nth-of-type(4n+1) { border-color: rgba(255,176,203,0.4); background-color: var(--bg-base) !important;
+.gn-card:nth-of-type(4n+1) { border-color: rgba(255,176,203,0.4);
     background-image: linear-gradient(135deg, rgba(255,71,156,0.35), rgba(164,118,255,0.35)); box-shadow: 0 0 0 rgba(255,71,156,0); }
 .gn-card:nth-of-type(4n+1) .gn-card-name, .gn-card:nth-of-type(4n+1) .gn-card-icon, .gn-card:nth-of-type(4n+1) .gn-card-tag { color: var(--mg-primary); }
 .gn-card:nth-of-type(4n+1):hover { box-shadow: 0 0 22px rgba(255,71,156,0.4); }
 
-.gn-card:nth-of-type(4n+2) { border-color: rgba(189,244,255,0.4); background-color: var(--bg-base) !important;
+.gn-card:nth-of-type(4n+2) { border-color: rgba(189,244,255,0.4);
     background-image: linear-gradient(135deg, rgba(0,227,253,0.3), rgba(255,71,156,0.25)); }
 .gn-card:nth-of-type(4n+2) .gn-card-name, .gn-card:nth-of-type(4n+2) .gn-card-icon, .gn-card:nth-of-type(4n+2) .gn-card-tag { color: var(--mg-secondary); }
 .gn-card:nth-of-type(4n+2):hover { box-shadow: 0 0 22px rgba(0,227,253,0.4); }
 
-.gn-card:nth-of-type(4n+3) { border-color: rgba(210,187,255,0.4); background-color: var(--bg-base) !important;
+.gn-card:nth-of-type(4n+3) { border-color: rgba(210,187,255,0.4);
     background-image: linear-gradient(135deg, rgba(164,118,255,0.35), rgba(0,227,253,0.25)); }
 .gn-card:nth-of-type(4n+3) .gn-card-name, .gn-card:nth-of-type(4n+3) .gn-card-icon, .gn-card:nth-of-type(4n+3) .gn-card-tag { color: var(--mg-tertiary); }
 .gn-card:nth-of-type(4n+3):hover { box-shadow: 0 0 22px rgba(210,187,255,0.4); }
 
-.gn-card:nth-of-type(4n+4) { border-color: rgba(255,215,0,0.35); background-color: var(--bg-base) !important;
+.gn-card:nth-of-type(4n+4) { border-color: rgba(255,215,0,0.35);
     background-image: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,71,156,0.25)); }
 .gn-card:nth-of-type(4n+4) .gn-card-name, .gn-card:nth-of-type(4n+4) .gn-card-icon, .gn-card:nth-of-type(4n+4) .gn-card-tag { color: var(--mg-gold); }
 .gn-card:nth-of-type(4n+4):hover { box-shadow: 0 0 22px rgba(255,215,0,0.35); }

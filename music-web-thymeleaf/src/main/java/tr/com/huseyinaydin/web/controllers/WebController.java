@@ -188,10 +188,14 @@ public class WebController {
     }
 
     @GetMapping({"/genres", "/genres.xhtml"})
-    public String genres() {
+    public String genres(Model model) {
         if (tr.com.huseyinaydin.web.security.CurrentUser.get().isEmpty()) {
             return "redirect:/login";
         }
+        java.util.Map<String, Integer> counts = (songSearchService != null)
+                ? songSearchService.getGenreSongCounts()
+                : java.util.Collections.emptyMap();
+        model.addAttribute("genreCounts", counts);
         return "genres";
     }
 

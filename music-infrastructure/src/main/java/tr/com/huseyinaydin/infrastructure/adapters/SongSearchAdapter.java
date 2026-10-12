@@ -130,6 +130,14 @@ public class SongSearchAdapter implements ISongSearchService {
                         map.put("title", es.getTitle());
                         map.put("artist", es.getArtist());
                         map.put("cover", es.getCoverUrl());
+                        String g = "Pop";
+                        for (CatalogSong cs : CATALOG) {
+                            if (String.valueOf(cs.id()).equals(String.valueOf(idVal))) {
+                                g = cs.genre();
+                                break;
+                            }
+                        }
+                        map.put("genre", g);
                         map.put("tier", es.getTier());
                         map.put("duration", "3:30");
                         results.add(map);
@@ -210,6 +218,24 @@ public class SongSearchAdapter implements ISongSearchService {
             }
         }
         return list;
+    }
+
+    @Override
+    public Map<String, Integer> getGenreSongCounts() {
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        counts.put("Pop", 0);
+        counts.put("Rock", 0);
+        counts.put("Jazz", 0);
+        counts.put("Elektronik", 0);
+        counts.put("Synthwave", 0);
+
+        for (CatalogSong cs : CATALOG) {
+            String g = cs.genre();
+            if (counts.containsKey(g)) {
+                counts.put(g, counts.get(g) + 1);
+            }
+        }
+        return counts;
     }
 
     private record CatalogSong(Long id, String title, String artist, String genre, String tier, String coverUrl, String duration) {}
