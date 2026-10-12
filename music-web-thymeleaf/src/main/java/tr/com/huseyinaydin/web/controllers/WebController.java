@@ -2,6 +2,7 @@ package tr.com.huseyinaydin.web.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,12 +96,48 @@ public class WebController {
         return "genres";
     }
 
+    @Autowired
+    private tr.com.huseyinaydin.application.ports.IPlaylistService playlistService;
+
     @GetMapping({"/playlists", "/playlists.xhtml"})
-    public String playlists() {
-        if (tr.com.huseyinaydin.web.security.CurrentUser.get().isEmpty()) {
+    public String playlists(Model model) {
+        String email = tr.com.huseyinaydin.web.security.CurrentUser.get().map(c -> c.email()).orElse(null);
+        if (email == null) {
             return "redirect:/login";
         }
+
+        java.util.List<tr.com.huseyinaydin.application.playlist.dtos.PlaylistDetailDto> userPlaylists =
+                (playlistService != null) ? playlistService.getUserPlaylists(email) : java.util.Collections.emptyList();
+        model.addAttribute("playlists", userPlaylists);
         return "playlists";
+    }
+
+    @PostMapping({"/playlists", "/playlists.xhtml", "/playlists/create"})
+    public String createPlaylist(@RequestParam("name") String name,
+                                 @RequestParam(value = "description", required = false) String description) {
+        String email = tr.com.huseyinaydin.web.security.CurrentUser.get().map(c -> c.email()).orElse(null);
+        if (email == null) {
+            return "redirect:/login";
+        }
+
+        if (name != null && !name.trim().isEmpty()) {
+            String trimmedName = name.trim();
+            if (playlistService != null) {
+                tr.com.huseyinaydin.application.playlist.dtos.CreatePlaylistDto dto =
+                        new tr.com.huseyinaydin.application.playlist.dtos.CreatePlaylistDto();
+                dto.setUserId(email);
+                dto.setName(trimmedName);
+                dto.setDescription(description != null ? description.trim() : "");
+                playlistService.createPlaylist(dto);
+            }
+            try {
+                java.util.UUID userUuid = java.util.UUID.nameUUIDFromBytes(email.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                mediator.send(new tr.com.huseyinaydin.application.playlist.commands.CreatePlaylistCommand(trimmedName, userUuid));
+            } catch (Exception e) {
+                org.slf4j.LoggerFactory.getLogger(WebController.class).warn("Create playlist command mediation warning: {}", e.getMessage());
+            }
+        }
+        return "redirect:/playlists";
     }
 
     @GetMapping({"/likes", "/likes.xhtml"})

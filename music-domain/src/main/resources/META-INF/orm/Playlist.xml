@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="https://jakarta.ee/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence/orm https://jakarta.ee/xml/ns/persistence/orm_3_1.xsd"
+                 version="3.1">
+    
+    <entity class="tr.com.huseyinaydin.domain.playlist.Playlist" name="Playlist" access="FIELD">
+        <table name="playlists"/>
+        <attributes>
+            <basic name="name">
+                <column name="name" nullable="false"/>
+            </basic>
+            <basic name="ownerId">
+                <column name="user_id" nullable="false"/>
+            </basic>
+            <transient name="description"/>
+        </attributes>
+    </entity>
+</entity-mappings>

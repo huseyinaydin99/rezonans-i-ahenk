@@ -97,6 +97,7 @@ public class PersistenceConfig {
             "META-INF/orm/UserOperationClaim.xml",
             "META-INF/orm/Song.xml",
             "META-INF/orm/Artist.xml",
+            "META-INF/orm/Playlist.xml",
             "META-INF/orm/DomainEventOutbox.xml",
             "META-INF/orm/SongReadModel.xml"
         );

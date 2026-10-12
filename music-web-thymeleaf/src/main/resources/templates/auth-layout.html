@@ -10,6 +10,156 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" th:href="@{/css/site.css?v=3}" />
     <link rel="stylesheet" th:href="@{/css/soundwave.css?v=3}" />
+    <style>
+        /* Ortak Auth Arka Planı (Müzik Temalı & Sinematik Karartma) */
+        .auth-bg {
+            min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden;
+            background-size: cover !important;
+            background-position: center center !important;
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 15px;
+            box-sizing: border-box;
+            background-color: #0b0f19;
+            transition: background-image 0.4s ease-in-out;
+        }
+
+        /* 2. Görev: Formların fare ile üzerine gelince veya ayrılınca asla oynamaması (Sabit Kalması) */
+        .login-card,
+        .register-card,
+        .auth-card,
+        .card.login-card,
+        .card.register-card,
+        .card.login-card:hover,
+        .card.register-card:hover,
+        .login-card:hover,
+        .register-card:hover,
+        .auth-card:hover {
+            transform: none !important;
+            transition: none !important;
+            animation: none !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            will-change: auto !important;
+        }
+
+        /* Glassmorphism ve Modern Form Tasarımı */
+        .login-card,
+        .register-card,
+        .auth-card {
+            background: rgba(10, 15, 29, 0.78) !important;
+            backdrop-filter: blur(18px) !important;
+            -webkit-backdrop-filter: blur(18px) !important;
+            border-radius: 16px !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75), 0 0 25px rgba(0, 229, 255, 0.1) !important;
+            margin: 0 auto;
+        }
+    </style>
+
+    <!-- 1. Görev: 10 Farklı Müzik Temalı Arka Plan & Hiç Bir Zaman Bir Gelenin Bir Daha Gelmediği Rastgele Döngü -->
+    <script>
+        (function() {
+            var MUSIC_AUTH_BGS = [
+                'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1920&q=80', // 1. Canlı Konser & Sahne Işıkları
+                'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1920&q=80', // 2. Neon Gitar & Enstrüman Sahnesi
+                'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=1920&q=80', // 3. Müzik Festivali & Coşkulu Kalabalık
+                'https://images.unsplash.com/photo-1493225457124-a1a2a53b51ee?w=1920&q=80', // 4. DJ & Elektronik Müzik Sahnesi
+                'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1920&q=80', // 5. Stüdyo Kulaklığı & Ses Dalgaları
+                'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?w=1920&q=80', // 6. Ses Dalgaları & Renkli Ahenk
+                'https://images.unsplash.com/photo-1493225457224-ca2e325608b4?w=1920&q=80', // 7. Klasik Müzik & Vintage Enstrümanlar
+                'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=1920&q=80', // 8. Derin Sahne & Konser Atmosferi
+                'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=1920&q=80', // 9. Profesyonel Kayıt Masası & Mikser
+                'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=1920&q=80'  // 10. Neon Işıklar & Canlı Gece Kulübü Performansı
+            ];
+
+            function getNextRandomBg() {
+                var KEY_POOL = 'rezonans_auth_bg_pool';
+                var KEY_LAST = 'rezonans_auth_bg_last';
+                var pool = [];
+
+                try {
+                    var stored = sessionStorage.getItem(KEY_POOL);
+                    if (stored) {
+                        pool = JSON.parse(stored);
+                    }
+                } catch (e) {
+                    pool = [];
+                }
+
+                var lastIndex = -1;
+                try {
+                    var lastStored = sessionStorage.getItem(KEY_LAST);
+                    if (lastStored !== null) {
+                        lastIndex = parseInt(lastStored, 10);
+                    }
+                } catch (e) {}
+
+                // Eğer havuz boşsa veya tümü tüketildiyse yeni 10'luk rastgele permütasyon oluştur
+                if (!Array.isArray(pool) || pool.length === 0) {
+                    pool = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+                    // Fisher-Yates Shuffle
+                    for (var i = pool.length - 1; i > 0; i--) {
+                        var j = Math.floor(Math.random() * (i + 1));
+                        var tmp = pool[i];
+                        pool[i] = pool[j];
+                        pool[j] = tmp;
+                    }
+                    // "hiç bir zaman bir gelen bir daha gelmesin": Yeni döngünün ilk resmi önceki döngünün son resmiyle çakışamaz
+                    if (lastIndex >= 0 && pool[0] === lastIndex && pool.length > 1) {
+                        var swapIdx = Math.floor(Math.random() * (pool.length - 1)) + 1;
+                        var t = pool[0];
+                        pool[0] = pool[swapIdx];
+                        pool[swapIdx] = t;
+                    }
+                }
+
+                var chosenIndex = pool.shift();
+
+                try {
+                    sessionStorage.setItem(KEY_POOL, JSON.stringify(pool));
+                    sessionStorage.setItem(KEY_LAST, chosenIndex.toString());
+                } catch (e) {}
+
+                return MUSIC_AUTH_BGS[chosenIndex];
+            }
+
+            window.applyDynamicAuthBg = function() {
+                var bgUrl = getNextRandomBg();
+                var styleEl = document.getElementById('auth-dynamic-bg-style');
+                if (!styleEl) {
+                    styleEl = document.createElement('style');
+                    styleEl.id = 'auth-dynamic-bg-style';
+                    document.head.appendChild(styleEl);
+                }
+                var css = '.auth-bg { background-image: linear-gradient(135deg, rgba(11, 15, 25, 0.82) 0%, rgba(18, 10, 28, 0.86) 100%), url("' + bgUrl + '") !important; }';
+                styleEl.textContent = css;
+
+                var bgEl = document.querySelector('.auth-bg');
+                if (bgEl) {
+                    bgEl.style.backgroundImage = 'linear-gradient(135deg, rgba(11, 15, 25, 0.82) 0%, rgba(18, 10, 28, 0.86) 100%), url("' + bgUrl + '")';
+                }
+            };
+
+            // Sayfa render edilmeden önce stili senkron yazdır (flicker önleme)
+            var initialUrl = getNextRandomBg();
+            document.write('<style id="auth-dynamic-bg-style">.auth-bg { background-image: linear-gradient(135deg, rgba(11, 15, 25, 0.82) 0%, rgba(18, 10, 28, 0.86) 100%), url("' + initialUrl + '") !important; }</style>');
+
+            // Turbo sayfa geçişlerinde de yeni rastgele resmi uygula
+            document.addEventListener('turbo:load', function() {
+                var bgEl = document.querySelector('.auth-bg');
+                if (bgEl) {
+                    window.applyDynamicAuthBg();
+                }
+            });
+        })();
+    </script>
+
     <th:block layout:fragment="head"></th:block>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js?v=3"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js?v=3"></script>

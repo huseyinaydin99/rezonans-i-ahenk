@@ -27,6 +27,7 @@ public class Playlist extends tr.com.huseyinaydin.domain.common.BaseEntity<java.
         private String description;
         private UUID ownerId;
 
+        public Builder id(UUID id) { this.id = id; return this; }
         public Builder name(String name) { this.name = name; return this; }
         public Builder description(String description) { this.description = description; return this; }
         public Builder ownerId(UUID ownerId) { this.ownerId = ownerId; return this; }
@@ -42,7 +43,17 @@ public class Playlist extends tr.com.huseyinaydin.domain.common.BaseEntity<java.
         this.name = name;
         this.ownerId = userId;
     }
+
+    public Playlist(UUID id, String name, String description, UUID userId) {
+        this.id = id != null ? id : UUID.randomUUID();
+        this.name = name;
+        this.description = description;
+        this.ownerId = userId;
+    }
+
     public UUID getId() { return id; }
     public String getName() { return name; }
+    public String getDescription() { return description; }
     public UUID getUserId() { return ownerId; }
+    public UUID getOwnerId() { return ownerId; }
 }

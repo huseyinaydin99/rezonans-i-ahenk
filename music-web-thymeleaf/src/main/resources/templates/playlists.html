@@ -7,29 +7,28 @@
         <h1 class="fv-title">Playlistlerim</h1>
         <p class="fv-subtitle mb-4">Kendi frekans koleksiyonlarını oluştur ve düzenle.</p>
         
-        <form class="pl-create">
-            <input type="text" name="name" placeholder="Yeni playlist adı" required="required" />
-            <button type="button">
+        <form class="pl-create" th:action="@{/playlists}" method="post" data-turbo="false">
+            <input type="text" name="name" placeholder="Yeni playlist adı" required="required" autocomplete="off" />
+            <button type="submit">
                 <span class="material-symbols-outlined" style="vertical-align:middle; font-size:18px;">add</span>
                 Oluştur
             </button>
         </form>
         
-        <div class="pl-grid">
-            <a th:href="@{/playlists}" class="pl-card">
+        <div class="pl-grid" th:if="${playlists != null and !playlists.isEmpty()}">
+            <a th:each="p : ${playlists}" th:href="@{/playlists}" class="pl-card">
                 <div class="pl-card-icon">
                     <span class="material-symbols-outlined">queue_music</span>
                 </div>
-                <div class="pl-card-name">Yol Şarkıları</div>
-                <div class="pl-card-count">42 şarkı</div>
+                <div class="pl-card-name" th:text="${p.name}">Playlist Adı</div>
+                <div class="pl-card-count" th:text="${p.songCount != null ? p.songCount + ' şarkı' : (p.songTitles != null ? p.songTitles.size() + ' şarkı' : '0 şarkı')}">0 şarkı</div>
             </a>
-            <a th:href="@{/playlists}" class="pl-card">
-                <div class="pl-card-icon">
-                    <span class="material-symbols-outlined">queue_music</span>
-                </div>
-                <div class="pl-card-name">Spor &amp; Motivasyon</div>
-                <div class="pl-card-count">18 şarkı</div>
-            </a>
+        </div>
+
+        <div th:if="${playlists == null or playlists.isEmpty()}" class="pl-empty" style="text-align: center; padding: 3rem 1rem; color: var(--mg-on-surface-variant);">
+            <span class="material-symbols-outlined" style="font-size: 48px; opacity: 0.5; margin-bottom: 0.5rem; display: block;">queue_music</span>
+            <p style="font-size: 1.1rem; margin-bottom: 0.25rem;">Henüz hiç playlist oluşturmadınız.</p>
+            <p style="font-size: 0.9rem; opacity: 0.7;">Yukarıdaki alandan yeni bir playlist adı girip "Oluştur" butonuna basarak ilk çalma listenizi oluşturabilirsiniz.</p>
         </div>
     </div>
 

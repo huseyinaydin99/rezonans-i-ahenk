@@ -31,12 +31,17 @@ async function loadPlaylistOptions() {
     if (!body) return;
 
     try {
-        const res = { status: 200, json: async () => [{playlistId: 1, name: 'Yol Şarkıları', songCount: 42}, {playlistId: 2, name: 'Spor & Motivasyon', songCount: 18}] };
+        const apiUrl = window.getAppUrl ? window.getAppUrl('/api/v1/playlists') : '/api/v1/playlists';
+        const res = await fetch(apiUrl);
         if (res.status === 401) {
             closePlaylistModal();
             notify('Playlist için giriş yapmalısınız.', 'info');
             window.location.href = window.getAppUrl ? window.getAppUrl('/login') : '/login';
             return;
+        }
+
+        if (!res.ok) {
+            throw new Error('HTTP ' + res.status);
         }
 
         const playlists = await res.json();
@@ -64,7 +69,7 @@ async function loadPlaylistOptions() {
                 '<span class="pladd-item-icon material-symbols-outlined">queue_music</span>' +
                 '<span class="pladd-item-info">' +
                 '<span class="pladd-item-name"></span>' +
-                '<span class="pladd-item-count">' + p.songCount + ' şarkı</span>' +
+                '<span class="pladd-item-count">' + (p.songCount != null ? p.songCount : 0) + ' şarkı</span>' +
                 '</span>' +
                 '<span class="pladd-item-arrow material-symbols-outlined">chevron_right</span>';
             item.querySelector('.pladd-item-name').textContent = p.name;
@@ -86,7 +91,16 @@ async function selectPlaylist(playlistId, playlistName, itemEl) {
     if (itemEl) itemEl.classList.add('pladd-item--loading');
 
     try {
-        const addRes = { ok: true };
+        const addUrl = window.getAppUrl
+            ? window.getAppUrl('/api/v1/playlists/' + encodeURIComponent(playlistId) + '/songs/' + encodeURIComponent(pladdCurrentSongId))
+            : ('/api/v1/playlists/' + encodeURIComponent(playlistId) + '/songs/' + encodeURIComponent(pladdCurrentSongId));
+
+        const addRes = await fetch(addUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
 
         if (addRes.ok) {
             notify('Şarkı "' + playlistName + '" playlistine eklendi.', 'success');
