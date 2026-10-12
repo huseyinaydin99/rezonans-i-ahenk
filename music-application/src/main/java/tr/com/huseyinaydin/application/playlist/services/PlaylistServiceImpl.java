@@ -308,4 +308,25 @@ public class PlaylistServiceImpl implements IPlaylistService {
 
         return new ArrayList<>(list);
     }
+
+    @Override
+    public void migrateUser(String oldUserId, String newUserId) {
+        if (oldUserId == null || newUserId == null) return;
+        String oldKey = normalizeKey(oldUserId);
+        String newKey = normalizeKey(newUserId);
+        if (oldKey.isEmpty() || newKey.isEmpty() || oldKey.equalsIgnoreCase(newKey)) return;
+
+        List<PlaylistDetailDto> oldPlaylists = userPlaylistsStore.remove(oldKey);
+        if (oldPlaylists != null && !oldPlaylists.isEmpty()) {
+            userPlaylistsStore.compute(newKey, (k, existing) -> {
+                if (existing == null) {
+                    return Collections.synchronizedList(new ArrayList<>(oldPlaylists));
+                } else {
+                    existing.addAll(oldPlaylists);
+                    return existing;
+                }
+            });
+            log.info("[PLAYLIST SERVİSİ] Kullanıcı çalma listeleri aktarıldı: {} -> {} ({} liste)", oldKey, newKey, oldPlaylists.size());
+        }
+    }
 }

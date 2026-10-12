@@ -10,4 +10,5 @@ public interface IPlaylistService {
     void removeSongFromPlaylist(String playlistId, String songId);
     List<PlaylistDetailDto> getUserPlaylists(String userId);
     PlaylistDetailDto getPlaylistById(String playlistId);
+    void migrateUser(String oldUserId, String newUserId);
 }

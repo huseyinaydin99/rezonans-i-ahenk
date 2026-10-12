@@ -17,6 +17,15 @@ public class WebController {
     @Autowired
     private Mediator mediator;
 
+    @Autowired(required = false)
+    private tr.com.huseyinaydin.application.ports.IProfileService profileService;
+
+    @Autowired(required = false)
+    private tr.com.huseyinaydin.application.ports.ITokenService tokenService;
+
+    @Autowired(required = false)
+    private tr.com.huseyinaydin.web.security.AuthCookies authCookies;
+
     @GetMapping("favicon.ico")
     public org.springframework.http.ResponseEntity<Void> returnNoFavicon() {
         return org.springframework.http.ResponseEntity.noContent().build();
@@ -71,19 +80,85 @@ public class WebController {
     }
 
     @GetMapping({"/profile", "/profile.xhtml"})
-    public String profile() {
-        if (tr.com.huseyinaydin.web.security.CurrentUser.get().isEmpty()) {
+    public String profile(Model model) {
+        String email = tr.com.huseyinaydin.web.security.CurrentUser.get().map(c -> c.email()).orElse(null);
+        if (email == null) {
             return "redirect:/login";
         }
+        tr.com.huseyinaydin.application.profile.dtos.UserProfileDto profile =
+                (profileService != null) ? profileService.getProfile(email) : null;
+        model.addAttribute("profile", profile);
+
+        int playlistCount = 0;
+        if (playlistService != null) {
+            var pl = playlistService.getUserPlaylists(email);
+            if (pl != null) playlistCount = pl.size();
+        }
+        model.addAttribute("playlistCount", playlistCount);
+
+        int likeCount = 0;
+        try {
+            java.util.List<Long> likedSongIds = mediator.query(new tr.com.huseyinaydin.application.like.queries.GetLikedSongsQuery(email));
+            if (likedSongIds != null) likeCount = likedSongIds.size();
+        } catch (Exception ignored) {}
+        model.addAttribute("likeCount", likeCount);
+
         return "profile";
     }
 
     @GetMapping({"/edit-profile", "/edit-profile.xhtml"})
-    public String editProfile() {
-        if (tr.com.huseyinaydin.web.security.CurrentUser.get().isEmpty()) {
+    public String editProfile(Model model) {
+        String email = tr.com.huseyinaydin.web.security.CurrentUser.get().map(c -> c.email()).orElse(null);
+        if (email == null) {
             return "redirect:/login";
         }
+        tr.com.huseyinaydin.application.profile.dtos.UserProfileDto profile =
+                (profileService != null) ? profileService.getProfile(email) : null;
+        model.addAttribute("profile", profile);
         return "edit-profile";
+    }
+
+    @PostMapping({"/edit-profile", "/edit-profile.xhtml"})
+    public String updateProfilePost(@RequestParam("email") String newEmail,
+                                    @RequestParam(value = "fullName", required = false) String fullName,
+                                    @RequestParam(value = "username", required = false) String username,
+                                    @RequestParam(value = "bio", required = false) String bio,
+                                    jakarta.servlet.http.HttpServletResponse response,
+                                    org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+        var currentUserOpt = tr.com.huseyinaydin.web.security.CurrentUser.get();
+        if (currentUserOpt.isEmpty()) {
+            return "redirect:/login";
+        }
+        var claims = currentUserOpt.get();
+        String currentEmail = claims.email();
+
+        try {
+            if (profileService != null) {
+                profileService.updateProfileInfo(currentEmail, newEmail, fullName, username, bio);
+            }
+
+            // E-posta adresi değiştiyse çalma listeleri ve oturum güncellemesi yap
+            String normalizedCurrent = (currentEmail != null) ? currentEmail.trim().toLowerCase(java.util.Locale.ROOT) : "";
+            String normalizedNew = (newEmail != null) ? newEmail.trim().toLowerCase(java.util.Locale.ROOT) : "";
+            if (!normalizedCurrent.equalsIgnoreCase(normalizedNew)) {
+                if (playlistService != null) {
+                    playlistService.migrateUser(normalizedCurrent, normalizedNew);
+                }
+                if (tokenService != null && authCookies != null) {
+                    String newToken = tokenService.generateAccessToken(normalizedNew, claims.role(), claims.tier());
+                    authCookies.write(response, newToken, tokenService.getExpirationSeconds());
+                }
+            }
+
+            redirectAttributes.addFlashAttribute("successMessage", "Profil bilgileriniz başarıyla güncellendi.");
+            return "redirect:/profile";
+        } catch (IllegalArgumentException | tr.com.huseyinaydin.sharedkernel.exception.BusinessException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/edit-profile";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Profil güncellenirken bir hata oluştu: " + e.getMessage());
+            return "redirect:/edit-profile";
+        }
     }
 
     @GetMapping({"/artists", "/artists.xhtml"})

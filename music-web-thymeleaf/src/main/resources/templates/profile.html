@@ -5,21 +5,32 @@
 </head>
 <body>
     <div layout:fragment="content">
+        <!-- Bildirim Mesajları -->
+        <div th:if="${errorMessage}" class="alert-box alert-box--error" style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; border-radius: 10px; padding: 12px 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <span class="material-symbols-outlined" style="color: #ef4444;">error</span>
+            <span th:text="${errorMessage}"></span>
+        </div>
+        <div th:if="${successMessage}" class="alert-box alert-box--success" style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); color: #6ee7b7; border-radius: 10px; padding: 12px 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <span class="material-symbols-outlined" style="color: #10b981;">check_circle</span>
+            <span th:text="${successMessage}"></span>
+        </div>
+
         <section class="pr-hero">
             <div class="pr-avatar-wrap">
                 <div class="pr-avatar">
-                    <div class="pr-avatar-fallback">HU</div>
+                    <div class="pr-avatar-fallback" th:text="${profile != null ? profile.initials : 'HU'}">HU</div>
                 </div>
-                <span class="pr-tier-ribbon pr-tier-ribbon--premium">Premium</span>
+                <span class="pr-tier-ribbon pr-tier-ribbon--premium" th:text="${profile != null and profile.tier != null ? profile.tier : 'Premium'}">Premium</span>
             </div>
 
             <div>
-                <h1 class="pr-name" th:text="${currentUser != null ? currentUser : 'Hüseyin Aydın'}"></h1>
-                <p class="pr-username">@huseyinaydin99</p>
+                <h1 class="pr-name" th:text="${profile != null and profile.fullName != null ? profile.fullName : (currentUser != null ? currentUser : 'Kullanıcı')}">Hüseyin Aydın</h1>
+                <p class="pr-username" th:text="${profile != null and profile.username != null ? '@' + profile.username : '@kullanici'}">@huseyinaydin99</p>
                 <p class="pr-email">
                     <span class="material-symbols-outlined">mail</span>
-                    test@example.com
+                    <span th:text="${profile != null and profile.email != null ? profile.email : currentUser}">test@example.com</span>
                 </p>
+                <p class="pr-bio" th:if="${profile != null and profile.bio != null and !profile.bio.isEmpty()}" th:text="${profile.bio}" style="color: var(--mg-on-surface-variant); font-size: 0.95rem; margin-top: 6px; margin-bottom: 12px;"></p>
 
                 <div class="pr-actions">
                     <a th:href="@{/edit-profile}" class="pr-btn-edit">
@@ -39,28 +50,28 @@
                 <div class="pr-stat-icon" style="color: gold;"><span class="material-symbols-outlined">monetization_on</span></div>
                 <div>
                     <div class="pr-stat-label" style="color: #ffd700;">Kredi Bakiyesi</div>
-                    <div class="pr-stat-value" style="color: #fff;">2,500</div>
+                    <div class="pr-stat-value" style="color: #fff;" th:text="${profile != null ? #numbers.formatInteger(profile.credits, 1, 'POINT') : '2.500'}">2.500</div>
                 </div>
             </div>
             <div class="pr-stat-card pr-stat-card--secondary">
                 <div class="pr-stat-icon"><span class="material-symbols-outlined">queue_music</span></div>
                 <div>
                     <div class="pr-stat-label">Playlist</div>
-                    <div class="pr-stat-value">12</div>
+                    <div class="pr-stat-value" th:text="${playlistCount != null ? playlistCount : 0}">0</div>
                 </div>
             </div>
             <div class="pr-stat-card pr-stat-card--primary">
                 <div class="pr-stat-icon"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span></div>
                 <div>
                     <div class="pr-stat-label">Beğeni</div>
-                    <div class="pr-stat-value">480</div>
+                    <div class="pr-stat-value" th:text="${likeCount != null ? likeCount : 0}">0</div>
                 </div>
             </div>
             <div class="pr-stat-card pr-stat-card--tertiary">
                 <div class="pr-stat-icon"><span class="material-symbols-outlined">headphones</span></div>
                 <div>
                     <div class="pr-stat-label">Dinleme</div>
-                    <div class="pr-stat-value">1,402</div>
+                    <div class="pr-stat-value">1.402</div>
                 </div>
             </div>
         </div>
