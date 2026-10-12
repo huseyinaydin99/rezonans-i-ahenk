@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title th:text="${genre != null ? genre.name + ' - Tür Detayı - Rezonans-ı Ahenk' : 'Tür Detayı - Rezonans-ı Ahenk'}">Tür Detayı - Rezonans-ı Ahenk</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <a th:href="@{/genres}" class="ad-back-link">
+            <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span>
+            Tüm türler
+        </a>
+
+        <!-- Tür Hero Başlığı -->
+        <header class="ad-hero" th:if="${genre != null}">
+            <div class="gn-waveform-container" 
+                 th:style="'width: 140px; height: 140px; border-radius: 20px; background: rgba(0,0,0,0.4); border: 2px solid ' + ${genre.accentColor} + '; flex-shrink: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px ' + ${genre.accentColor} + '66;'">
+                <svg class="gn-waveform" viewBox="0 0 80 80" fill="currentColor" 
+                     th:style="'width: 72px; height: 72px; color: ' + ${genre.accentColor} + '; filter: drop-shadow(0 0 10px ' + ${genre.accentColor} + ');'">
+                    <rect x="4" y="24" width="8" height="32" rx="4" />
+                    <rect x="20" y="14" width="8" height="52" rx="4" />
+                    <rect x="36" y="4" width="8" height="72" rx="4" />
+                    <rect x="52" y="14" width="8" height="52" rx="4" />
+                    <rect x="68" y="24" width="8" height="32" rx="4" />
+                </svg>
+            </div>
+            <div>
+                <h1 class="ad-name" style="margin-bottom: 0.35rem;">
+                    <span th:text="${genre.name}">Tür Adı</span>
+                    <span class="gn-card-tag ms-2" style="font-size: 0.8rem; vertical-align: middle;" th:text="${genre.tag}">#TÜR</span>
+                </h1>
+                <p class="ad-listeners" th:text="${genre.songCount + ' PARÇA YAYINDA'}">0 PARÇA YAYINDA</p>
+                <p class="ad-bio" th:text="${genre.description}">Tür açıklaması...</p>
+
+                <div class="ad-actions">
+                    <button th:if="${songs != null and !songs.isEmpty()}"
+                            class="ad-btn-play queue-item"
+                            th:data-song-id="${songs[0].songId}"
+                            th:data-song-title="${songs[0].title}"
+                            th:data-song-artist="${songs[0].artistName}"
+                            th:onclick="|player.playFrom(${songs[0].songId})|"
+                            title="Tümünü Çal">
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                        Tümünü Çal
+                    </button>
+                    <button th:unless="${songs != null and !songs.isEmpty()}" class="ad-btn-play" disabled>
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                        Tümünü Çal
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tür Parçaları Vitrini -->
+        <section class="ad-panel">
+            <h2 class="ad-panel-title">Tür Parçaları</h2>
+
+            <div th:if="${songs == null or songs.isEmpty()}" class="alert alert-info" style="background: rgba(0,227,253,0.1); border-color: rgba(0,227,253,0.3); color: var(--mg-secondary);">
+                Bu türe ait henüz kayıtlı parça bulunmuyor.
+            </div>
+
+            <div th:if="${songs != null and !songs.isEmpty()}" class="d-flex flex-column gap-2">
+                <div th:each="song, iterStat : ${songs}" class="ad-track-row">
+                    <span class="ad-track-rank" th:text="${iterStat.count}">1</span>
+                    <button class="ad-track-play queue-item"
+                            th:data-song-id="${song.songId}"
+                            th:data-song-title="${song.title}"
+                            th:data-song-artist="${song.artistName}"
+                            th:onclick="|player.playFrom(${song.songId})|"
+                            title="Oynat">
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size:20px;">play_arrow</span>
+                    </button>
+                    <div class="ad-track-cover">
+                        <img th:src="${song.coverImageUrl != null and !#strings.isEmpty(song.coverImageUrl)} ? ${song.coverImageUrl} : @{/images/default-cover.svg}" 
+                             th:alt="${song.title}" 
+                             onerror="window.onImageError(this, 'song')" />
+                    </div>
+                    <div class="ad-track-info">
+                        <div class="ad-track-title" th:text="${song.title}">Şarkı Başlığı</div>
+                        <span class="text-secondary" style="font-size: 0.85rem;" th:text="${song.artistName}">Sanatçı Adı</span>
+                    </div>
+                    <div class="text-end me-3 d-none d-md-block" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-secondary);">
+                        <span th:text="${song.duration}">3:30</span>
+                    </div>
+                    <span class="ad-track-badge"
+                          th:classappend="'ad-track-badge--' + ${song.tierLevel}"
+                          th:text="${song.tier}">Premium</span>
+                    <div class="ad-track-actions">
+                        <button class="ad-icon-btn like-btn"
+                                th:classappend="${likedSongIds != null and likedSongIds.contains(song.songId)} ? 'text-danger' : 'text-muted'"
+                                th:data-song-id="${song.songId}"
+                                th:onclick="|toggleLike(${song.songId}, this)|"
+                                th:title="${likedSongIds != null and likedSongIds.contains(song.songId)} ? 'Beğeniyi kaldır' : 'Beğen'"
+                                th:text="${likedSongIds != null and likedSongIds.contains(song.songId)} ? '♥' : '♡'">♡</button>
+                        <button class="ad-icon-btn"
+                                th:onclick="|addToPlaylist(${song.songId})|"
+                                title="Playlist'e ekle">
+                            <span class="material-symbols-outlined">playlist_add</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

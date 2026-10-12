@@ -169,4 +169,36 @@ public class TemplateRenderingTest {
             assertNotNull(result);
         });
     }
+
+    @Test
+    void testGenreDetailTemplateRendersSuccessfully() {
+        WebContext context = createContext();
+        tr.com.huseyinaydin.application.genre.dtos.GenreSongDto song1 = new tr.com.huseyinaydin.application.genre.dtos.GenreSongDto(
+                30L, "Sunset", "The Midnight", "https://example.com/sunset.jpg", "https://example.com/sunset.mp3",
+                "5:26", 2310000L, "Gold", 2, "Synthwave"
+        );
+        tr.com.huseyinaydin.application.genre.dtos.GenreWithSongsDto genre = new tr.com.huseyinaydin.application.genre.dtos.GenreWithSongsDto(
+                "synthwave", "Synthwave", "#SYNTHWAVE", "Neon ses evreni", "gn-card--synthwave", "#ff2a85", 1, List.of(song1)
+        );
+
+        context.setVariable("genre", genre);
+        context.setVariable("songs", genre.getSongs());
+        context.setVariable("likedSongIds", List.of(30L));
+
+        assertDoesNotThrow(() -> {
+            String result = engine.process("genre-detail", context);
+            assertNotNull(result);
+        });
+    }
+
+    @Test
+    void testGenresTemplateRendersSuccessfully() {
+        WebContext context = createContext();
+        context.setVariable("genreCounts", Map.of("Pop", 11, "Rock", 6, "Synthwave", 21));
+
+        assertDoesNotThrow(() -> {
+            String result = engine.process("genres", context);
+            assertNotNull(result);
+        });
+    }
 }

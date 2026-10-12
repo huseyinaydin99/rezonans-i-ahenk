@@ -12,6 +12,8 @@ import tr.com.huseyinaydin.application.home.dtos.HomeDashboardDto;
 import tr.com.huseyinaydin.application.home.queries.GetHomeDashboardQuery;
 import tr.com.huseyinaydin.application.like.queries.GetLikedSongsQuery;
 import tr.com.huseyinaydin.application.genre.queries.GetGenreSongCountsQuery;
+import tr.com.huseyinaydin.application.genre.queries.GetGenreWithSongsQuery;
+import tr.com.huseyinaydin.application.genre.dtos.GenreWithSongsDto;
 import tr.com.huseyinaydin.application.artist.queries.GetFeaturedArtistsQuery;
 import tr.com.huseyinaydin.application.artist.queries.GetArtistDetailQuery;
 import tr.com.huseyinaydin.application.artist.dtos.ResultArtistDto;
@@ -239,6 +241,27 @@ public class WebController {
         Map<String, Integer> counts = mediator.query(new GetGenreSongCountsQuery());
         model.addAttribute("genreCounts", counts != null ? counts : Collections.emptyMap());
         return "genres";
+    }
+
+    @GetMapping({"/genres/{id}", "/genres/{id}.xhtml"})
+    public String genreDetail(@PathVariable("id") String id, Model model) {
+        String email = CurrentUser.get().map(c -> c.email()).orElse(null);
+        if (email == null) {
+            return "redirect:/login";
+        }
+
+        GenreWithSongsDto genre = mediator.query(new GetGenreWithSongsQuery(id));
+        if (genre == null) {
+            return "redirect:/genres";
+        }
+
+        model.addAttribute("genre", genre);
+        model.addAttribute("songs", genre.getSongs() != null ? genre.getSongs() : Collections.emptyList());
+
+        List<Long> likedSongIds = mediator.query(new GetLikedSongsQuery(email));
+        model.addAttribute("likedSongIds", likedSongIds != null ? likedSongIds : Collections.emptyList());
+
+        return "genre-detail";
     }
 
     @GetMapping({"/playlists", "/playlists.xhtml"})
