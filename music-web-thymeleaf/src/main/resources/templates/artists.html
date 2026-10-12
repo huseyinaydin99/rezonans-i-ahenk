@@ -33,7 +33,7 @@
         <div class="al-grid" id="artistGrid">
             <!-- Dinamik Sanatçı Kartları (Modelden) -->
             <th:block th:if="${artists != null and !artists.isEmpty()}" th:each="artist : ${artists}">
-                <a th:href="@{/search(q=${artist.name})}" 
+                <a th:href="@{/artists/{id}(id=${artist.id})}" 
                    class="al-card"
                    th:classappend="${artist.name == 'Royalty Free Music Background'} ? 'al-card--highlight' : ''"
                    th:data-name="${#strings.toLowerCase(artist.name)}">
@@ -50,7 +50,7 @@
 
             <!-- Statik Fallback / Kesintisiz Görsel Güvencesi (12 Retro Sanatçı) -->
             <th:block th:if="${artists == null or artists.isEmpty()}">
-                <a th:href="@{/search(q='The Midnight & Nikki Flores')}" class="al-card" data-name="the midnight & nikki flores">
+                <a th:href="@{/artists/art-1}" class="al-card" data-name="the midnight & nikki flores">
                     <div class="al-avatar">
                         <img th:src="@{/images/artists/midnight-cockpit.svg}" alt="The Midnight & Nikki Flores" onerror="window.onImageError(this, 'artist')" />
                     </div>
@@ -61,7 +61,7 @@
                     <p class="al-listeners">1.893.317 AYLIK DİNLENİYİCİ</p>
                 </a>
 
-                <a th:href="@{/search(q='The Midnight')}" class="al-card" data-name="the midnight">
+                <a th:href="@{/artists/art-2}" class="al-card" data-name="the midnight">
                     <div class="al-avatar">
                         <img th:src="@{/images/artists/midnight-cockpit.svg}" alt="The Midnight" onerror="window.onImageError(this, 'artist')" />
                     </div>
@@ -72,7 +72,7 @@
                     <p class="al-listeners">1.002.914 AYLIK DİNLENİYİCİ</p>
                 </a>
 
-                <a th:href="@{/search(q='Royalty Free Music Background')}" class="al-card al-card--highlight" data-name="royalty free music background">
+                <a th:href="@{/artists/art-3}" class="al-card al-card--highlight" data-name="royalty free music background">
                     <div class="al-avatar">
                         <img th:src="@{/images/artists/neon-square.svg}" alt="Royalty Free Music Background" onerror="window.onImageError(this, 'artist')" />
                     </div>
@@ -83,7 +83,7 @@
                     <p class="al-listeners">120.823 AYLIK DİNLENİYİCİ</p>
                 </a>
 
-                <a th:href="@{/search(q='Zee-ker')}" class="al-card" data-name="zee-ker">
+                <a th:href="@{/artists/art-4}" class="al-card" data-name="zee-ker">
                     <div class="al-avatar">
                         <img th:src="@{/images/artists/midnight-sax.svg}" alt="Zee-ker" onerror="window.onImageError(this, 'artist')" />
                     </div>
@@ -94,7 +94,7 @@
                     <p class="al-listeners">310.813 AYLIK DİNLENİYİCİ</p>
                 </a>
 
-                <a th:href="@{/search(q='Lachi James')}" class="al-card" data-name="lachi james">
+                <a th:href="@{/artists/art-5}" class="al-card" data-name="lachi james">
                     <div class="al-avatar">
                         <img th:src="@{/images/artists/synthwave-triangle.svg}" alt="Lachi James" onerror="window.onImageError(this, 'artist')" />
                     </div>
@@ -105,7 +105,7 @@
                     <p class="al-listeners">760.472 AYLIK DİNLENİYİCİ</p>
                 </a>
 
-                <a th:href="@{/search(q='Serene Serene')}" class="al-card" data-name="serene serene">
+                <a th:href="@{/artists/art-6}" class="al-card" data-name="serene serene">
                     <div class="al-avatar">
                         <img th:src="@{/images/artists/cyber-portrait.svg}" alt="Serene Serene" onerror="window.onImageError(this, 'artist')" />
                     </div>
@@ -116,7 +116,7 @@
                     <p class="al-listeners">552.636 AYLIK DİNLENİYİCİ</p>
                 </a>
 
-                <a th:href="@{/search(q='Kavinsky')}" class="al-card" data-name="kavinsky">
+                <a th:href="@{/artists/art-7}" class="al-card" data-name="kavinsky">
                     <div class="al-avatar">
                         <img th:src="@{/images/artists/kavinsky.svg}" alt="Kavinsky" onerror="window.onImageError(this, 'artist')" />
                     </div>
@@ -127,7 +127,7 @@
                     <p class="al-listeners">199.068 AYLIK DİNLENİYİCİ</p>
                 </a>
 
-                <a th:href="@{/search(q='Kavinsky, Angèle & Phoenix')}" class="al-card" data-name="kavinsky, angèle & phoenix">
+                <a th:href="@{/artists/art-8}" class="al-card" data-name="kavinsky, angèle & phoenix">
                     <div class="al-avatar">
                         <img th:src="@{/images/artists/nightcall-group.svg}" alt="Kavinsky, Angèle & Phoenix" onerror="window.onImageError(this, 'artist')" />
                     </div>
@@ -138,7 +138,7 @@
                     <p class="al-listeners">464.858 AYLIK DİNLENİYİCİ</p>
                 </a>
 
-                <a th:href="@{/search(q='FM-84 & Ollie Wride')}" class="al-card" data-name="fm-84 & ollie wride">
+                <a th:href="@{/artists/art-9}" class="al-card" data-name="fm-84 & ollie wride">
                     <div class="al-avatar">
                         <img th:src="@{/images/artists/retro-sun.svg}" alt="FM-84 & Ollie Wride" onerror="window.onImageError(this, 'artist')" />
                     </div>
@@ -149,7 +149,7 @@
                     <p class="al-listeners">983.997 AYLIK DİNLENİYİCİ</p>
                 </a>
 
-                <a th:href="@{/search(q='FM-84')}" class="al-card" data-name="fm-84">
+                <a th:href="@{/artists/art-10}" class="al-card" data-name="fm-84">
                     <div class="al-avatar">
                         <img th:src="@{/images/artists/retro-sun.svg}" alt="FM-84" onerror="window.onImageError(this, 'artist')" />
                     </div>
@@ -160,7 +160,7 @@
                     <p class="al-listeners">1.617.667 AYLIK DİNLENİYİCİ</p>
                 </a>
 
-                <a th:href="@{/search(q='FM-84, Timecop1983 & Josh Dally')}" class="al-card" data-name="fm-84, timecop1983 & josh dally">
+                <a th:href="@{/artists/art-11}" class="al-card" data-name="fm-84, timecop1983 & josh dally">
                     <div class="al-avatar">
                         <img th:src="@{/images/artists/retro-sun.svg}" alt="FM-84, Timecop1983 & Josh Dally" onerror="window.onImageError(this, 'artist')" />
                     </div>
@@ -171,7 +171,7 @@
                     <p class="al-listeners">729.879 AYLIK DİNLENİYİCİ</p>
                 </a>
 
-                <a th:href="@{/search(q='Lazerhawk')}" class="al-card" data-name="lazerhawk">
+                <a th:href="@{/artists/art-12}" class="al-card" data-name="lazerhawk">
                     <div class="al-avatar">
                         <img th:src="@{/images/artists/lazerhawk-car.svg}" alt="Lazerhawk" onerror="window.onImageError(this, 'artist')" />
                     </div>

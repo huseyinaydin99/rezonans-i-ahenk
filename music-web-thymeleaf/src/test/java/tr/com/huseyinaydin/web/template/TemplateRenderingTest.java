@@ -129,4 +129,44 @@ public class TemplateRenderingTest {
             assertNotNull(result);
         });
     }
+
+    @Test
+    void testArtistDetailTemplateRendersSuccessfully() {
+        WebContext context = createContext();
+        tr.com.huseyinaydin.application.artist.dtos.ArtistSongDto song1 = new tr.com.huseyinaydin.application.artist.dtos.ArtistSongDto(
+                30L, "Sunset", "https://example.com/sunset.jpg", "https://example.com/sunset.mp3",
+                "5:26", 2310000L, "Gold", 2, "The Midnight", "Synthwave"
+        );
+        tr.com.huseyinaydin.application.artist.dtos.ArtistSongDto song2 = new tr.com.huseyinaydin.application.artist.dtos.ArtistSongDto(
+                31L, "Days of Thunder", null, "https://example.com/thunder.mp3",
+                "5:24", 1980000L, "Basic", 1, "The Midnight", "Synthwave"
+        );
+        tr.com.huseyinaydin.application.artist.dtos.ArtistDetailDto artist = new tr.com.huseyinaydin.application.artist.dtos.ArtistDetailDto(
+                "art-2", "The Midnight", "/images/artists/midnight-cockpit.svg",
+                "Synthwave efsanesi", 1002914L, true, List.of(song1, song2)
+        );
+
+        context.setVariable("artist", artist);
+        context.setVariable("songs", artist.getPopularSongs());
+        context.setVariable("likedSongIds", List.of(30L));
+
+        assertDoesNotThrow(() -> {
+            String result = engine.process("artist-detail", context);
+            assertNotNull(result);
+        });
+    }
+
+    @Test
+    void testArtistsTemplateRendersSuccessfully() {
+        WebContext context = createContext();
+        tr.com.huseyinaydin.application.artist.dtos.ResultArtistDto artistDto = new tr.com.huseyinaydin.application.artist.dtos.ResultArtistDto(
+                "art-1", "The Midnight & Nikki Flores", "/images/artists/midnight-cockpit.svg", 1893317L, true
+        );
+        context.setVariable("artists", List.of(artistDto));
+
+        assertDoesNotThrow(() -> {
+            String result = engine.process("artists", context);
+            assertNotNull(result);
+        });
+    }
 }

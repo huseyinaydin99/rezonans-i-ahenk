@@ -13,7 +13,9 @@ import tr.com.huseyinaydin.application.home.queries.GetHomeDashboardQuery;
 import tr.com.huseyinaydin.application.like.queries.GetLikedSongsQuery;
 import tr.com.huseyinaydin.application.genre.queries.GetGenreSongCountsQuery;
 import tr.com.huseyinaydin.application.artist.queries.GetFeaturedArtistsQuery;
+import tr.com.huseyinaydin.application.artist.queries.GetArtistDetailQuery;
 import tr.com.huseyinaydin.application.artist.dtos.ResultArtistDto;
+import tr.com.huseyinaydin.application.artist.dtos.ArtistDetailDto;
 import tr.com.huseyinaydin.application.profile.queries.GetUserProfileQuery;
 import tr.com.huseyinaydin.application.profile.commands.UpdateProfileInfoCommand;
 import tr.com.huseyinaydin.application.profile.dtos.UserProfileDto;
@@ -193,14 +195,38 @@ public class WebController {
         return "artists";
     }
 
+    @GetMapping({"/artists/{id}", "/artists/{id}.xhtml"})
+    public String artistDetail(@PathVariable("id") String id, Model model) {
+        String email = CurrentUser.get().map(c -> c.email()).orElse(null);
+        if (email == null) {
+            return "redirect:/login";
+        }
+
+        ArtistDetailDto artist = mediator.query(new GetArtistDetailQuery(id));
+        if (artist == null) {
+            return "redirect:/artists";
+        }
+
+        model.addAttribute("artist", artist);
+        model.addAttribute("songs", artist.getPopularSongs() != null ? artist.getPopularSongs() : Collections.emptyList());
+
+        List<Long> likedSongIds = mediator.query(new GetLikedSongsQuery(email));
+        model.addAttribute("likedSongIds", likedSongIds != null ? likedSongIds : Collections.emptyList());
+
+        return "artist-detail";
+    }
+
     @GetMapping({"/artist-details", "/artist-details.xhtml"})
     public String artistDetails(@RequestParam(value = "name", required = false) String name,
                                 @RequestParam(value = "id", required = false) String id) {
         if (CurrentUser.get().isEmpty()) {
             return "redirect:/login";
         }
+        if (id != null && !id.isBlank()) {
+            return "redirect:/artists/" + id;
+        }
         if (name != null && !name.isBlank()) {
-            return "redirect:/search?q=" + java.net.URLEncoder.encode(name.trim(), java.nio.charset.StandardCharsets.UTF_8);
+            return "redirect:/artists/" + java.net.URLEncoder.encode(name.trim(), java.nio.charset.StandardCharsets.UTF_8);
         }
         return "redirect:/artists";
     }
