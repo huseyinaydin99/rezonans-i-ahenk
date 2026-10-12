@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>403 - Frekans Uyuşmazlığı | Rezonans-ı Ahenk</title>
+    <style>
+        .synth-403-container {
+            position: relative;
+            max-width: 1050px;
+            margin: 2.5rem auto 4rem;
+            padding: 3rem 2rem;
+            background: radial-gradient(circle at 50% 10%, rgba(247, 37, 133, 0.12) 0%, rgba(10, 10, 24, 0.85) 65%, #06060f 100%);
+            border: 1px solid rgba(255, 42, 133, 0.3);
+            border-radius: 24px;
+            box-shadow: 0 0 40px rgba(255, 42, 133, 0.15), inset 0 0 30px rgba(0, 229, 255, 0.05);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .synth-grid-floor {
+            position: absolute;
+            bottom: -50px;
+            left: -20%;
+            width: 140%;
+            height: 180px;
+            background-image: 
+                linear-gradient(rgba(0, 229, 255, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(247, 37, 133, 0.15) 1px, transparent 1px);
+            background-size: 30px 30px;
+            transform: perspective(300px) rotateX(60deg);
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .synth-glitch-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 18px;
+            background: rgba(247, 37, 133, 0.15);
+            border: 1px solid #f72585;
+            border-radius: 50px;
+            color: #ffb0cb;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            box-shadow: 0 0 15px rgba(247, 37, 133, 0.4);
+            margin-bottom: 1.5rem;
+        }
+
+        .synth-glitch-badge .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00e5ff;
+            box-shadow: 0 0 8px #00e5ff;
+            animation: blinkDot 1s infinite alternate;
+        }
+
+        @keyframes blinkDot {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .synth-neon-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 800;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 1rem;
+            animation: neonPulse 2.5s infinite alternate;
+        }
+
+        @keyframes neonPulse {
+            0% {
+                text-shadow: 
+                    0 0 10px rgba(247, 37, 133, 0.8),
+                    0 0 20px rgba(247, 37, 133, 0.5),
+                    0 0 40px rgba(124, 58, 237, 0.4);
+            }
+            100% {
+                text-shadow: 
+                    0 0 15px rgba(0, 229, 255, 0.9),
+                    0 0 30px rgba(0, 229, 255, 0.6),
+                    0 0 50px rgba(247, 37, 133, 0.5);
+            }
+        }
+
+        .synth-subtitle {
+            font-size: 1.1rem;
+            color: #cfc0c5;
+            max-width: 680px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.6;
+        }
+
+        /* KARŞILAŞTIRMA SAHNESİ */
+        .synth-compare-stage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .synth-tier-card {
+            flex: 1;
+            min-width: 250px;
+            max-width: 320px;
+            background: rgba(19, 19, 31, 0.85);
+            border-radius: 18px;
+            padding: 1.8rem 1.4rem;
+            backdrop-filter: blur(10px);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .synth-tier-card.current {
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            opacity: 0.85;
+        }
+
+        .synth-tier-card.required {
+            border: 1.5px solid #00e5ff;
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.25), inset 0 0 15px rgba(0, 229, 255, 0.1);
+        }
+
+        .synth-card-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #8888aa;
+            margin-bottom: 0.5rem;
+        }
+
+        .synth-card-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.7rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .synth-tier-card.current .synth-card-title {
+            color: #e1e2eb;
+        }
+
+        .synth-tier-card.required .synth-card-title {
+            color: #00e5ff;
+            text-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
+        }
+
+        .synth-card-desc {
+            font-size: 0.9rem;
+            color: #a0a0ba;
+            line-height: 1.4;
+        }
+
+        .synth-bridge-beam {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: #f72585;
+        }
+
+        .synth-bridge-icon {
+            font-size: 2.2rem;
+            animation: bounceBeam 1.5s infinite;
+        }
+
+        @keyframes bounceBeam {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(6px); }
+        }
+
+        .synth-bridge-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #f72585;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* PARILTILI CTA BUTONU */
+        .synth-cta-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.2rem;
+            margin-bottom: 3.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-upgrade-glow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #f72585 0%, #7209b7 50%, #4361ee 100%);
+            color: #ffffff !important;
+            font-family: 'Syne', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            padding: 1rem 2.2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 25px rgba(247, 37, 133, 0.55);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: pulseGlowBtn 2s infinite alternate;
+        }
+
+        @keyframes pulseGlowBtn {
+            0% { box-shadow: 0 0 20px rgba(247, 37, 133, 0.4); }
+            100% { box-shadow: 0 0 35px rgba(247, 37, 133, 0.8), 0 0 15px rgba(0, 229, 255, 0.4); }
+        }
+
+        .btn-upgrade-glow:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 0 45px rgba(247, 37, 133, 0.9), 0 0 25px rgba(0, 229, 255, 0.6);
+        }
+
+        .btn-return-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #cfc0c5 !important;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 0.95rem 1.8rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+
+        .btn-return-home:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff !important;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* PAKET AVANTAJLARI MATRIX */
+        .synth-matrix-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #f0f0ff;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .synth-matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1.2rem;
+            text-align: left;
+        }
+
+        .synth-matrix-card {
+            background: rgba(14, 14, 28, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 1.4rem;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .synth-matrix-card:hover {
+            border-color: rgba(0, 229, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .synth-matrix-card.highlight {
+            border: 1px solid #f72585;
+            background: rgba(247, 37, 133, 0.07);
+            box-shadow: 0 0 18px rgba(247, 37, 133, 0.2);
+        }
+
+        .matrix-tier-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.6rem;
+        }
+
+        .matrix-tier-name {
+            font-weight: 800;
+            font-size: 1.05rem;
+        }
+
+        .matrix-tier-price {
+            font-size: 0.85rem;
+            color: #00e5ff;
+            font-weight: 700;
+        }
+
+        .matrix-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.85rem;
+            color: #8888aa;
+        }
+
+        .matrix-features li {
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .matrix-features li span {
+            color: #00e5ff;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="synth-403-container">
+            <div class="synth-grid-floor"></div>
+
+            <div class="synth-glitch-badge">
+                <span class="dot"></span>
+                <span>Hata 403 // Frekans Bariyeri</span>
+            </div>
+
+            <h1 class="synth-neon-title">Erişim Kısıtlı — Frekans Uyuşmazlığı</h1>
+
+            <p class="synth-subtitle">
+                Erişmek istediğiniz ses dalgası veya ayrıcalıklı vitrin, mevcut üyelik kademenizin rezonans sınırlarını aşıyor. Kesintisiz frekansa geçerek tüm müzik evreninin kilidini kaldırın.
+            </p>
+
+            <!-- GÖRSEL PAKET KARŞILAŞTIRMASI -->
+            <div class="synth-compare-stage">
+                <!-- MEVCUT PAKET -->
+                <div class="synth-tier-card current">
+                    <div class="synth-card-tag">Aktif Kademeni̇z</div>
+                    <div class="synth-card-title" th:text="${currentTier != null ? currentTier : 'Basic'}">Basic</div>
+                    <div class="synth-card-desc">
+                        <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 18px; color: #f72585;">lock</span>
+                        Standart frekans aralığı &amp; sınırlı katalog erişimi
+                    </div>
+                </div>
+
+                <!-- FREKANS KÖPRÜSÜ -->
+                <div class="synth-bridge-beam">
+                    <span class="material-symbols-outlined synth-bridge-icon">bolt</span>
+                    <span class="synth-bridge-label">Rezonans Atlama</span>
+                </div>
+
+                <!-- TALEP EDİLEN PAKET -->
+                <div class="synth-tier-card required">
+                    <div class="synth-card-tag" style="color: #00e5ff;">Hedef Kademe</div>
+                    <div class="synth-card-title" th:text="${requiredTier != null ? requiredTier : 'Premium'}">Premium</div>
+                    <div class="synth-card-desc">
+                        <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 18px; color: #00e5ff;">lock_open</span>
+                        Tam parça kataloğu, yüksek bit-rate ve akıllı öneriler
+                    </div>
+                </div>
+            </div>
+
+            <!-- PARILTILI CTA BUTONU -->
+            <div class="synth-cta-group">
+                <a th:href="@{/package}" class="btn-upgrade-glow">
+                    <span class="material-symbols-outlined">rocket_launch</span>
+                    Paketini Yükselt ve Kesintisiz Dinle
+                </a>
+                <a th:href="@{/}" class="btn-return-home">
+                    <span class="material-symbols-outlined">home</span>
+                    Ana Sayfaya Dön
+                </a>
+            </div>
+
+            <!-- PLATFORM PAKET AVANTAJLARI KARŞILAŞTIRMA KARTI -->
+            <h3 class="synth-matrix-title">Platform Frekans ve Paket Avantajları</h3>
+            <div class="synth-matrix-grid">
+                <!-- Basic -->
+                <div class="synth-matrix-card" th:classappend="${#strings.equalsIgnoreCase(requiredTier, 'Basic') ? 'highlight' : ''}">
+                    <div class="matrix-tier-head">
+                        <span class="matrix-tier-name" style="color: #bdf4ff;">Basic</span>
+                        <span class="matrix-tier-price">Ücretsiz</span>
+                    </div>
+                    <ul class="matrix-features">
+                        <li><span>✓</span> Standart katalog erişimi</li>
+                        <li><span>✓</span> Çalma listesi oluşturma</li>
+                        <li><span>✓</span> Şarkı favorileme</li>
+                    </ul>
+                </div>
+
+                <!-- Gold -->
+                <div class="synth-matrix-card" th:classappend="${#strings.equalsIgnoreCase(requiredTier, 'Gold') ? 'highlight' : ''}">
+                    <div class="matrix-tier-head">
+                        <span class="matrix-tier-name" style="color: #ffd700;">Gold</span>
+                        <span class="matrix-tier-price">₺49,90/ay</span>
+                    </div>
+                    <ul class="matrix-features">
+                        <li><span>✓</span> Gold ve altı parçalar</li>
+                        <li><span>✓</span> Genişletilmiş kütüphane</li>
+                        <li><span>✓</span> Temel öneri motoru</li>
+                    </ul>
+                </div>
+
+                <!-- Premium -->
+                <div class="synth-matrix-card" th:classappend="${#strings.equalsIgnoreCase(requiredTier, 'Premium') or (requiredTier == null) ? 'highlight' : ''}">
+                    <div class="matrix-tier-head">
+                        <span class="matrix-tier-name" style="color: #ff479c;">Premium</span>
+                        <span class="matrix-tier-price">₺89,90/ay</span>
+                    </div>
+                    <ul class="matrix-features">
+                        <li><span>✓</span> Tam müzik arşivi erişimi</li>
+                        <li><span>✓</span> Yüksek bit-rate ses akışı</li>
+                        <li><span>✓</span> Yapay zeka rezonans önerileri</li>
+                    </ul>
+                </div>
+
+                <!-- Elit -->
+                <div class="synth-matrix-card" th:classappend="${#strings.equalsIgnoreCase(requiredTier, 'Elit') ? 'highlight' : ''}">
+                    <div class="matrix-tier-head">
+                        <span class="matrix-tier-name" style="color: #00e3fd;">Elit</span>
+                        <span class="matrix-tier-price">₺149,90/ay</span>
+                    </div>
+                    <ul class="matrix-features">
+                        <li><span>✓</span> Kayıpsız (Hi-Fi) stüdyo sesi</li>
+                        <li><span>✓</span> Yeni parçalara öncelikli erişim</li>
+                        <li><span>✓</span> VIP sınırsız ayrıcalıklar</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

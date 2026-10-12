@@ -201,4 +201,28 @@ public class TemplateRenderingTest {
             assertNotNull(result);
         });
     }
+
+    @Test
+    void test403TemplateRendersSuccessfully() {
+        WebContext context = createContext();
+        context.setVariable("currentTier", "Basic");
+        context.setVariable("requiredTier", "Premium");
+
+        assertDoesNotThrow(() -> {
+            String result = engine.process("403", context);
+            assertNotNull(result);
+        });
+    }
+
+    @Test
+    void testError403TemplateRendersSuccessfully() {
+        WebContext context = createContext();
+        context.setVariable("currentTier", "Gold");
+        context.setVariable("requiredTier", "Elit");
+
+        assertDoesNotThrow(() -> {
+            String result = engine.process("error/403", context);
+            assertNotNull(result);
+        });
+    }
 }

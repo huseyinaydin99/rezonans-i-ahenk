@@ -116,9 +116,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AuthorizationException.class)
-    public ResponseEntity<ProblemDetail> handleAuthorization(AuthorizationException ex,
-                                                             HttpServletRequest request) {
+    public ResponseEntity<?> handleAuthorization(AuthorizationException ex,
+                                                 HttpServletRequest request) {
         log.warn("Yetkisiz erişim [{}]: {}", request.getRequestURI(), ex.getMessage());
+        if (isHtmlRequest(request)) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                    .location(URI.create(request.getContextPath() + "/error/403"))
+                    .build();
+        }
         return business(MusicErrorTypes.UNAUTHORIZED, ex.getMessage(),
                 ex.getErrorCode(), request);
     }
@@ -132,9 +137,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ProblemDetail> handleAccessDenied(AccessDeniedException ex,
-                                                            HttpServletRequest request) {
+    public ResponseEntity<?> handleAccessDenied(AccessDeniedException ex,
+                                                HttpServletRequest request) {
         log.warn("Erişim reddedildi [{}]: {}", request.getRequestURI(), ex.getMessage());
+        if (isHtmlRequest(request)) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                    .location(URI.create(request.getContextPath() + "/error/403"))
+                    .build();
+        }
         return business(MusicErrorTypes.FORBIDDEN, "Bu kaynağa erişim yetkiniz bulunmamaktadır.",
                 "ACCESS_DENIED", request);
     }
@@ -244,5 +254,17 @@ public class GlobalExceptionHandler {
             return traceId;
         }
         return MDC.get("traceId");
+    }
+
+    private static boolean isHtmlRequest(HttpServletRequest request) {
+        if (request == null) {
+            return false;
+        }
+        String uri = request.getRequestURI();
+        if (uri != null && uri.startsWith("/api/")) {
+            return false;
+        }
+        String accept = request.getHeader("Accept");
+        return accept != null && accept.contains(MediaType.TEXT_HTML_VALUE);
     }
 }

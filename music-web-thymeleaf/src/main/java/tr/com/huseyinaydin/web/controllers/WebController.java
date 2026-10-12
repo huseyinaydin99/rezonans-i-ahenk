@@ -357,7 +357,7 @@ public class WebController {
         return "likes";
     }
 
-    @GetMapping({"/membership", "/membership.xhtml"})
+    @GetMapping({"/membership", "/membership.xhtml", "/package", "/package.xhtml"})
     public String membership(Model model) {
         String email = CurrentUser.get().map(c -> c.email()).orElse(null);
         if (email == null) {
@@ -366,6 +366,31 @@ public class WebController {
         String currentTier = mediator.query(new tr.com.huseyinaydin.application.membership.queries.GetUserMembershipTierQuery(email));
         model.addAttribute("currentTier", currentTier != null ? currentTier : "Basic");
         return "membership";
+    }
+
+    @GetMapping({"/403", "/error/403", "/error/403.xhtml"})
+    public String accessDenied(@RequestParam(value = "requiredTier", required = false) String requiredTier,
+                               @RequestParam(value = "required", required = false) String required,
+                               Model model) {
+        String email = CurrentUser.get().map(c -> c.email()).orElse(null);
+        String currentTier = "Basic";
+        if (email != null) {
+            try {
+                currentTier = mediator.query(new tr.com.huseyinaydin.application.membership.queries.GetUserMembershipTierQuery(email));
+                if (currentTier == null || currentTier.isBlank()) currentTier = "Basic";
+            } catch (Exception ignored) {
+                currentTier = "Basic";
+            }
+        }
+
+        String targetTier = (requiredTier != null && !requiredTier.isBlank()) ? requiredTier : required;
+        if (targetTier == null || targetTier.isBlank()) {
+            targetTier = "Premium";
+        }
+
+        model.addAttribute("currentTier", currentTier);
+        model.addAttribute("requiredTier", targetTier);
+        return "403";
     }
 
     @GetMapping({"/search", "/search.xhtml"})
