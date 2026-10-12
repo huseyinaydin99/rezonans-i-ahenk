@@ -1,6 +1,7 @@
 package tr.com.huseyinaydin.infrastructure.adapters;
 
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -36,8 +37,12 @@ public class PlaybackAdapter implements IPlaybackService {
         put("5", "Elit");
     }};
 
-    public PlaybackAdapter(ListenEventProducer listenEventProducer) {
+    private final tr.com.huseyinaydin.application.ports.ISongSearchService songSearchService;
+
+    public PlaybackAdapter(ListenEventProducer listenEventProducer,
+                           @org.springframework.context.annotation.Lazy @Autowired(required = false) tr.com.huseyinaydin.application.ports.ISongSearchService songSearchService) {
         this.listenEventProducer = listenEventProducer;
+        this.songSearchService = songSearchService;
     }
 
     public Map<String, Integer> getLevels() { return levels; }
@@ -74,6 +79,12 @@ public class PlaybackAdapter implements IPlaybackService {
 
     @Override
     public Integer getRequiredTierLevel(Long songId) {
+        if (songSearchService != null && songId != null) {
+            Map<String, Object> song = songSearchService.getSongById(songId);
+            if (song != null && song.get("tier") != null) {
+                return levels.getOrDefault(String.valueOf(song.get("tier")), 0);
+            }
+        }
         String requiredTierName = songs.get(String.valueOf(songId));
         if (requiredTierName == null) return 0; // Default is Basic (0)
         return levels.getOrDefault(requiredTierName, 0);

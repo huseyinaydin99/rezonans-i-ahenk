@@ -21,29 +21,44 @@ public class HomeServiceImpl implements IHomeService {
     public HomeDashboardDto buildHomeDashboard(String userId) {
         log.info("[ANA SAYFA VİTRİNİ] Dinleyici ('" + userId + "') uygulamaya giriş yaptı. Ana Sayfa panosu yükleniyor...");
 
-        // 1. Cassandra'dan (Big Data) dünyada en çok dinlenen Top 10 çekilir
-        log.info("-> Cassandra üzerinden 'Küresel Top 10' verisi çekiliyor.");
+        // 1. "Keşfet" Vitrini: Depeche Mode ve ikonik synth/rock klasikleri
+        log.info("-> 'Keşfet' küresel parça koleksiyonu derleniyor.");
         List<SongSnippet> topGlobal = List.of(
-            new SongSnippet(1L, "Blinding Lights", "The Weeknd", "https://images.unsplash.com/photo-1493225457124-a1a2a53b51ee?auto=format&fit=crop&w=400&q=80"),
-            new SongSnippet(2L, "Shape of You", "Ed Sheeran", "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=400&q=80"),
-            new SongSnippet(3L, "Bohemian Rhapsody", "Queen", "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80")
+            new SongSnippet(1L, "People Are People", "Depeche Mode", "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&q=80", "Premium", "Elektronik"),
+            new SongSnippet(2L, "Just Can't Get Enough", "Depeche Mode", "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&q=80", "Premium", "Synthwave"),
+            new SongSnippet(3L, "Never Let Me Down Again", "Depeche Mode", "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&q=80", "Premium", "Rock"),
+            new SongSnippet(4L, "Policy of Truth", "Depeche Mode", "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&q=80", "Premium", "Elektronik"),
+            new SongSnippet(5L, "Personal Jesus", "Depeche Mode", "https://images.unsplash.com/photo-1493225457124-a1a2a53b51ee?w=400&q=80", "Premium", "Rock"),
+            new SongSnippet(6L, "Enjoy the Silence", "Depeche Mode", "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&q=80", "Elit", "Elektronik"),
+            new SongSnippet(16L, "Running in the Night", "FM-84 & Ollie Wride", "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&q=80", "Premium", "Synthwave"),
+            new SongSnippet(21L, "Nightcall", "Kavinsky", "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&q=80", "Premium", "Synthwave"),
+            new SongSnippet(26L, "Overdrive", "Lazerhawk", "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=400&q=80", "Premium", "Synthwave"),
+            new SongSnippet(44L, "Blinding Lights", "The Weeknd", "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?w=400&q=80", "Gold", "Pop")
         );
 
-        // 2. Elasticsearch üzerinden son 24 saatte çıkan şarkılar çekilir
-        log.info("-> Elasticsearch üzerinden 'Yeni Çıkanlar' verisi süzülüyor.");
+        // 2. Yeni Çıkanlar (New Releases)
+        log.info("-> 'Yeni Çıkanlar' koleksiyonu derleniyor.");
         List<SongSnippet> newReleases = List.of(
-            new SongSnippet(4L, "Vampire", "Olivia Rodrigo", "https://images.unsplash.com/photo-1493225457124-a1a2a53b51ee?auto=format&fit=crop&w=400&q=80"),
-            new SongSnippet(5L, "Paint The Town Red", "Doja Cat", "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80")
+            new SongSnippet(15L, "Houdini", "Dua Lipa", "https://images.unsplash.com/photo-1520523839898-507121c21528?w=400&q=80", "Premium", "Pop"),
+            new SongSnippet(20L, "Atlas", "FM-84", "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&q=80", "Premium", "Synthwave"),
+            new SongSnippet(23L, "Cameo", "Kavinsky, Angèle & Phoenix", "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&q=80", "Premium", "Elektronik"),
+            new SongSnippet(36L, "Neon Horizon", "Lachi James", "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=400&q=80", "Gold", "Synthwave")
         );
 
-        // 3. Apache Spark (ML) motorunun gece 03:00'te hesapladığı özel tavsiyeler çekilir
-        log.info("-> Apache Spark Yapay Zeka motorundan 'Sizin İçin Seçtiklerimiz' çekiliyor.");
+        // 3. "Senin İçin Önerilenler": The Midnight, Lachi James, Dua Lipa vb. synthwave & pop önerileri
+        log.info("-> 'Senin İçin Önerilenler' kişiselleştirilmiş öneri akışı derleniyor.");
         List<SongSnippet> forYou = List.of(
-            new SongSnippet(6L, "Starboy", "The Weeknd", "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=400&q=80"),
-            new SongSnippet(7L, "Stairway To Heaven", "Led Zeppelin", "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80")
+            new SongSnippet(11L, "Light Years", "The Midnight & Nikki Flores", "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&q=80", "Premium", "Synthwave"),
+            new SongSnippet(12L, "River of Darkness (feat. Timecop1983)", "The Midnight", "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&q=80", "Premium", "Synthwave"),
+            new SongSnippet(13L, "Midnight (I Want You in My Arms)", "Lachi James", "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=400&q=80", "Premium", "Synthwave"),
+            new SongSnippet(14L, "Dance The Night", "Dua Lipa", "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&q=80", "Basic", "Pop"),
+            new SongSnippet(15L, "Houdini", "Dua Lipa", "https://images.unsplash.com/photo-1520523839898-507121c21528?w=400&q=80", "Premium", "Pop"),
+            new SongSnippet(30L, "Sunset", "The Midnight", "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&q=80", "Gold", "Synthwave"),
+            new SongSnippet(39L, "Levitating", "Dua Lipa", "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&q=80", "Gold", "Pop"),
+            new SongSnippet(16L, "Running in the Night", "FM-84 & Ollie Wride", "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&q=80", "Premium", "Synthwave")
         );
 
-        log.info("[ANA SAYFA VİTRİNİ] Tüm asenkron veriler milisaniyeler içinde toparlandı ve UI'a (JSF) gönderildi!");
+        log.info("[ANA SAYFA VİTRİNİ] Zengin müzik kataloğu asenkron olarak toparlandı.");
         
         return new HomeDashboardDto(topGlobal, newReleases, forYou);
     }

@@ -19,25 +19,35 @@ public class ElasticSeeder {
     @Autowired
     private IElasticSongRepository elasticSongRepository;
 
+    @Autowired(required = false)
+    private tr.com.huseyinaydin.application.ports.ISongSearchService songSearchService;
+
     @EventListener(ApplicationReadyEvent.class)
     public void seed() {
         try {
-            if (elasticSongRepository.count() == 0) {
-                log.info("🌱 Elasticsearch boş, örnek müzikler yükleniyor...");
+            if (elasticSongRepository != null && elasticSongRepository.count() == 0) {
+                log.info("🌱 Elasticsearch boş, 50+ zengin müzik kataloğu yükleniyor...");
 
-                elasticSongRepository.save(createElasticSong("1", "Blinding Lights", "The Weeknd", "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?w=300", "Gold"));
-                elasticSongRepository.save(createElasticSong("2", "Starboy", "The Weeknd", "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300", "Basic"));
-                elasticSongRepository.save(createElasticSong("3", "Shape of You", "Ed Sheeran", "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300", "Premium"));
-                elasticSongRepository.save(createElasticSong("4", "Perfect", "Ed Sheeran", "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=300", "Premium"));
-                elasticSongRepository.save(createElasticSong("5", "Bohemian Rhapsody", "Queen", "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300", "Elit"));
-                elasticSongRepository.save(createElasticSong("6", "Hotel California", "Eagles", "https://images.unsplash.com/photo-1493225457224-ca2e325608b4?w=300", "Basic"));
-
-                log.info("✅ Elasticsearch örnek verilerle dolduruldu.");
+                if (songSearchService != null) {
+                    java.util.List<java.util.Map<String, Object>> allSongs = songSearchService.searchSongs(null);
+                    for (java.util.Map<String, Object> s : allSongs) {
+                        elasticSongRepository.save(createElasticSong(
+                            String.valueOf(s.get("id")),
+                            String.valueOf(s.get("title")),
+                            String.valueOf(s.get("artist")),
+                            String.valueOf(s.get("cover")),
+                            String.valueOf(s.get("tier"))
+                        ));
+                    }
+                    log.info("✅ Elasticsearch {} adet şarkıyla dolduruldu.", allSongs.size());
+                } else {
+                    log.info("✅ ISongSearchService bulunamadı, fallback seed atlandı.");
+                }
             } else {
                 log.info("✅ Elasticsearch zaten dolu, seed atlandı.");
             }
         } catch (Exception e) {
-            log.error("❌ Elasticsearch'e ulaşılamadı veya veri yazılamadı: " + e.getMessage());
+            log.warn("⚠️ Elasticsearch seed işlemi uyarısı: " + e.getMessage());
         }
     }
 

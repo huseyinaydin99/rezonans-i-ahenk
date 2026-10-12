@@ -55,9 +55,14 @@ public class SongController {
         String audioUrl = playbackService.getAudioUrl(id);
         playbackService.recordListenEvent(user.email(), id);
         
+        Map<String, Object> song = (songSearchService != null) ? songSearchService.getSongById(id) : null;
+        String title = (song != null && song.get("title") != null) ? String.valueOf(song.get("title")) : ("Song " + id);
+        String artist = (song != null && song.get("artist") != null) ? String.valueOf(song.get("artist")) : "";
+
         Map<String, Object> response = new HashMap<>();
         response.put("audioUrl", audioUrl);
-        response.put("title", "Song " + id);
+        response.put("title", title);
+        response.put("artist", artist);
         
         if (metrics != null) {
             metrics.incrementSongsPlayed(tier);

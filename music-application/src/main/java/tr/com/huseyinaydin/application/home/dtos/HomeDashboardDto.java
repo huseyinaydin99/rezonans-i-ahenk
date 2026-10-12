@@ -27,17 +27,27 @@ public class HomeDashboardDto implements Serializable {
         private String title;
         private String artist;
         private String coverUrl;
+        private String tier;
+        private String genre;
 
         public SongSnippet(Long songId, String title, String artist, String coverUrl) {
+            this(songId, title, artist, coverUrl, "Basic", "Pop");
+        }
+
+        public SongSnippet(Long songId, String title, String artist, String coverUrl, String tier, String genre) {
             this.songId = songId;
             this.title = title;
             this.artist = artist;
             this.coverUrl = coverUrl;
+            this.tier = tier != null ? tier : "Basic";
+            this.genre = genre != null ? genre : "Pop";
         }
 
         public Long getSongId() { return songId; }
         public String getTitle() { return title; }
         public String getArtist() { return artist; }
         public String getCoverUrl() { return coverUrl; }
+        public String getTier() { return tier; }
+        public String getGenre() { return genre; }
     }
 }
