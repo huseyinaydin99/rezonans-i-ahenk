@@ -38,8 +38,15 @@ public class SecurityConfig {
                     new AntPathRequestMatcher("/api/v1/auth/**"),
                     new AntPathRequestMatcher("/health"),
                     new AntPathRequestMatcher("/api/Song/**"),
-                    new AntPathRequestMatcher("/api/v1/search/**")
+                    new AntPathRequestMatcher("/api/v1/search/**"),
+                    new AntPathRequestMatcher("/api/v1/playlists/**")
                 ).permitAll()
+                .anyRequest().authenticated()
+            )
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.sendError(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                })
             )
             .addFilterBefore(
                 new JwtAuthenticationFilter(tokenService),

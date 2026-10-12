@@ -195,6 +195,17 @@ public class GlobalExceptionHandler {
                 "TYPE_MISMATCH", request);
     }
 
+    @ExceptionHandler(org.springframework.web.servlet.NoHandlerFoundException.class)
+    public ResponseEntity<ProblemDetail> handleNoHandlerFound(org.springframework.web.servlet.NoHandlerFoundException ex,
+                                                              HttpServletRequest request) {
+        if ("/favicon.ico".equals(request.getRequestURI())) {
+            return ResponseEntity.notFound().build();
+        }
+        log.warn("Kaynak bulunamadı [{}]: {}", request.getRequestURI(), ex.getMessage());
+        return business(MusicErrorTypes.NOT_FOUND, "İstenen kaynak bulunamadı.",
+                "RESOURCE_NOT_FOUND", request);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> handleGeneral(Exception ex,
                                                        HttpServletRequest request) {

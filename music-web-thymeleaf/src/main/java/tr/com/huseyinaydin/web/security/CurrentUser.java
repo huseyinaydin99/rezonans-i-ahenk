@@ -12,8 +12,13 @@ public final class CurrentUser {
 
     public static Optional<TokenClaims> get() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.getPrincipal() instanceof TokenClaims claims) {
-            return Optional.of(claims);
+        if (auth != null && auth.isAuthenticated()) {
+            if (auth.getPrincipal() instanceof TokenClaims claims) {
+                return Optional.of(claims);
+            }
+            if (auth.getName() != null && !auth.getName().isBlank() && !"anonymousUser".equalsIgnoreCase(auth.getName())) {
+                return Optional.of(new TokenClaims(auth.getName(), "CUSTOMER", "Standard"));
+            }
         }
         return Optional.empty();
     }

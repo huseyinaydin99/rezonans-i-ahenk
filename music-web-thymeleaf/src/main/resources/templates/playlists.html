@@ -5,7 +5,17 @@
     <div layout:fragment="title">Playlistlerim</div>
     <div layout:fragment="content">
         <h1 class="fv-title">Playlistlerim</h1>
-        <p class="fv-subtitle mb-4">Kendi frekans koleksiyonlarını oluştur ve düzenle.</p>
+        <p class="fv-subtitle mb-4">Kendi frekans koleksiyonlarını oluştur, aç ve çal.</p>
+
+        <!-- Bildirim Mesajları -->
+        <div th:if="${errorMessage}" class="alert-box alert-box--error" style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; border-radius: 10px; padding: 12px 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <span class="material-symbols-outlined" style="color: #ef4444;">error</span>
+            <span th:text="${errorMessage}"></span>
+        </div>
+        <div th:if="${successMessage}" class="alert-box alert-box--success" style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); color: #6ee7b7; border-radius: 10px; padding: 12px 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <span class="material-symbols-outlined" style="color: #10b981;">check_circle</span>
+            <span th:text="${successMessage}"></span>
+        </div>
         
         <form class="pl-create" th:action="@{/playlists}" method="post" data-turbo="false">
             <input type="text" name="name" placeholder="Yeni playlist adı" required="required" autocomplete="off" />
@@ -16,13 +26,21 @@
         </form>
         
         <div class="pl-grid" th:if="${playlists != null and !playlists.isEmpty()}">
-            <a th:each="p : ${playlists}" th:href="@{/playlists}" class="pl-card">
-                <div class="pl-card-icon">
-                    <span class="material-symbols-outlined">queue_music</span>
-                </div>
-                <div class="pl-card-name" th:text="${p.name}">Playlist Adı</div>
-                <div class="pl-card-count" th:text="${p.songCount != null ? p.songCount + ' şarkı' : (p.songTitles != null ? p.songTitles.size() + ' şarkı' : '0 şarkı')}">0 şarkı</div>
-            </a>
+            <div th:each="p : ${playlists}" class="pl-card-wrapper" style="position: relative;">
+                <a th:href="@{/playlists/{id}(id=${p.id})}" class="pl-card" style="display: block; text-decoration: none;">
+                    <div class="pl-card-icon">
+                        <span class="material-symbols-outlined">queue_music</span>
+                    </div>
+                    <div class="pl-card-name" th:text="${p.name}">Playlist Adı</div>
+                    <div class="pl-card-count" th:text="${p.songCount != null ? p.songCount + ' şarkı' : (p.songTitles != null ? p.songTitles.size() + ' şarkı' : '0 şarkı')}">0 şarkı</div>
+                </a>
+                <button type="button" class="pl-card-play-action"
+                        th:title="'Çal: ' + ${p.name}"
+                        th:data-playlist-id="${p.id}"
+                        onclick="playPlaylistDirect(this.getAttribute('data-playlist-id'))">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 22px;">play_arrow</span>
+                </button>
+            </div>
         </div>
 
         <div th:if="${playlists == null or playlists.isEmpty()}" class="pl-empty" style="text-align: center; padding: 3rem 1rem; color: var(--mg-on-surface-variant);">
@@ -32,6 +50,74 @@
         </div>
     </div>
 
+    <th:block layout:fragment="scripts">
+        <style>
+            .pl-card-wrapper {
+                position: relative;
+                transition: transform 0.2s ease;
+            }
+            .pl-card-wrapper:hover {
+                transform: translateY(-2px);
+            }
+            .pl-card-play-action {
+                position: absolute;
+                bottom: 14px;
+                right: 14px;
+                width: 38px;
+                height: 38px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #ec4899, #8b5cf6);
+                color: #fff;
+                border: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                opacity: 0;
+                transform: scale(0.85);
+                transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+                box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+                z-index: 2;
+            }
+            .pl-card-wrapper:hover .pl-card-play-action {
+                opacity: 1;
+                transform: scale(1);
+            }
+            .pl-card-play-action:hover {
+                transform: scale(1.1);
+                box-shadow: 0 0 16px rgba(236, 72, 153, 0.6);
+            }
+        </style>
+        <script>
+            async function playPlaylistDirect(playlistId) {
+                try {
+                    let url = window.getAppUrl ? window.getAppUrl('/web-api/playlists/' + encodeURIComponent(playlistId)) : ('/web-api/playlists/' + encodeURIComponent(playlistId));
+                    let res = await fetch(url, { credentials: 'same-origin' });
+                    if (!res.ok) {
+                        window.location.href = (window.getAppUrl ? window.getAppUrl('/playlists/' + encodeURIComponent(playlistId)) : ('/playlists/' + encodeURIComponent(playlistId))) + '?autoplay=true';
+                        return;
+                    }
+                    let data = await res.json();
+                    if (data.songs && data.songs.length > 0) {
+                        window.player.queue = data.songs.map(function(s) {
+                            return {
+                                id: parseInt(s.id, 10),
+                                title: s.title || 'Şarkı',
+                                artist: s.artist || ''
+                            };
+                        });
+                        window.player.index = 0;
+                        window.player.playCurrent(false);
+                        notify('"' + data.name + '" çalınıyor...', 'info');
+                    } else {
+                        notify('Bu playlistte henüz şarkı bulunmuyor.', 'info');
+                    }
+                } catch (e) {
+                    window.location.href = (window.getAppUrl ? window.getAppUrl('/playlists/' + encodeURIComponent(playlistId)) : ('/playlists/' + encodeURIComponent(playlistId))) + '?autoplay=true';
+                }
+            }
+        </script>
+    </th:block>
 
 </body>
 </html>

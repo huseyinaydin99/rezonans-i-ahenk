@@ -31,12 +31,18 @@ async function loadPlaylistOptions() {
     if (!body) return;
 
     try {
-        const apiUrl = window.getAppUrl ? window.getAppUrl('/api/v1/playlists') : '/api/v1/playlists';
-        const res = await fetch(apiUrl);
-        if (res.status === 401) {
+        let apiUrl = window.getAppUrl ? window.getAppUrl('/web-api/playlists') : '/web-api/playlists';
+        let res = await fetch(apiUrl, { credentials: 'same-origin' });
+        
+        if (res.status === 404) {
+            apiUrl = window.getAppUrl ? window.getAppUrl('/api/v1/playlists') : '/api/v1/playlists';
+            res = await fetch(apiUrl, { credentials: 'same-origin' });
+        }
+
+        if (res.status === 401 || res.status === 403) {
             closePlaylistModal();
             notify('Playlist için giriş yapmalısınız.', 'info');
-            window.location.href = '/music-credit-system/login.xhtml';
+            window.location.href = window.getAppUrl ? window.getAppUrl('/login') : '/music-credit-system/login.xhtml';
             return;
         }
 
@@ -78,6 +84,7 @@ async function loadPlaylistOptions() {
             list.appendChild(item);
         });
     } catch (e) {
+        console.error('[PlaylistModal] Yükleme hatası:', e);
         body.innerHTML = '<p class="pladd-status pladd-status--error">Playlistler yüklenemedi.</p>';
     }
 }
@@ -90,26 +97,49 @@ async function selectPlaylist(playlistId, playlistName, itemEl) {
     if (itemEl) itemEl.classList.add('pladd-item--loading');
 
     try {
-        const addUrl = window.getAppUrl
-            ? window.getAppUrl('/api/v1/playlists/' + encodeURIComponent(playlistId) + '/songs/' + encodeURIComponent(pladdCurrentSongId))
-            : ('/api/v1/playlists/' + encodeURIComponent(playlistId) + '/songs/' + encodeURIComponent(pladdCurrentSongId));
+        let addUrl = window.getAppUrl
+            ? window.getAppUrl('/web-api/playlists/' + encodeURIComponent(playlistId) + '/songs/' + encodeURIComponent(pladdCurrentSongId))
+            : ('/web-api/playlists/' + encodeURIComponent(playlistId) + '/songs/' + encodeURIComponent(pladdCurrentSongId));
 
-        const addRes = await fetch(addUrl, {
+        let addRes = await fetch(addUrl, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            credentials: 'same-origin'
         });
+
+        if (addRes.status === 404) {
+            addUrl = window.getAppUrl
+                ? window.getAppUrl('/api/v1/playlists/' + encodeURIComponent(playlistId) + '/songs/' + encodeURIComponent(pladdCurrentSongId))
+                : ('/api/v1/playlists/' + encodeURIComponent(playlistId) + '/songs/' + encodeURIComponent(pladdCurrentSongId));
+            addRes = await fetch(addUrl, {
+                method: 'POST',
+                credentials: 'same-origin'
+            });
+        }
+
+        if (addRes.status === 401 || addRes.status === 403) {
+            closePlaylistModal();
+            notify('Playlist için giriş yapmalısınız.', 'info');
+            window.location.href = window.getAppUrl ? window.getAppUrl('/login') : '/music-credit-system/login.xhtml';
+            return;
+        }
+
+        if (addRes.status === 409) {
+            closePlaylistModal();
+            notify('Bu şarkı zaten "' + playlistName + '" playlistine eklenmiş.', 'info');
+            return;
+        }
 
         if (addRes.ok) {
             notify('Şarkı "' + playlistName + '" playlistine eklendi.', 'success');
             closePlaylistModal();
         } else {
+            console.error('[PlaylistModal] Şarkı ekleme hatası HTTP:', addRes.status);
             notify('Şarkı eklenemedi.', 'error');
             items.forEach(function (el) { el.disabled = false; });
             if (itemEl) itemEl.classList.remove('pladd-item--loading');
         }
     } catch (e) {
+        console.error('[PlaylistModal] İstek hatası:', e);
         notify('İstek gönderilemedi: ' + e, 'error');
         items.forEach(function (el) { el.disabled = false; });
         if (itemEl) itemEl.classList.remove('pladd-item--loading');

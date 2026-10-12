@@ -6,7 +6,8 @@ import java.util.List;
 
 public interface IPlaylistService {
     void createPlaylist(CreatePlaylistDto dto);
-    void addSongToPlaylist(String playlistId, String songId);
+    boolean addSongToPlaylist(String playlistId, String songId);
     void removeSongFromPlaylist(String playlistId, String songId);
     List<PlaylistDetailDto> getUserPlaylists(String userId);
+    PlaylistDetailDto getPlaylistById(String playlistId);
 }

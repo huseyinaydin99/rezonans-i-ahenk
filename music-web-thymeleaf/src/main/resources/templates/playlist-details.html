@@ -1,37 +1,115 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title th:text="${playlist != null ? playlist.name + ' - Playlist Detayı' : 'Playlist Detayı'}">Playlist Detayı</title>
+</head>
 <body>
 
-    <div layout:fragment="title">Playlist Detayı</div>
+    <div layout:fragment="title" th:text="${playlist != null ? playlist.name : 'Playlist'}">Playlist Detayı</div>
     <div layout:fragment="content">
-        <h1 class="fv-title">Playlist: Favorilerim</h1>
-        <p class="fv-subtitle mb-4">Sizin için seçilen harika şarkılar.</p>
-        
-        <div class="mg-hero-strip" style="display: flex; gap: 1rem; flex-wrap: wrap;">
-            <div class="mg-card mg-card--tier-1" style="width: 200px;">
-                <div class="mg-card-cover">
-                    <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=200" alt="Song" />
-                    <div class="mg-card-play-overlay">
-                        <button class="mg-card-play" onclick="player.playFrom(30)"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span></button>
-                    </div>
-                </div>
-                <div class="mg-card-title-row"><h4 class="mg-card-title">My Favorite Track</h4></div>
-                <p class="mg-card-artist">Various Artists</p>
+        <a th:href="@{/playlists}" class="btn btn-outline-light mb-3" style="border-radius: 8px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; text-decoration: none;">
+            <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span>
+            Tüm Playlistler
+        </a>
+
+        <!-- Bildirim Mesajları -->
+        <div th:if="${errorMessage}" class="alert-box alert-box--error" style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; border-radius: 10px; padding: 12px 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <span class="material-symbols-outlined" style="color: #ef4444;">error</span>
+            <span th:text="${errorMessage}"></span>
+        </div>
+        <div th:if="${successMessage}" class="alert-box alert-box--success" style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); color: #6ee7b7; border-radius: 10px; padding: 12px 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+            <span class="material-symbols-outlined" style="color: #10b981;">check_circle</span>
+            <span th:text="${successMessage}"></span>
+        </div>
+
+        <div class="fv-header">
+            <div>
+                <h1 class="fv-title" th:text="${playlist.name}">Playlist Adı</h1>
+                <p class="fv-subtitle" th:text="${(playlist.description != null and !playlist.description.isEmpty() ? playlist.description : 'Kişisel çalma listeniz.') + ' • ' + (songCount != null ? songCount : 0) + ' şarkı.'}">
+                    Açıklama • 0 şarkı
+                </p>
             </div>
-            
-            <div class="mg-card mg-card--tier-2" style="width: 200px;">
-                <div class="mg-card-cover">
-                    <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=200" alt="Song" />
-                    <div class="mg-card-play-overlay">
-                        <button class="mg-card-play" onclick="player.playFrom(31)"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span></button>
+            <div class="fv-actions" th:if="${songs != null and !songs.isEmpty()}">
+                <button type="button" class="fv-btn-playall" onclick="playAllOnPage()">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                    Tümünü Çal
+                </button>
+                <button type="button" class="fv-btn-shuffle" id="shuffleBtn" onclick="toggleShuffleBtn(this)" title="Karışık çal">
+                    <span class="material-symbols-outlined">shuffle</span>
+                </button>
+            </div>
+        </div>
+
+        <div th:if="${songs == null or songs.isEmpty()}" style="text-align: center; padding: 48px 20px; background: rgba(255, 255, 255, 0.02); border-radius: 12px; border: 1px dashed rgba(255, 255, 255, 0.1); margin-top: 24px;">
+            <span class="material-symbols-outlined" style="font-size: 56px; color: #6c757d; margin-bottom: 12px;">queue_music</span>
+            <h3 style="color: #fff; font-size: 20px; margin-bottom: 8px;">Bu playlistte henüz şarkı bulunmuyor</h3>
+            <p style="color: #9aa0a6; max-width: 420px; margin: 0 auto 20px auto; font-size: 14px;">Şarkı kartlarındaki playlist ikonuna basarak bu listeye istediğiniz parçaları ekleyebilirsiniz.</p>
+            <a th:href="@{/}" class="btn btn-outline-light px-4 py-2" style="border-radius: 8px; font-weight: 500;">Müzikleri Keşfet</a>
+        </div>
+
+        <div th:if="${songs != null and !songs.isEmpty()}" class="fv-list">
+            <div th:each="song : ${songs}" class="fv-row">
+                <div class="fv-row-main">
+                    <div class="fv-cover">
+                        <img th:src="${song.cover != null ? song.cover : 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300'}" th:alt="${song.title}" />
+                        <div class="fv-cover-overlay queue-item"
+                             th:data-song-id="${song.id}"
+                             th:data-song-title="${song.title}"
+                             th:data-song-artist="${song.artist}"
+                             onclick="player.playFrom(parseInt(this.getAttribute('data-song-id'), 10))">
+                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                        </div>
+                    </div>
+                    <div class="fv-row-info">
+                        <span class="fv-row-title" th:text="${song.title}">Şarkı Başlığı</span>
+                        <span class="fv-row-artist" th:text="${song.artist != null ? song.artist : 'Rezonans Sanatçısı'}">Sanatçı</span>
                     </div>
                 </div>
-                <div class="mg-card-title-row"><h4 class="mg-card-title">Chill Vibes</h4></div>
-                <p class="mg-card-artist">Lofi Boy</p>
+                <div class="fv-row-meta">
+                    <span class="fv-duration" th:text="${song.duration != null ? song.duration : '3:30'}">3:30</span>
+                    <span class="fv-badge" th:classappend="${song.tier == 'Premium'} ? 'fv-badge--2' : (${song.tier == 'Elit'} ? 'fv-badge--3' : 'fv-badge--1')" th:text="${song.tier != null ? song.tier : 'Basic'}">Basic</span>
+                    <form th:action="@{/playlists/{id}/remove-song/{songId}(id=${playlist.id}, songId=${song.id})}" method="post" style="display:inline;" data-turbo="false">
+                        <button type="submit" class="fv-icon-btn text-danger" title="Playlistten çıkar">
+                            <span class="material-symbols-outlined" style="font-size: 20px;">delete_outline</span>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 
+    <th:block layout:fragment="scripts">
+        <script>
+            function playAllOnPage() {
+                if (!window.player) return;
+                const items = window.player.buildQueueFromPage();
+                if (items.length === 0) return;
+                window.player.queue = items;
+                window.player.index = 0;
+                window.player.playCurrent(false);
+            }
+
+            function toggleShuffleBtn(btn) {
+                if (!window.player) return;
+                window.player.shuffle = !window.player.shuffle;
+                btn.classList.toggle('active', window.player.shuffle);
+                if (window.player.shuffle) {
+                    notify('Karışık çalma açıldı.', 'info');
+                } else {
+                    notify('Karışık çalma kapatıldı.', 'info');
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('autoplay') === 'true') {
+                    setTimeout(function() {
+                        playAllOnPage();
+                    }, 300);
+                }
+            });
+        </script>
+    </th:block>
 
 </body>
 </html>
