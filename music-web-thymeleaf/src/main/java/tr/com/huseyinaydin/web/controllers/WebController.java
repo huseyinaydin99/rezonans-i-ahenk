@@ -127,6 +127,9 @@ public class WebController {
         } catch (Exception ignored) {}
         model.addAttribute("likeCount", likeCount);
 
+        HomeDashboardDto dashboardData = mediator.query(new GetHomeDashboardQuery(email));
+        model.addAttribute("recommendations", dashboardData != null ? dashboardData.getPersonalizedRecommendations() : Collections.emptyList());
+
         return "profile";
     }
 

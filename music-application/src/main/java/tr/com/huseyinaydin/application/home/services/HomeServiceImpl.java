@@ -48,11 +48,11 @@ public class HomeServiceImpl implements IHomeService {
         // 3. "Senin İçin Önerilenler": The Midnight, Lachi James, Dua Lipa vb. synthwave & pop önerileri
         log.info("-> 'Senin İçin Önerilenler' kişiselleştirilmiş öneri akışı derleniyor.");
         List<SongSnippet> forYou = List.of(
-            new SongSnippet(11L, "Light Years", "The Midnight & Nikki Flores", "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&q=80", "Premium", "Synthwave"),
             new SongSnippet(12L, "River of Darkness (feat. Timecop1983)", "The Midnight", "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&q=80", "Premium", "Synthwave"),
             new SongSnippet(13L, "Midnight (I Want You in My Arms)", "Lachi James", "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=400&q=80", "Premium", "Synthwave"),
             new SongSnippet(14L, "Dance The Night", "Dua Lipa", "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&q=80", "Basic", "Pop"),
             new SongSnippet(15L, "Houdini", "Dua Lipa", "https://images.unsplash.com/photo-1520523839898-507121c21528?w=400&q=80", "Premium", "Pop"),
+            new SongSnippet(11L, "Light Years", "The Midnight & Nikki Flores", "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&q=80", "Premium", "Synthwave"),
             new SongSnippet(30L, "Sunset", "The Midnight", "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&q=80", "Gold", "Synthwave"),
             new SongSnippet(39L, "Levitating", "Dua Lipa", "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&q=80", "Gold", "Pop"),
             new SongSnippet(16L, "Running in the Night", "FM-84 & Ollie Wride", "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&q=80", "Premium", "Synthwave")

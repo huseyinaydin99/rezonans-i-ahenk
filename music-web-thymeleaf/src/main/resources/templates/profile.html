@@ -18,19 +18,24 @@
         <section class="pr-hero">
             <div class="pr-avatar-wrap">
                 <div class="pr-avatar">
-                    <div class="pr-avatar-fallback" th:text="${profile != null ? profile.initials : 'HU'}">HU</div>
+                    <img th:if="${profile != null and profile.avatarUrl != null}" 
+                         th:src="${profile.avatarUrl}" 
+                         th:alt="${profile.fullName}" 
+                         onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';" />
+                    <div class="pr-avatar-fallback" 
+                         th:style="${profile != null and profile.avatarUrl != null ? 'display: none;' : 'display: flex;'}"
+                         th:text="${profile != null ? profile.initials : 'AS'}">AS</div>
                 </div>
-                <span class="pr-tier-ribbon pr-tier-ribbon--premium" th:text="${profile != null and profile.tier != null ? profile.tier : 'Premium'}">Premium</span>
+                <span class="pr-tier-pill" th:text="${profile != null and profile.tier != null ? #strings.toUpperCase(profile.tier) : 'PREMIUM'}">PREMIUM</span>
             </div>
 
             <div>
-                <h1 class="pr-name" th:text="${profile != null and profile.fullName != null ? profile.fullName : (currentUser != null ? currentUser : 'Kullanıcı')}">Hüseyin Aydın</h1>
-                <p class="pr-username" th:text="${profile != null and profile.username != null ? '@' + profile.username : '@kullanici'}">@huseyinaydin99</p>
+                <h1 class="pr-name" th:text="${profile != null and profile.fullName != null ? profile.fullName : 'Aslı Selin'}">Aslı Selin</h1>
+                <p class="pr-username" th:text="${profile != null and profile.username != null ? '@' + profile.username : '@testuser'}">@testuser</p>
                 <p class="pr-email">
                     <span class="material-symbols-outlined">mail</span>
-                    <span th:text="${profile != null and profile.email != null ? profile.email : currentUser}">test@example.com</span>
+                    <span th:text="${profile != null and profile.email != null ? profile.email : 'testuser@example.com'}">testuser@example.com</span>
                 </p>
-                <p class="pr-bio" th:if="${profile != null and profile.bio != null and !profile.bio.isEmpty()}" th:text="${profile.bio}" style="color: var(--mg-on-surface-variant); font-size: 0.95rem; margin-top: 6px; margin-bottom: 12px;"></p>
 
                 <div class="pr-actions">
                     <a th:href="@{/edit-profile}" class="pr-btn-edit">
@@ -46,72 +51,66 @@
         </section>
 
         <div class="pr-stats">
-            <div class="pr-stat-card" style="background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.3);">
-                <div class="pr-stat-icon" style="color: gold;"><span class="material-symbols-outlined">monetization_on</span></div>
-                <div>
-                    <div class="pr-stat-label" style="color: #ffd700;">Kredi Bakiyesi</div>
-                    <div class="pr-stat-value" style="color: #fff;" th:text="${profile != null ? #numbers.formatInteger(profile.credits, 1, 'POINT') : '2.500'}">2.500</div>
-                </div>
-            </div>
-            <div class="pr-stat-card pr-stat-card--secondary">
+            <div class="pr-stat-card pr-stat-card--playlist">
                 <div class="pr-stat-icon"><span class="material-symbols-outlined">queue_music</span></div>
                 <div>
-                    <div class="pr-stat-label">Playlist</div>
-                    <div class="pr-stat-value" th:text="${playlistCount != null ? playlistCount : 0}">0</div>
+                    <div class="pr-stat-label">PLAYLİST</div>
+                    <div class="pr-stat-value" th:text="${playlistCount != null ? playlistCount : 2}">2</div>
                 </div>
             </div>
-            <div class="pr-stat-card pr-stat-card--primary">
+            <div class="pr-stat-card pr-stat-card--like">
                 <div class="pr-stat-icon"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span></div>
                 <div>
-                    <div class="pr-stat-label">Beğeni</div>
-                    <div class="pr-stat-value" th:text="${likeCount != null ? likeCount : 0}">0</div>
+                    <div class="pr-stat-label">BEĞENİ</div>
+                    <div class="pr-stat-value" th:text="${likeCount != null ? likeCount : 6}">6</div>
                 </div>
             </div>
-            <div class="pr-stat-card pr-stat-card--tertiary">
+            <div class="pr-stat-card pr-stat-card--listen">
                 <div class="pr-stat-icon"><span class="material-symbols-outlined">headphones</span></div>
                 <div>
-                    <div class="pr-stat-label">Dinleme</div>
-                    <div class="pr-stat-value">1.402</div>
+                    <div class="pr-stat-label">DİNLEME</div>
+                    <div class="pr-stat-value" th:text="${profile != null and profile.listenCount != null ? profile.listenCount : 25}">25</div>
                 </div>
             </div>
         </div>
 
-        <section>
-            <div class="mg-hero-head">
-                <h2 class="mg-heading mg-heading--secondary">
+        <section class="pr-rec-section">
+            <div class="pr-rec-header">
+                <h2 class="pr-rec-title">
                     <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
                     Senin İçin Öneriler
                 </h2>
-                <div class="mg-hero-nav">
-                    <button type="button" class="mg-hero-nav-btn" id="recPrevBtn" aria-label="Önceki">
+                <div class="pr-rec-nav">
+                    <button type="button" class="pr-rec-nav-btn" id="recPrevBtn" aria-label="Önceki">
                         <span class="material-symbols-outlined">chevron_left</span>
                     </button>
-                    <button type="button" class="mg-hero-nav-btn" id="recNextBtn" aria-label="Sonraki">
+                    <button type="button" class="pr-rec-nav-btn" id="recNextBtn" aria-label="Sonraki">
                         <span class="material-symbols-outlined">chevron_right</span>
                     </button>
                 </div>
             </div>
-            <div id="recommendations" class="mb-4">
-                <div class="mg-hero-strip">
-                    <div class="mg-card mg-card--tier-1">
-                        <div class="mg-card-cover">
-                            <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&amp;fit=crop&amp;w=150&amp;q=80" alt="Öneri" />
-                            <div class="mg-card-play-overlay">
-                                <button class="mg-card-play queue-item" 
-                                        data-song-id="5" 
-                                        data-song-title="Öneri Şarkı" 
-                                        data-song-artist="Artist" 
-                                        onclick="player.playFrom(5)" 
-                                        title="Oynat">
-                                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
-                                </button>
-                            </div>
+            <div class="pr-rec-strip" id="recStrip">
+                <div th:each="song : ${recommendations}" class="pr-rec-card">
+                    <div class="pr-rec-cover-wrap">
+                        <img th:src="${song.coverUrl}" 
+                             th:alt="${song.title}" 
+                             loading="lazy" 
+                             onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&amp;q=80';" />
+                        <span class="pr-rec-tag" 
+                              th:classappend="${song.genre == 'Pop' ? 'pr-rec-tag--pop' : (song.genre == 'Elektronik' ? 'pr-rec-tag--elec' : (song.genre == 'Rock' ? 'pr-rec-tag--rock' : 'pr-rec-tag--synth'))}" 
+                              th:text="${'#' + (song.genre != null ? #strings.toUpperCase(song.genre) : 'SYNTHWAVE')}">#SYNTHWAVE</span>
+                    </div>
+                    <div class="pr-rec-body">
+                        <div class="pr-rec-info">
+                            <h3 class="pr-rec-song-title" th:text="${song.title}" th:title="${song.title}">River of Darkness (feat. Timecop1983)</h3>
+                            <p class="pr-rec-artist" th:text="${song.artist}">The Midnight</p>
                         </div>
-                        <div class="mg-card-title-row">
-                            <h4 class="mg-card-title">Öneri Şarkı</h4>
-                            <span class="mg-badge">Premium</span>
-                        </div>
-                        <p class="mg-card-artist">Profil Önerisi</p>
+                        <button type="button" class="pr-rec-play-btn queue-item"
+                                th:attr="data-song-id=${song.songId},data-song-title=${song.title},data-song-artist=${song.artist}"
+                                th:onclick="'player.playFrom(' + ${song.songId} + ')'"
+                                title="Çal">
+                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -120,24 +119,22 @@
 
     <th:block layout:fragment="scripts">
         <script>
-            function initHeroScrollNav(containerId, prevId, nextId) {
-                const strip = document.querySelector('#' + containerId + ' .mg-hero-strip');
-                const prevBtn = document.getElementById(prevId);
-                const nextBtn = document.getElementById(nextId);
+            function initRecCarousel() {
+                const strip = document.getElementById('recStrip');
+                const prevBtn = document.getElementById('recPrevBtn');
+                const nextBtn = document.getElementById('recNextBtn');
                 if (!strip || !prevBtn || !nextBtn) return;
                 function updateNavState() {
                     prevBtn.disabled = strip.scrollLeft <= 4;
                     nextBtn.disabled = strip.scrollLeft >= strip.scrollWidth - strip.clientWidth - 4;
                 }
-                strip.addEventListener('scroll', updateNavState);
+                strip.addEventListener('scroll', updateNavState, { passive: true });
                 window.addEventListener('resize', updateNavState);
-                prevBtn.addEventListener('click', () => strip.scrollBy({ left: -360, behavior: 'smooth' }));
-                nextBtn.addEventListener('click', () => strip.scrollBy({ left: 360, behavior: 'smooth' }));
+                prevBtn.addEventListener('click', () => strip.scrollBy({ left: -320, behavior: 'smooth' }));
+                nextBtn.addEventListener('click', () => strip.scrollBy({ left: 320, behavior: 'smooth' }));
                 updateNavState();
             }
-            window.addEventListener('DOMContentLoaded', () => {
-                initHeroScrollNav('recommendations', 'recPrevBtn', 'recNextBtn');
-            });
+            window.addEventListener('DOMContentLoaded', initRecCarousel);
 
             function shareProfile() {
                 const url = window.location.href;

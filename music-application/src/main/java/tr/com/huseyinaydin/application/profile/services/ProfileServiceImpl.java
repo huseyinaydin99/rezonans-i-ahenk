@@ -48,6 +48,11 @@ public class ProfileServiceImpl implements IProfileService {
             String derivedFullName = derivedUsername;
             String tier = "Premium";
 
+            if (k.contains("testuser") || k.equalsIgnoreCase("testuser@example.com")) {
+                derivedFullName = "Aslı Selin";
+                derivedUsername = "testuser";
+            }
+
             if (userRepository != null) {
                 try {
                     Optional<ApplicationUser> userOpt = userRepository.findByEmail(k);
@@ -67,7 +72,9 @@ public class ProfileServiceImpl implements IProfileService {
                 derivedUsername,
                 k,
                 "Müzik tutkunu, yazılım geliştirici.",
-                tier
+                tier,
+                "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&auto=format&fit=crop&q=80",
+                25
             );
         });
     }
