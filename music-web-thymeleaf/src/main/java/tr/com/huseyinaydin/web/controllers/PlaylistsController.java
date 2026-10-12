@@ -11,12 +11,13 @@ import tr.com.huseyinaydin.application.playlist.commands.CreatePlaylistCommand;
 import tr.com.huseyinaydin.application.playlist.commands.AddSongToPlaylistCommand;
 import tr.com.huseyinaydin.application.playlist.commands.RemoveSongFromPlaylistCommand;
 import tr.com.huseyinaydin.application.playlist.commands.SharePlaylistCommand;
-import tr.com.huseyinaydin.application.playlist.dtos.CreatePlaylistDto;
 import tr.com.huseyinaydin.application.playlist.dtos.PlaylistDetailDto;
-import tr.com.huseyinaydin.application.ports.IPlaylistService;
+import tr.com.huseyinaydin.application.playlist.queries.GetPlaylistByIdQuery;
+import tr.com.huseyinaydin.application.playlist.queries.GetUserPlaylistsQuery;
 import tr.com.huseyinaydin.application.ports.ITokenService;
 import tr.com.huseyinaydin.application.ports.TokenClaims;
 import tr.com.huseyinaydin.infrastructure.security.JwtAuthenticationFilter;
+import tr.com.huseyinaydin.sharedkernel.exception.BusinessException;
 import tr.com.huseyinaydin.web.security.CurrentUser;
 
 import java.nio.charset.StandardCharsets;
@@ -26,14 +27,11 @@ import java.util.*;
 @RequestMapping({"/web-api/playlists", "/api/v1/playlists"})
 public class PlaylistsController extends BaseController {
 
-    private final IPlaylistService playlistService;
     private final ITokenService tokenService;
 
     public PlaylistsController(Mediator mediator,
-                               @Autowired(required = false) IPlaylistService playlistService,
                                @Autowired(required = false) ITokenService tokenService) {
         super(mediator);
-        this.playlistService = playlistService;
         this.tokenService = tokenService;
     }
 
@@ -61,9 +59,11 @@ public class PlaylistsController extends BaseController {
         if (email == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        List<PlaylistDetailDto> list = (playlistService != null)
-                ? playlistService.getUserPlaylists(email)
-                : Collections.emptyList();
+
+        List<PlaylistDetailDto> list = mediator.query(new GetUserPlaylistsQuery(email));
+        if (list == null) {
+            list = Collections.emptyList();
+        }
 
         List<Map<String, Object>> response = new ArrayList<>();
         for (PlaylistDetailDto p : list) {
@@ -79,11 +79,9 @@ public class PlaylistsController extends BaseController {
 
     @GetMapping("/{playlistId}")
     public ResponseEntity<PlaylistDetailDto> getPlaylistDetail(@PathVariable("playlistId") String playlistId) {
-        if (playlistService != null) {
-            PlaylistDetailDto p = playlistService.getPlaylistById(playlistId);
-            if (p != null) {
-                return ResponseEntity.ok(p);
-            }
+        PlaylistDetailDto p = mediator.query(new GetPlaylistByIdQuery(playlistId));
+        if (p != null) {
+            return ResponseEntity.ok(p);
         }
         return ResponseEntity.notFound().build();
     }
@@ -102,33 +100,16 @@ public class PlaylistsController extends BaseController {
         String trimmedName = name.trim();
         String description = (String) payload.getOrDefault("description", "");
 
-        if (playlistService != null) {
-            List<PlaylistDetailDto> existing = playlistService.getUserPlaylists(email);
-            for (PlaylistDetailDto p : existing) {
-                if (p.getName() != null && p.getName().trim().equalsIgnoreCase(trimmedName)) {
-                    return ResponseEntity.status(HttpStatus.CONFLICT).build();
-                }
-            }
-            CreatePlaylistDto dto = new CreatePlaylistDto();
-            dto.setUserId(email);
-            dto.setName(trimmedName);
-            dto.setDescription(description);
-            try {
-                playlistService.createPlaylist(dto);
-            } catch (IllegalArgumentException e) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).build();
-            }
-        }
-
-        UUID userUuid = UUID.nameUUIDFromBytes(email.getBytes(StandardCharsets.UTF_8));
-        UUID playlistUuid;
         try {
-            playlistUuid = mediator.send(new CreatePlaylistCommand(trimmedName, userUuid));
+            UUID playlistUuid = mediator.send(new CreatePlaylistCommand(trimmedName, description, email));
+            return ResponseEntity.ok(playlistUuid);
+        } catch (BusinessException be) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (IllegalArgumentException iae) {
+            return ResponseEntity.badRequest().build();
         } catch (Exception e) {
-            playlistUuid = UUID.randomUUID();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
-        return ResponseEntity.ok(playlistUuid);
     }
 
     @PostMapping("/{playlistId}/songs/{songId}")
@@ -140,12 +121,8 @@ public class PlaylistsController extends BaseController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        boolean added = false;
-        if (playlistService != null) {
-            added = playlistService.addSongToPlaylist(playlistId, songId);
-        }
-
-        if (!added) {
+        Boolean added = mediator.send(new AddSongToPlaylistCommand(playlistId, songId));
+        if (added == null || !added) {
             // Şarkı bu listede zaten mevcut!
             return ResponseEntity.status(HttpStatus.CONFLICT).body(false);
         }
@@ -157,16 +134,18 @@ public class PlaylistsController extends BaseController {
     public ResponseEntity<Boolean> removeSong(@PathVariable("playlistId") String playlistId,
                                               @PathVariable("songId") String songId,
                                               HttpServletRequest request) {
-        if (playlistService != null) {
-            playlistService.removeSongFromPlaylist(playlistId, songId);
-        }
-        return ResponseEntity.ok(true);
+        Boolean removed = mediator.send(new RemoveSongFromPlaylistCommand(playlistId, songId));
+        return ResponseEntity.ok(removed != null ? removed : true);
     }
 
     @PostMapping("/{playlistId}/share")
     public ResponseEntity<String> share(@PathVariable("playlistId") String playlistId) {
         UUID pId;
-        try { pId = UUID.fromString(playlistId); } catch (Exception e) { pId = UUID.nameUUIDFromBytes(playlistId.getBytes(StandardCharsets.UTF_8)); }
+        try {
+            pId = UUID.fromString(playlistId);
+        } catch (Exception e) {
+            pId = UUID.nameUUIDFromBytes(playlistId.getBytes(StandardCharsets.UTF_8));
+        }
         return ResponseEntity.ok(mediator.send(new SharePlaylistCommand(pId)));
     }
 }

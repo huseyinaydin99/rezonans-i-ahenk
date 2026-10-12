@@ -1,90 +1,171 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 <head>
-    <title>Paketler</title>
+    <title>Paketler - Rezonans-ı Ahenk</title>
 </head>
 <body>
     <div layout:fragment="content">
         <div class="pk-floor"></div>
 
         <div class="pk-header">
-            <h2 class="pk-title">Kademeni Yükselt</h2>
+            <h2 class="pk-title">KADEMENİ YÜKSELT</h2>
             <p class="pk-subtitle">Erişim seviyeni seç. Üst kademeler daha geniş bir şarkı kütüphanesine ve öncelikli önerilere açılır.</p>
         </div>
 
         <div class="pk-current-wrap">
             <span class="pk-current">
-                <span class="material-symbols-outlined" style="font-size:16px;">bolt</span>
-                Mevcut paketin: <strong id="currentTier">Basic</strong>
+                <span style="color:#00e3fd; font-size:16px;">⚡</span>
+                Mevcut paketin: <strong id="currentTier" th:text="${currentTier}">Premium</strong>
             </span>
         </div>
 
-        <div class="pk-grid">
-            <div class="pk-card">
-                <span class="material-symbols-outlined pk-card-icon">audiotrack</span>
-                <span class="pk-active-ribbon">Aktif Paketin</span>
-                <h3 class="pk-card-name">Basic</h3>
+        <div class="pk-grid" id="packagesGrid" th:attr="data-current-tier=${currentTier}">
+            <!-- BASIC KARTI -->
+            <div class="pk-card pk-card--basic" id="card-Basic" th:classappend="${#strings.equalsIgnoreCase(currentTier, 'Basic') ? ' pk-card--active' : ''}">
+                <svg class="pk-card-watermark" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                </svg>
+                <span class="pk-active-badge" id="badge-Basic" th:style="${#strings.equalsIgnoreCase(currentTier, 'Basic') ? 'display:inline-block;' : 'display:none;'}">AKTİF PAKETİN</span>
+                <h3 class="pk-card-name">BASIC</h3>
                 <div class="pk-card-price"><span class="amount">₺0</span> <span class="period">/ay</span></div>
                 <ul class="pk-card-features">
-                    <li><span class="material-symbols-outlined" style="color:var(--mg-secondary);">check</span> Basic kademedeki şarkılara erişim</li>
-                    <li><span class="material-symbols-outlined" style="color:var(--mg-secondary);">check</span> Sınırsız çalma listesi oluştur</li>
-                    <li><span class="material-symbols-outlined" style="color:var(--mg-secondary);">check</span> Şarkıları favorilere ekle</li>
+                    <li><span class="pk-check">✓</span> Basic kademedeki şarkılara erişim</li>
+                    <li><span class="pk-check">✓</span> Sınırsız çalma listesi oluştur</li>
+                    <li><span class="pk-check">✓</span> Şarkıları favorilere ekle</li>
                 </ul>
-                <button class="pk-btn pk-btn-ghost" disabled="disabled">Varsayılan Paket</button>
+                <div class="pk-btn-wrap" id="btn-wrap-Basic">
+                    <button th:if="${#strings.equalsIgnoreCase(currentTier, 'Basic')}" class="pk-btn pk-btn--active-basic" disabled="disabled">AKTİF PAKETİN</button>
+                    <button th:unless="${#strings.equalsIgnoreCase(currentTier, 'Basic')}" class="pk-btn pk-btn-ghost" disabled="disabled">VARSAYILAN PAKET</button>
+                </div>
             </div>
 
-            <div class="pk-card pk-card--gold">
-                <span class="material-symbols-outlined pk-card-icon">headphones</span>
-                <h3 class="pk-card-name">Gold</h3>
+            <!-- GOLD KARTI -->
+            <div class="pk-card pk-card--gold" id="card-Gold" th:classappend="${#strings.equalsIgnoreCase(currentTier, 'Gold') ? ' pk-card--active' : ''}">
+                <svg class="pk-card-watermark" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 3a9 9 0 0 0-9 9v7a3 3 0 0 0 3 3h2a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1H5v-2a7 7 0 1 1 14 0v2h-3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2a3 3 0 0 0 3-3v-7a9 9 0 0 0-9-9z"/>
+                </svg>
+                <span class="pk-active-badge" id="badge-Gold" th:style="${#strings.equalsIgnoreCase(currentTier, 'Gold') ? 'display:inline-block;' : 'display:none;'}">AKTİF PAKETİN</span>
+                <h3 class="pk-card-name">GOLD</h3>
                 <div class="pk-card-price"><span class="amount">₺49,90</span> <span class="period">/ay</span></div>
                 <ul class="pk-card-features">
-                    <li><span class="material-symbols-outlined" style="color:var(--mg-gold);">check</span> Gold ve altı tüm şarkılara erişim</li>
-                    <li><span class="material-symbols-outlined" style="color:var(--mg-gold);">check</span> Basic'teki her şey</li>
-                    <li><span class="material-symbols-outlined" style="color:var(--mg-gold);">check</span> Kişiselleştirilmiş öneriler</li>
+                    <li><span class="pk-check">✓</span> Gold ve altı tüm şarkılara erişim</li>
+                    <li><span class="pk-check">✓</span> Basic'teki her şey</li>
+                    <li><span class="pk-check">✓</span> Kişiselleştirilmiş öneriler</li>
                 </ul>
-                <button class="pk-btn pk-btn-outline-gold" onclick="buyPackage(this.closest('.pk-card').querySelector('.pk-card-name').innerText)">Gold'a Geç</button>
+                <div class="pk-btn-wrap" id="btn-wrap-Gold">
+                    <button th:if="${#strings.equalsIgnoreCase(currentTier, 'Gold')}" class="pk-btn pk-btn--active-gold" disabled="disabled">AKTİF PAKETİN</button>
+                    <button th:unless="${#strings.equalsIgnoreCase(currentTier, 'Gold')}" class="pk-btn pk-btn-outline-gold" onclick="buyPackage('Gold')">GOLD'A GEÇ</button>
+                </div>
             </div>
 
-            <div class="pk-card pk-card--premium">
-                <span class="material-symbols-outlined pk-card-icon">album</span>
-                <h3 class="pk-card-name">Premium</h3>
+            <!-- PREMIUM KARTI -->
+            <div class="pk-card pk-card--premium" id="card-Premium" th:classappend="${#strings.equalsIgnoreCase(currentTier, 'Premium') ? ' pk-card--active' : ''}">
+                <svg class="pk-card-watermark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="12" cy="12" r="9"/>
+                    <circle cx="12" cy="12" r="6"/>
+                    <circle cx="12" cy="12" r="3"/>
+                    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+                </svg>
+                <span class="pk-active-badge" id="badge-Premium" th:style="${#strings.equalsIgnoreCase(currentTier, 'Premium') ? 'display:inline-block;' : 'display:none;'}">AKTİF PAKETİN</span>
+                <h3 class="pk-card-name">PREMIUM</h3>
                 <div class="pk-card-price"><span class="amount">₺89,90</span> <span class="period">/ay</span></div>
                 <ul class="pk-card-features">
-                    <li><span class="material-symbols-outlined" style="color:var(--mg-primary);">check</span> Premium ve altı tüm şarkılara erişim</li>
-                    <li><span class="material-symbols-outlined" style="color:var(--mg-primary);">check</span> Gold'daki her şey</li>
-                    <li><span class="material-symbols-outlined" style="color:var(--mg-primary);">check</span> Gelişmiş öneri motoru</li>
+                    <li><span class="pk-check">✓</span> Premium ve altı tüm şarkılara erişim</li>
+                    <li><span class="pk-check">✓</span> Gold'daki her şey</li>
+                    <li><span class="pk-check">✓</span> Gelişmiş öneri motoru</li>
                 </ul>
-                <button class="pk-btn pk-btn-solid-primary" onclick="buyPackage(this.closest('.pk-card').querySelector('.pk-card-name').innerText)">Premium'a Geç</button>
+                <div class="pk-btn-wrap" id="btn-wrap-Premium">
+                    <button th:if="${#strings.equalsIgnoreCase(currentTier, 'Premium')}" class="pk-btn pk-btn--active-premium" disabled="disabled">AKTİF PAKETİN</button>
+                    <button th:unless="${#strings.equalsIgnoreCase(currentTier, 'Premium')}" class="pk-btn pk-btn-solid-primary" onclick="buyPackage('Premium')">PREMİUM'A GEÇ</button>
+                </div>
             </div>
 
-            <div class="pk-card pk-card--elit">
-                <span class="material-symbols-outlined pk-card-icon">diamond</span>
-                <h3 class="pk-card-name">Elit</h3>
+            <!-- ELİT KARTI -->
+            <div class="pk-card pk-card--elit" id="card-Elit" th:classappend="${#strings.equalsIgnoreCase(currentTier, 'Elit') ? ' pk-card--active' : ''}">
+                <svg class="pk-card-watermark" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 3h12l4 6-10 12L2 9l4-6zm.7 2L3.8 9h4.4L9.5 5H6.7zm4.8 0L10.2 9h3.6l-1.3-4h-1zm4.8 0l-1.3 4h4.4l-2.9-4h-.2zM4.6 11l6.4 7.7V11H4.6zm8.4 0v7.7l6.4-7.7h-6.4z"/>
+                </svg>
+                <span class="pk-active-badge" id="badge-Elit" th:style="${#strings.equalsIgnoreCase(currentTier, 'Elit') ? 'display:inline-block;' : 'display:none;'}">AKTİF PAKETİN</span>
+                <h3 class="pk-card-name">ELİT</h3>
                 <div class="pk-card-price"><span class="amount">₺149,90</span> <span class="period">/ay</span></div>
                 <ul class="pk-card-features">
-                    <li><span class="material-symbols-outlined" style="color:var(--mg-tertiary);">check</span> Sistemdeki tüm şarkılara sınırsız erişim</li>
-                    <li><span class="material-symbols-outlined" style="color:var(--mg-tertiary);">check</span> Premium'daki her şey</li>
-                    <li><span class="material-symbols-outlined" style="color:var(--mg-tertiary);">check</span> Yeni eklenen parçalara ilk erişim</li>
+                    <li><span class="pk-check">✓</span> Sistemdeki tüm şarkılara sınırsız erişim</li>
+                    <li><span class="pk-check">✓</span> Premium'daki her şey</li>
+                    <li><span class="pk-check">✓</span> Yeni eklenen parçalara ilk erişim</li>
                 </ul>
-                <button class="pk-btn pk-btn-solid-elit" onclick="buyPackage(this.closest('.pk-card').querySelector('.pk-card-name').innerText)">Elit'e Geç</button>
+                <div class="pk-btn-wrap" id="btn-wrap-Elit">
+                    <button th:if="${#strings.equalsIgnoreCase(currentTier, 'Elit')}" class="pk-btn pk-btn--active-elit" disabled="disabled">AKTİF PAKETİN</button>
+                    <button th:unless="${#strings.equalsIgnoreCase(currentTier, 'Elit')}" class="pk-btn pk-btn-solid-elit" onclick="buyPackage('Elit')">ELİT'E GEÇ</button>
+                </div>
             </div>
         </div>
+
         <p class="pk-footnote">Bu bir demo sistemdir — gerçek bir ödeme alınmaz, paket değişikliği anında uygulanır.</p>
     </div>
 
     <th:block layout:fragment="scripts">
         <script>
+            function updateTierUi(tierName) {
+                if (!tierName) return;
+                const normalized = tierName.trim().charAt(0).toUpperCase() + tierName.trim().slice(1).toLowerCase();
+                const canonicalTier = (normalized === 'Elite') ? 'Elit' : normalized;
+
+                const currentTierEl = document.getElementById('currentTier');
+                if (currentTierEl) {
+                    currentTierEl.innerText = canonicalTier;
+                }
+
+                const tiers = ['Basic', 'Gold', 'Premium', 'Elit'];
+                tiers.forEach(t => {
+                    const card = document.getElementById('card-' + t);
+                    const badge = document.getElementById('badge-' + t);
+                    const btnWrap = document.getElementById('btn-wrap-' + t);
+                    const isActive = (t.toLowerCase() === canonicalTier.toLowerCase());
+
+                    if (card) {
+                        if (isActive) card.classList.add('pk-card--active');
+                        else card.classList.remove('pk-card--active');
+                    }
+
+                    if (badge) {
+                        badge.style.display = isActive ? 'inline-block' : 'none';
+                    }
+
+                    if (btnWrap) {
+                        if (isActive) {
+                            let activeClass = 'pk-btn--active-basic';
+                            if (t === 'Gold') activeClass = 'pk-btn--active-gold';
+                            else if (t === 'Premium') activeClass = 'pk-btn--active-premium';
+                            else if (t === 'Elit') activeClass = 'pk-btn--active-elit';
+                            btnWrap.innerHTML = '<button class="pk-btn ' + activeClass + '" disabled="disabled">AKTİF PAKETİN</button>';
+                        } else {
+                            if (t === 'Basic') {
+                                btnWrap.innerHTML = '<button class="pk-btn pk-btn-ghost" disabled="disabled">VARSAYILAN PAKET</button>';
+                            } else if (t === 'Gold') {
+                                btnWrap.innerHTML = '<button class="pk-btn pk-btn-outline-gold" onclick="buyPackage(\'Gold\')">GOLD\'A GEÇ</button>';
+                            } else if (t === 'Premium') {
+                                btnWrap.innerHTML = '<button class="pk-btn pk-btn-solid-primary" onclick="buyPackage(\'Premium\')">PREMİUM\'A GEÇ</button>';
+                            } else if (t === 'Elit') {
+                                btnWrap.innerHTML = '<button class="pk-btn pk-btn-solid-elit" onclick="buyPackage(\'Elit\')">ELİT\'E GEÇ</button>';
+                            }
+                        }
+                    }
+                });
+            }
+
             async function buyPackage(tier) {
                 try {
-                    const buyUrl = '[[@{/api/Membership/Buy}]]' + '?tier=' + tier;
+                    const buyUrl = '[[@{/api/Membership/Buy}]]' + '?tier=' + encodeURIComponent(tier);
                     const loginUrl = '[[@{/login}]]';
                     const res = await fetch(buyUrl, { method: 'POST', credentials: 'same-origin' });
                     if (res.ok) {
                         const data = await res.json();
-                        document.getElementById('currentTier').innerText = data.tier;
-                        notify(data.message + ' Artık müzik sayfasında bu kademedeki şarkıları çalabilirsiniz.', 'success');
+                        updateTierUi(data.tier);
+                        if (typeof notify === 'function') {
+                            notify(data.message + ' Artık bu kademedeki tüm şarkıları dinleyebilirsiniz.', 'success');
+                        }
                     } else {
-                        const data = await res.json();
+                        const data = await res.json().catch(() => ({}));
                         if (res.status === 401) {
                             if (typeof Turbo !== 'undefined') {
                                 Turbo.visit(loginUrl);
@@ -92,13 +173,24 @@
                                 window.location.href = loginUrl;
                             }
                         } else {
-                            notify(data.message || 'Satın alma başarısız.', 'error');
+                            if (typeof notify === 'function') {
+                                notify(data.message || 'Paket değişikliği başarısız.', 'error');
+                            }
                         }
                     }
                 } catch (e) {
-                    notify('İstek gönderilemedi: ' + e, 'error');
+                    if (typeof notify === 'function') {
+                        notify('İstek gönderilemedi: ' + e, 'error');
+                    }
                 }
             }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const grid = document.getElementById('packagesGrid');
+                if (grid && grid.dataset.currentTier) {
+                    updateTierUi(grid.dataset.currentTier);
+                }
+            });
         </script>
     </th:block>
 </body>

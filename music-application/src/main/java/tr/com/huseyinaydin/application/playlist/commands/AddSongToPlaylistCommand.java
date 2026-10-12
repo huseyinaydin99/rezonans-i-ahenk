@@ -1,18 +1,21 @@
 package tr.com.huseyinaydin.application.playlist.commands;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tr.com.huseyinaydin.application.ports.IPlaylistService;
-import tr.com.huseyinaydin.domain.playlist.PlaylistSong;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommand;
 import tr.com.huseyinaydin.sharedkernel.messaging.ICommandHandler;
+
 import java.util.UUID;
 
-public record AddSongToPlaylistCommand(UUID playlistId, UUID songId) implements ICommand<Boolean> {
+public record AddSongToPlaylistCommand(String playlistId, String songId) implements ICommand<Boolean> {
     private static final Logger log = LoggerFactory.getLogger(AddSongToPlaylistCommand.class);
+
+    public AddSongToPlaylistCommand(UUID playlistId, UUID songId) {
+        this(playlistId != null ? playlistId.toString() : null, songId != null ? songId.toString() : null);
+    }
 
     @Component
     public static class Handler implements ICommandHandler<AddSongToPlaylistCommand, Boolean> {
@@ -26,10 +29,14 @@ public record AddSongToPlaylistCommand(UUID playlistId, UUID songId) implements 
         public Boolean handle(AddSongToPlaylistCommand command) {
             if (playlistService != null && command.playlistId() != null && command.songId() != null) {
                 try {
-                    playlistService.addSongToPlaylist(command.playlistId().toString(), command.songId().toString());
-                } catch (Exception ignored) {}
+                    boolean success = playlistService.addSongToPlaylist(command.playlistId(), command.songId());
+                    log.info("Song {} added to Playlist {}: {}", command.songId(), command.playlistId(), success);
+                    return success;
+                } catch (Exception e) {
+                    log.error("Error adding song {} to playlist {}: {}", command.songId(), command.playlistId(), e.getMessage());
+                    return false;
+                }
             }
-            log.info("Song " + command.songId() + " added to Playlist " + command.playlistId());
             return true;
         }
     }
