@@ -1,1 +1,0 @@
-sed -i '' 's/src="#{song.coverUrl != null ? song.coverUrl : .https:\/\/via.placeholder.com\/150.}"/th:src="${song.coverUrl != null ? song.coverUrl : .https:\/\/via.placeholder.com\/150.}"/g' music-web-thymeleaf/src/main/resources/templates/index.html
