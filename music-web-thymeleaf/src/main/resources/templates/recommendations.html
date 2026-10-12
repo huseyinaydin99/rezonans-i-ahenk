@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Kişisel Öneriler — Rezonans-ı Ahenk</title>
+    <style>
+        .rec-hero {
+            position: relative;
+            background: linear-gradient(135deg, rgba(255, 42, 133, 0.12), rgba(0, 227, 253, 0.08) 50%, rgba(13, 17, 23, 0.95));
+            border: 1px solid rgba(255, 42, 133, 0.25);
+            border-radius: 16px;
+            padding: 36px 32px;
+            margin-bottom: 28px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 0 60px rgba(255, 42, 133, 0.04);
+            overflow: hidden;
+        }
+        .rec-hero::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(0, 227, 253, 0.2) 0%, transparent 70%);
+            pointer-events: none;
+            filter: blur(40px);
+        }
+        .rec-hero-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #ff2a85, #00e3fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        .rec-hero-sub {
+            color: #9aa0a6;
+            font-size: 0.95rem;
+            max-width: 620px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        .rec-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: rgba(0, 227, 253, 0.12);
+            border: 1px solid rgba(0, 227, 253, 0.35);
+            border-radius: 20px;
+            color: #00e3fd;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .rec-track-row {
+            display: grid;
+            grid-template-columns: 40px 44px 56px 1fr auto auto auto;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 18px;
+            background: rgba(22, 27, 34, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-bottom: 8px;
+        }
+        .rec-track-row:hover {
+            background: rgba(30, 38, 48, 0.9);
+            border-color: rgba(255, 42, 133, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+        .rec-track-rank {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-align: center;
+            font-weight: 700;
+        }
+        .rec-track-play {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff2a85, #ff6b35);
+            border: none;
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(255, 42, 133, 0.35);
+            transition: transform 0.15s ease;
+        }
+        .rec-track-play:hover {
+            transform: scale(1.1);
+        }
+        .rec-track-cover {
+            width: 52px;
+            height: 52px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #111;
+            flex-shrink: 0;
+        }
+        .rec-track-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .rec-track-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+        .rec-track-title {
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .rec-track-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .rec-track-artist {
+            color: #9aa0a6;
+            font-size: 0.85rem;
+        }
+        .rec-track-reason {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255, 42, 133, 0.15);
+            border: 1px solid rgba(255, 42, 133, 0.3);
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 0.72rem;
+            color: #ff80bf;
+            font-weight: 500;
+        }
+        .rec-track-genre {
+            color: #00e3fd;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .rec-tier-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .rec-tier-badge--Basic {
+            background: rgba(108, 117, 125, 0.15);
+            color: #adb5bd;
+            border: 1px solid rgba(108, 117, 125, 0.3);
+        }
+        .rec-tier-badge--Gold {
+            background: rgba(255, 193, 7, 0.15);
+            color: #ffd166;
+            border: 1px solid rgba(255, 193, 7, 0.35);
+        }
+        .rec-tier-badge--Premium {
+            background: rgba(255, 42, 133, 0.15);
+            color: #ff2a85;
+            border: 1px solid rgba(255, 42, 133, 0.4);
+        }
+        .rec-tier-badge--Elit {
+            background: rgba(0, 227, 253, 0.15);
+            color: #00e3fd;
+            border: 1px solid rgba(0, 227, 253, 0.4);
+        }
+        .rec-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .rec-icon-btn {
+            background: transparent;
+            border: none;
+            color: #9aa0a6;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            transition: color 0.15s ease, background 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        .rec-icon-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        @media (max-width: 768px) {
+            .rec-track-row {
+                grid-template-columns: 32px 36px 44px 1fr auto;
+                gap: 10px;
+                padding: 10px 12px;
+            }
+            .rec-track-rank { font-size: 0.8rem; }
+            .rec-tier-badge { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <!-- Hero Başlık Alanı -->
+        <section class="rec-hero">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div>
+                    <div class="rec-badge-pill mb-2">
+                        <span class="material-symbols-outlined" style="font-size: 14px; font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                        Yapay Zeka Destekli Frekans Eşleştirme
+                    </div>
+                    <h1 class="rec-hero-title">Senin İçin Öneriler</h1>
+                    <p class="rec-hero-sub">
+                        Dinleme geçmişin, favori sanatçıların ve en çok tekrar ettiğin türler analiz edilerek senin müzikal frekansına özel olarak derlendi.
+                    </p>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-primary px-3 py-2 d-flex align-items-center gap-2" onclick="playAllOnPage()" style="border-radius: 8px; font-weight: 600;">
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                        Tümünü Çal
+                    </button>
+                    <a th:href="@{/genres}" class="btn btn-outline-light px-3 py-2" style="border-radius: 8px;">Türler</a>
+                    <a th:href="@{/artists}" class="btn btn-outline-light px-3 py-2" style="border-radius: 8px;">Sanatçılar</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Öneri Parçaları Vitrini -->
+        <section>
+            <div th:if="${recommendations == null or recommendations.isEmpty()}" style="text-align: center; padding: 48px 20px; background: rgba(255, 255, 255, 0.02); border-radius: 12px; border: 1px dashed rgba(255, 255, 255, 0.1); margin-top: 24px;">
+                <span class="material-symbols-outlined" style="font-size: 56px; color: #6c757d; margin-bottom: 12px;">queue_music</span>
+                <h3 style="color: #fff; font-size: 20px; margin-bottom: 8px;">Henüz öneri üretilemedi</h3>
+                <p style="color: #9aa0a6; max-width: 440px; margin: 0 auto 20px auto; font-size: 14px;">Platformda birkaç parça dinledikçe yapay zeka rezonans motorumuz senin için benzersiz öneriler hazırlamaya başlayacak.</p>
+                <a th:href="@{/}" class="btn btn-outline-light px-4 py-2" style="border-radius: 8px; font-weight: 500;">Müzikleri Keşfet</a>
+            </div>
+
+            <div th:if="${recommendations != null and !recommendations.isEmpty()}" class="d-flex flex-column">
+                <div th:each="song, iterStat : ${recommendations}" class="rec-track-row">
+                    <!-- Sıralama -->
+                    <span class="rec-track-rank" th:text="${iterStat.count}">1</span>
+
+                    <!-- Oynat Butonu -->
+                    <button class="rec-track-play queue-item"
+                            th:data-song-id="${song.songId}"
+                            th:data-song-title="${song.title}"
+                            th:data-song-artist="${song.artist}"
+                            th:onclick="|player.playFrom(${song.songId})|"
+                            title="Oynat">
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1; font-size: 22px;">play_arrow</span>
+                    </button>
+
+                    <!-- Kapak Görseli -->
+                    <div class="rec-track-cover">
+                        <img th:src="${song.coverUrl != null and !#strings.isEmpty(song.coverUrl)} ? ${song.coverUrl} : @{/images/default-cover.svg}"
+                             th:alt="${song.title}"
+                             onerror="window.onImageError(this, 'song')" />
+                    </div>
+
+                    <!-- Parça Bilgisi & Eşleşme Sebebi -->
+                    <div class="rec-track-info">
+                        <span class="rec-track-title" th:text="${song.title}">Şarkı Başlığı</span>
+                        <div class="rec-track-meta">
+                            <span class="rec-track-artist" th:text="${song.artist}">Sanatçı Adı</span>
+                            <span class="rec-track-genre" th:text="'#' + ${#strings.toUpperCase(song.genre != null ? song.genre : 'SYNTHWAVE')}">#SYNTHWAVE</span>
+                            <span th:if="${song.matchReason != null and !#strings.isEmpty(song.matchReason)}"
+                                  class="rec-track-reason"
+                                  th:text="${song.matchReason}">Sevdiğin türde</span>
+                        </div>
+                    </div>
+
+                    <!-- Paket Seviyesi Rozeti -->
+                    <span class="rec-tier-badge"
+                          th:classappend="'rec-tier-badge--' + ${song.tier != null ? song.tier : 'Basic'}"
+                          th:text="${song.tier != null ? song.tier : 'Basic'}">Basic</span>
+
+                    <!-- Beğen ve Playlist Kontrolleri -->
+                    <div class="rec-actions">
+                        <button class="rec-icon-btn like-btn"
+                                th:classappend="${likedSongIds != null and likedSongIds.contains(song.songId)} ? 'text-danger' : 'text-muted'"
+                                th:data-song-id="${song.songId}"
+                                th:onclick="|toggleLike(${song.songId}, this)|"
+                                th:title="${likedSongIds != null and likedSongIds.contains(song.songId)} ? 'Beğeniyi kaldır' : 'Beğen'"
+                                th:text="${likedSongIds != null and likedSongIds.contains(song.songId)} ? '♥' : '♡'">♡</button>
+                        <button class="rec-icon-btn"
+                                th:onclick="|addToPlaylist(${song.songId})|"
+                                title="Playlist'e ekle">
+                            <span class="material-symbols-outlined" style="font-size: 20px;">playlist_add</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <th:block layout:fragment="scripts">
+        <script>
+            function playAllOnPage() {
+                const playButtons = document.querySelectorAll('.rec-track-play');
+                if (playButtons && playButtons.length > 0) {
+                    playButtons[0].click();
+                }
+            }
+        </script>
+    </th:block>
+</body>
+</html>

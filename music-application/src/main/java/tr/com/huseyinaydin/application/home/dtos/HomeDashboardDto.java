@@ -29,18 +29,26 @@ public class HomeDashboardDto implements Serializable {
         private String coverUrl;
         private String tier;
         private String genre;
+        private Long playCount;
+        private String matchReason;
 
         public SongSnippet(Long songId, String title, String artist, String coverUrl) {
-            this(songId, title, artist, coverUrl, "Basic", "Pop");
+            this(songId, title, artist, coverUrl, "Basic", "Pop", 0L, null);
         }
 
         public SongSnippet(Long songId, String title, String artist, String coverUrl, String tier, String genre) {
+            this(songId, title, artist, coverUrl, tier, genre, 0L, null);
+        }
+
+        public SongSnippet(Long songId, String title, String artist, String coverUrl, String tier, String genre, Long playCount, String matchReason) {
             this.songId = songId;
             this.title = title;
             this.artist = artist;
             this.coverUrl = coverUrl;
             this.tier = tier != null ? tier : "Basic";
             this.genre = genre != null ? genre : "Pop";
+            this.playCount = playCount != null ? playCount : 0L;
+            this.matchReason = matchReason;
         }
 
         public Long getSongId() { return songId; }
@@ -49,5 +57,7 @@ public class HomeDashboardDto implements Serializable {
         public String getCoverUrl() { return coverUrl; }
         public String getTier() { return tier; }
         public String getGenre() { return genre; }
+        public Long getPlayCount() { return playCount; }
+        public String getMatchReason() { return matchReason; }
     }
 }

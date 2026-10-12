@@ -16,7 +16,7 @@
             </div>
             <div class="mg-card-title-row">
                 <h4 class="mg-card-title" th:text="${song.title}"></h4>
-                <span class="mg-badge">Basic</span>
+                <span class="mg-badge" th:text="${song.tier != null ? song.tier : 'Basic'}">Basic</span>
             </div>
             <p class="mg-card-artist" th:text="${song.artist}"></p>
             <div class="mg-card-actions">

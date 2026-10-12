@@ -90,7 +90,7 @@
             
             window.addEventListener('DOMContentLoaded', async function () {
                 try {
-                    const recUrl = '[[@{/recommendations}]]';
+                    const recUrl = '[[@{/recommendations(fragment=true)}]]';
                     const res = await fetch(recUrl);
                     const html = await res.text();
                     document.getElementById('recommendations').innerHTML = html;

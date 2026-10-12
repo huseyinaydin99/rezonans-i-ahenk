@@ -74,6 +74,8 @@ public class SecurityConfig {
                     new AntPathRequestMatcher("/403"),
                     new AntPathRequestMatcher("/package"),
                     new AntPathRequestMatcher("/membership"),
+                    new AntPathRequestMatcher("/recommendations"),
+                    new AntPathRequestMatcher("/recommendations.xhtml"),
                     new AntPathRequestMatcher("/css/**"),
                     new AntPathRequestMatcher("/js/**"),
                     new AntPathRequestMatcher("/images/**"),

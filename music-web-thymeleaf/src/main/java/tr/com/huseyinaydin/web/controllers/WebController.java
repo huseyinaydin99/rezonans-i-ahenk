@@ -28,6 +28,7 @@ import tr.com.huseyinaydin.application.playlist.commands.RemoveSongFromPlaylistC
 import tr.com.huseyinaydin.application.playlist.dtos.PlaylistDetailDto;
 import tr.com.huseyinaydin.application.song.queries.SearchSongsQuery;
 import tr.com.huseyinaydin.application.song.queries.GetSongsByIdsQuery;
+import tr.com.huseyinaydin.application.song.queries.GetPersonalizedRecommendationsQuery;
 import tr.com.huseyinaydin.application.ports.ITokenService;
 import tr.com.huseyinaydin.web.security.AuthCookies;
 import tr.com.huseyinaydin.web.security.CurrentUser;
@@ -73,20 +74,29 @@ public class WebController {
         return "index";
     }
 
-    @GetMapping("/recommendations")
-    public String recommendations(Model model) {
+    @GetMapping({"/recommendations", "/recommendations.xhtml"})
+    public String recommendations(@RequestParam(value = "fragment", required = false) Boolean fragment,
+                                  jakarta.servlet.http.HttpServletRequest request,
+                                  Model model) {
         String email = CurrentUser.get().map(c -> c.email()).orElse(null);
         if (email == null) {
             return "redirect:/login";
         }
 
-        HomeDashboardDto dashboardData = mediator.query(new GetHomeDashboardQuery(email));
-        model.addAttribute("personalizedRecommendations", dashboardData.getPersonalizedRecommendations());
+        List<HomeDashboardDto.SongSnippet> recommendations = mediator.query(new GetPersonalizedRecommendationsQuery(email, 16));
+        model.addAttribute("personalizedRecommendations", recommendations != null ? recommendations : Collections.emptyList());
+        model.addAttribute("recommendations", recommendations != null ? recommendations : Collections.emptyList());
 
         List<Long> likedSongIds = mediator.query(new GetLikedSongsQuery(email));
         model.addAttribute("likedSongIds", likedSongIds != null ? likedSongIds : Collections.emptyList());
 
-        return "fragments/recommendations";
+        boolean isFragment = Boolean.TRUE.equals(fragment)
+                || "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"));
+
+        if (isFragment) {
+            return "fragments/recommendations";
+        }
+        return "recommendations";
     }
 
     @GetMapping({"/login", "/login.xhtml"})
@@ -131,8 +141,8 @@ public class WebController {
         } catch (Exception ignored) {}
         model.addAttribute("likeCount", likeCount);
 
-        HomeDashboardDto dashboardData = mediator.query(new GetHomeDashboardQuery(email));
-        model.addAttribute("recommendations", dashboardData != null ? dashboardData.getPersonalizedRecommendations() : Collections.emptyList());
+        List<HomeDashboardDto.SongSnippet> recommendations = mediator.query(new GetPersonalizedRecommendationsQuery(email, 8));
+        model.addAttribute("recommendations", recommendations != null ? recommendations : Collections.emptyList());
 
         return "profile";
     }

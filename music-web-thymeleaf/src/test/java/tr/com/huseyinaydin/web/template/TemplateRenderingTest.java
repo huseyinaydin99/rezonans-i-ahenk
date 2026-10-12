@@ -225,4 +225,25 @@ public class TemplateRenderingTest {
             assertNotNull(result);
         });
     }
+
+    @Test
+    void testRecommendationsTemplateRendersSuccessfully() {
+        WebContext context = createContext();
+        HomeDashboardDto.SongSnippet song1 = new HomeDashboardDto.SongSnippet(
+                12L, "River of Darkness", "The Midnight", "https://example.com/cover.jpg",
+                "Premium", "Synthwave", 2400000L, "Sevdiğin sanatçı: The Midnight"
+        );
+        HomeDashboardDto.SongSnippet song2 = new HomeDashboardDto.SongSnippet(
+                14L, "Dance The Night", "Dua Lipa", null,
+                "Basic", "Pop", 1900000L, "Platformun en çok dinlenen hit parçası"
+        );
+
+        context.setVariable("recommendations", List.of(song1, song2));
+        context.setVariable("likedSongIds", List.of(12L));
+
+        assertDoesNotThrow(() -> {
+            String result = engine.process("recommendations", context);
+            assertNotNull(result);
+        });
+    }
 }

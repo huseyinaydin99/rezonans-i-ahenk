@@ -3,11 +3,13 @@ package tr.com.huseyinaydin.application.home.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import tr.com.huseyinaydin.application.ports.IHomeService;
 import tr.com.huseyinaydin.application.home.dtos.HomeDashboardDto;
 import tr.com.huseyinaydin.application.home.dtos.HomeDashboardDto.SongSnippet;
+import tr.com.huseyinaydin.application.song.queries.GetPersonalizedRecommendationsQuery;
 
 import java.util.List;
 
@@ -15,6 +17,11 @@ import java.util.List;
 public class HomeServiceImpl implements IHomeService {
     private static final Logger log = LoggerFactory.getLogger(HomeServiceImpl.class);
 
+    private final GetPersonalizedRecommendationsQuery.Handler recommendationHandler;
+
+    public HomeServiceImpl(@Autowired(required = false) GetPersonalizedRecommendationsQuery.Handler recommendationHandler) {
+        this.recommendationHandler = recommendationHandler;
+    }
 
     @Override
     @Cacheable(value = "homeDashboardCache", key = "#userId != null ? #userId : 'anonymous'")
@@ -45,18 +52,28 @@ public class HomeServiceImpl implements IHomeService {
             new SongSnippet(36L, "Neon Horizon", "Lachi James", "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=400&q=80", "Gold", "Synthwave")
         );
 
-        // 3. "Senin İçin Önerilenler": The Midnight, Lachi James, Dua Lipa vb. synthwave & pop önerileri
+        // 3. "Senin İçin Önerilenler": Dinleme geçmişi veya akıllı cold-start önerileri
         log.info("-> 'Senin İçin Önerilenler' kişiselleştirilmiş öneri akışı derleniyor.");
-        List<SongSnippet> forYou = List.of(
-            new SongSnippet(12L, "River of Darkness (feat. Timecop1983)", "The Midnight", "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&q=80", "Premium", "Synthwave"),
-            new SongSnippet(13L, "Midnight (I Want You in My Arms)", "Lachi James", "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=400&q=80", "Premium", "Synthwave"),
-            new SongSnippet(14L, "Dance The Night", "Dua Lipa", "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&q=80", "Basic", "Pop"),
-            new SongSnippet(15L, "Houdini", "Dua Lipa", "https://images.unsplash.com/photo-1520523839898-507121c21528?w=400&q=80", "Premium", "Pop"),
-            new SongSnippet(11L, "Light Years", "The Midnight & Nikki Flores", "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&q=80", "Premium", "Synthwave"),
-            new SongSnippet(30L, "Sunset", "The Midnight", "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&q=80", "Gold", "Synthwave"),
-            new SongSnippet(39L, "Levitating", "Dua Lipa", "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&q=80", "Gold", "Pop"),
-            new SongSnippet(16L, "Running in the Night", "FM-84 & Ollie Wride", "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&q=80", "Premium", "Synthwave")
-        );
+        List<SongSnippet> forYou = null;
+        if (recommendationHandler != null) {
+            try {
+                forYou = recommendationHandler.handle(new GetPersonalizedRecommendationsQuery(userId, 8));
+            } catch (Exception ex) {
+                log.warn("[ANA SAYFA VİTRİNİ] Öneri motoru çağrısında uyarı (fallback devrede): {}", ex.getMessage());
+            }
+        }
+        if (forYou == null || forYou.isEmpty()) {
+            forYou = List.of(
+                new SongSnippet(12L, "River of Darkness (feat. Timecop1983)", "The Midnight", "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&q=80", "Premium", "Synthwave"),
+                new SongSnippet(13L, "Midnight (I Want You in My Arms)", "Lachi James", "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=400&q=80", "Premium", "Synthwave"),
+                new SongSnippet(14L, "Dance The Night", "Dua Lipa", "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&q=80", "Basic", "Pop"),
+                new SongSnippet(15L, "Houdini", "Dua Lipa", "https://images.unsplash.com/photo-1520523839898-507121c21528?w=400&q=80", "Premium", "Pop"),
+                new SongSnippet(11L, "Light Years", "The Midnight & Nikki Flores", "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&q=80", "Premium", "Synthwave"),
+                new SongSnippet(30L, "Sunset", "The Midnight", "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&q=80", "Gold", "Synthwave"),
+                new SongSnippet(39L, "Levitating", "Dua Lipa", "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&q=80", "Gold", "Pop"),
+                new SongSnippet(16L, "Running in the Night", "FM-84 & Ollie Wride", "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&q=80", "Premium", "Synthwave")
+            );
+        }
 
         log.info("[ANA SAYFA VİTRİNİ] Zengin müzik kataloğu asenkron olarak toparlandı.");
         
