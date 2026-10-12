@@ -55,31 +55,11 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                    new AntPathRequestMatcher("/"),
-                    new AntPathRequestMatcher("/index"),
                     new AntPathRequestMatcher("/login"),
                     new AntPathRequestMatcher("/doLogin"),
                     new AntPathRequestMatcher("/register"),
                     new AntPathRequestMatcher("/doRegister"),
                     new AntPathRequestMatcher("/doLogout"),
-                    new AntPathRequestMatcher("/recommendations"),
-                    new AntPathRequestMatcher("/Song/Search**"),
-                    new AntPathRequestMatcher("/search"),
-                    new AntPathRequestMatcher("/search.xhtml"),
-                    new AntPathRequestMatcher("/likes"),
-                    new AntPathRequestMatcher("/likes.xhtml"),
-                    new AntPathRequestMatcher("/profile"),
-                    new AntPathRequestMatcher("/profile.xhtml"),
-                    new AntPathRequestMatcher("/edit-profile"),
-                    new AntPathRequestMatcher("/edit-profile.xhtml"),
-                    new AntPathRequestMatcher("/artists"),
-                    new AntPathRequestMatcher("/artists.xhtml"),
-                    new AntPathRequestMatcher("/genres"),
-                    new AntPathRequestMatcher("/genres.xhtml"),
-                    new AntPathRequestMatcher("/playlists"),
-                    new AntPathRequestMatcher("/playlists.xhtml"),
-                    new AntPathRequestMatcher("/membership"),
-                    new AntPathRequestMatcher("/membership.xhtml"),
                     new AntPathRequestMatcher("/login.xhtml"),
                     new AntPathRequestMatcher("/register.xhtml"),
                     new AntPathRequestMatcher("/error/**"),
@@ -92,13 +72,18 @@ public class SecurityConfig {
                     new AntPathRequestMatcher("/swagger-ui/**"),
                     new AntPathRequestMatcher("/swagger-ui.html"),
                     new AntPathRequestMatcher("/v3/api-docs/**"),
-                    new AntPathRequestMatcher("/web-api/Like/**")
+                    new AntPathRequestMatcher("/ws-music/**")
                 ).permitAll()
                 .anyRequest().authenticated()
             )
             .exceptionHandling(ex -> ex
                 .authenticationEntryPoint((request, response, authException) -> {
-                    response.sendRedirect(request.getContextPath() + "/login");
+                    String uri = request.getRequestURI();
+                    if (uri != null && (uri.contains("/web-api/") || uri.contains("/api/"))) {
+                        response.sendError(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                    } else {
+                        response.sendRedirect(request.getContextPath() + "/login");
+                    }
                 })
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
                     response.sendRedirect(request.getContextPath() + "/error/403");

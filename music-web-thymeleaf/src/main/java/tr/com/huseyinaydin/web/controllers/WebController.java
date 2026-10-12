@@ -17,13 +17,15 @@ public class WebController {
 
     @GetMapping({"/", "/index"})
     public String index(Model model) {
-        HomeDashboardDto dashboardData = mediator.query(new GetHomeDashboardQuery("current-user"));
+        String email = tr.com.huseyinaydin.web.security.CurrentUser.get().map(c -> c.email()).orElse(null);
+        if (email == null) {
+            return "redirect:/login";
+        }
+
+        HomeDashboardDto dashboardData = mediator.query(new GetHomeDashboardQuery(email));
         model.addAttribute("topGlobalSongs", dashboardData.getTopGlobalSongs());
 
-        String email = tr.com.huseyinaydin.web.security.CurrentUser.get().map(c -> c.email()).orElse(null);
-        java.util.List<Long> likedSongIds = (email != null) 
-                ? mediator.query(new tr.com.huseyinaydin.application.like.queries.GetLikedSongsQuery(email))
-                : java.util.Collections.emptyList();
+        java.util.List<Long> likedSongIds = mediator.query(new tr.com.huseyinaydin.application.like.queries.GetLikedSongsQuery(email));
         model.addAttribute("likedSongIds", likedSongIds != null ? likedSongIds : java.util.Collections.emptyList());
 
         return "index";
@@ -31,13 +33,15 @@ public class WebController {
 
     @GetMapping("/recommendations")
     public String recommendations(Model model) {
-        HomeDashboardDto dashboardData = mediator.query(new GetHomeDashboardQuery("current-user"));
+        String email = tr.com.huseyinaydin.web.security.CurrentUser.get().map(c -> c.email()).orElse(null);
+        if (email == null) {
+            return "redirect:/login";
+        }
+
+        HomeDashboardDto dashboardData = mediator.query(new GetHomeDashboardQuery(email));
         model.addAttribute("personalizedRecommendations", dashboardData.getPersonalizedRecommendations());
 
-        String email = tr.com.huseyinaydin.web.security.CurrentUser.get().map(c -> c.email()).orElse(null);
-        java.util.List<Long> likedSongIds = (email != null) 
-                ? mediator.query(new tr.com.huseyinaydin.application.like.queries.GetLikedSongsQuery(email))
-                : java.util.Collections.emptyList();
+        java.util.List<Long> likedSongIds = mediator.query(new tr.com.huseyinaydin.application.like.queries.GetLikedSongsQuery(email));
         model.addAttribute("likedSongIds", likedSongIds != null ? likedSongIds : java.util.Collections.emptyList());
 
         return "fragments/recommendations";
@@ -45,36 +49,57 @@ public class WebController {
 
     @GetMapping({"/login", "/login.xhtml"})
     public String login() {
+        if (tr.com.huseyinaydin.web.security.CurrentUser.get().isPresent()) {
+            return "redirect:/";
+        }
         return "login";
     }
 
     @GetMapping({"/register", "/register.xhtml"})
     public String register() {
+        if (tr.com.huseyinaydin.web.security.CurrentUser.get().isPresent()) {
+            return "redirect:/";
+        }
         return "register";
     }
 
     @GetMapping({"/profile", "/profile.xhtml"})
     public String profile() {
+        if (tr.com.huseyinaydin.web.security.CurrentUser.get().isEmpty()) {
+            return "redirect:/login";
+        }
         return "profile";
     }
 
     @GetMapping({"/edit-profile", "/edit-profile.xhtml"})
     public String editProfile() {
+        if (tr.com.huseyinaydin.web.security.CurrentUser.get().isEmpty()) {
+            return "redirect:/login";
+        }
         return "edit-profile";
     }
 
     @GetMapping({"/artists", "/artists.xhtml"})
     public String artists() {
+        if (tr.com.huseyinaydin.web.security.CurrentUser.get().isEmpty()) {
+            return "redirect:/login";
+        }
         return "artists";
     }
 
     @GetMapping({"/genres", "/genres.xhtml"})
     public String genres() {
+        if (tr.com.huseyinaydin.web.security.CurrentUser.get().isEmpty()) {
+            return "redirect:/login";
+        }
         return "genres";
     }
 
     @GetMapping({"/playlists", "/playlists.xhtml"})
     public String playlists() {
+        if (tr.com.huseyinaydin.web.security.CurrentUser.get().isEmpty()) {
+            return "redirect:/login";
+        }
         return "playlists";
     }
 
@@ -98,6 +123,9 @@ public class WebController {
 
     @GetMapping({"/membership", "/membership.xhtml"})
     public String membership() {
+        if (tr.com.huseyinaydin.web.security.CurrentUser.get().isEmpty()) {
+            return "redirect:/login";
+        }
         return "membership";
     }
 
@@ -106,6 +134,11 @@ public class WebController {
 
     @GetMapping({"/search", "/search.xhtml"})
     public String search(@RequestParam(value = "q", required = false) String q, Model model) {
+        String email = tr.com.huseyinaydin.web.security.CurrentUser.get().map(c -> c.email()).orElse(null);
+        if (email == null) {
+            return "redirect:/login";
+        }
+
         String query = (q != null) ? q.trim() : "";
         model.addAttribute("q", query);
         java.util.List<java.util.Map<String, Object>> searchResults = (!query.isEmpty() && songSearchService != null)
@@ -113,10 +146,7 @@ public class WebController {
                 : java.util.Collections.emptyList();
         model.addAttribute("songs", searchResults);
 
-        String email = tr.com.huseyinaydin.web.security.CurrentUser.get().map(c -> c.email()).orElse(null);
-        java.util.List<Long> likedSongIds = (email != null) 
-                ? mediator.query(new tr.com.huseyinaydin.application.like.queries.GetLikedSongsQuery(email))
-                : java.util.Collections.emptyList();
+        java.util.List<Long> likedSongIds = mediator.query(new tr.com.huseyinaydin.application.like.queries.GetLikedSongsQuery(email));
         model.addAttribute("likedSongIds", likedSongIds != null ? likedSongIds : java.util.Collections.emptyList());
 
         return "search";
