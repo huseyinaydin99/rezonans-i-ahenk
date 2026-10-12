@@ -246,4 +246,22 @@ public class TemplateRenderingTest {
             assertNotNull(result);
         });
     }
+
+    @Test
+    void testAdminItunesTemplateRendersSuccessfully() {
+        WebContext context = createContext();
+        context.setVariable("defaultArtists", List.of("The Midnight", "Kavinsky", "FM-84"));
+        context.setVariable("importResult", new tr.com.huseyinaydin.application.itunes.dtos.BatchImportResultDto(
+                2, 4, 3, 1,
+                List.of(new tr.com.huseyinaydin.application.itunes.dtos.BatchImportResultDto.ImportedTrackSummary(
+                        "Sunset", "The Midnight", "Synthwave", "Premium", "05:26", "http://art.jpg", "http://preview.mp3"
+                )),
+                List.of("İçe aktarma başarılı")
+        ));
+
+        assertDoesNotThrow(() -> {
+            String result = engine.process("admin-itunes", context);
+            assertNotNull(result);
+        });
+    }
 }

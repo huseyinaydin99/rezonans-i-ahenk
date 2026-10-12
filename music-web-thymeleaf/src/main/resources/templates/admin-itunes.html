@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>iTunes Katalog İçe Aktarma Konsolu | Rezonans-ı Ahenk</title>
+    <style>
+        .itunes-admin-container {
+            position: relative;
+            max-width: 1180px;
+            margin: 2rem auto 4rem;
+            padding: 2.5rem;
+            background: radial-gradient(circle at 50% 0%, rgba(114, 9, 183, 0.18) 0%, rgba(12, 12, 28, 0.95) 75%, #070712 100%);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 0 45px rgba(0, 229, 255, 0.12), inset 0 0 30px rgba(247, 37, 133, 0.05);
+            overflow: hidden;
+        }
+
+        .itunes-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .itunes-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 18px;
+            background: rgba(0, 229, 255, 0.12);
+            border: 1px solid #00e5ff;
+            border-radius: 50px;
+            color: #00e5ff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+            margin-bottom: 1rem;
+        }
+
+        .itunes-badge .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #f72585;
+            box-shadow: 0 0 8px #f72585;
+            animation: pulseDot 1s infinite alternate;
+        }
+
+        @keyframes pulseDot {
+            from { opacity: 0.4; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1.2); }
+        }
+
+        .itunes-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00e5ff 0%, #b5179e 50%, #f72585 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.8rem;
+            text-shadow: 0 0 25px rgba(0, 229, 255, 0.3);
+        }
+
+        .itunes-subtitle {
+            color: #b8c1ec;
+            font-size: 1.05rem;
+            max-width: 780px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .itunes-form-card {
+            background: rgba(22, 22, 45, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group label {
+            display: block;
+            color: #00e5ff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 0.6rem;
+        }
+
+        .form-control-neon {
+            width: 100%;
+            background: rgba(10, 10, 26, 0.85);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: #fff;
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-control-neon:focus {
+            border-color: #f72585;
+            box-shadow: 0 0 15px rgba(247, 37, 133, 0.4);
+        }
+
+        .default-artists-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 0.8rem;
+        }
+
+        .artist-pill {
+            background: rgba(114, 9, 183, 0.25);
+            border: 1px solid rgba(181, 23, 158, 0.4);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            color: #ffb0cb;
+        }
+
+        .btn-neon-import {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #7209b7, #f72585);
+            border: none;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 1.05rem;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(247, 37, 133, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .btn-neon-import:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 35px rgba(247, 37, 133, 0.8), 0 0 20px rgba(0, 229, 255, 0.5);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: rgba(16, 16, 38, 0.85);
+            border-radius: 14px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card.imported { border-color: rgba(0, 229, 255, 0.4); box-shadow: 0 0 20px rgba(0, 229, 255, 0.15); }
+        .stat-card.found { border-color: rgba(181, 23, 158, 0.4); box-shadow: 0 0 20px rgba(181, 23, 158, 0.15); }
+        .stat-card.skipped { border-color: rgba(255, 183, 3, 0.4); box-shadow: 0 0 20px rgba(255, 183, 3, 0.15); }
+        .stat-card.artists { border-color: rgba(76, 201, 240, 0.4); box-shadow: 0 0 20px rgba(76, 201, 240, 0.15); }
+
+        .stat-val {
+            font-size: 2.4rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 0.4rem;
+        }
+
+        .stat-card.imported .stat-val { color: #00e5ff; }
+        .stat-card.found .stat-val { color: #f72585; }
+        .stat-card.skipped .stat-val { color: #ffb703; }
+        .stat-card.artists .stat-val { color: #4cc9f0; }
+
+        .stat-label {
+            color: #8c93b5;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Results Table */
+        .results-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #00e5ff;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tracks-table-wrapper {
+            background: rgba(16, 16, 36, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .tracks-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .tracks-table th {
+            background: rgba(26, 26, 56, 0.9);
+            color: #00e5ff;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 14px 18px;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+        }
+
+        .tracks-table td {
+            padding: 12px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #e0e1dd;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        .tracks-table tr:hover {
+            background: rgba(0, 229, 255, 0.04);
+        }
+
+        .track-cell-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .track-cover-sm {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+        }
+
+        .track-title-text {
+            font-weight: 700;
+            color: #fff;
+            display: block;
+        }
+
+        .track-artist-text {
+            font-size: 0.8rem;
+            color: #8c93b5;
+        }
+
+        .tier-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tier-BASIC { background: rgba(76, 201, 240, 0.2); color: #4cc9f0; border: 1px solid #4cc9f0; }
+        .tier-GOLD { background: rgba(255, 183, 3, 0.2); color: #ffb703; border: 1px solid #ffb703; }
+        .tier-PREMIUM { background: rgba(247, 37, 133, 0.2); color: #f72585; border: 1px solid #f72585; }
+        .tier-ELIT { background: linear-gradient(135deg, #7209b7, #f72585); color: #fff; border: 1px solid #f72585; }
+
+        .genre-tag {
+            background: rgba(114, 9, 183, 0.25);
+            border: 1px solid rgba(181, 23, 158, 0.5);
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: 0.75rem;
+            color: #ffb0cb;
+        }
+
+        /* Console Logs Box */
+        .console-logs-box {
+            background: #05050d;
+            border: 1px solid rgba(0, 229, 255, 0.25);
+            border-radius: 12px;
+            padding: 1.2rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            color: #4cc9f0;
+            max-height: 240px;
+            overflow-y: auto;
+            line-height: 1.6;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="itunes-admin-container">
+        
+        <!-- Header -->
+        <div class="itunes-header">
+            <div class="itunes-badge">
+                <span class="pulse-dot"></span>
+                <span>Otomasyon & Dış Servis Entegrasyonu</span>
+            </div>
+            <h1 class="itunes-title">iTunes Toplu Katalog Senkronizasyonu</h1>
+            <p class="itunes-subtitle">
+                Apple iTunes Search API üzerinden synthwave, retrowave ve cyberpunk efsanelerinin parçalarını,
+                albüm kapaklarını ve 30 saniyelik yüksek kaliteli ses önizlemelerini mükerrer kontrolüyle kataloğumuza aktarın.
+            </p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="itunes-form-card">
+            <form th:action="@{/admin/itunes/import}" method="post">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="artists">İçe Aktarılacak Sanatçılar (Virgülle Ayrılmış)</label>
+                        <input type="text" id="artists" name="artists" class="form-control-neon"
+                               th:value="${artistsInput}"
+                               placeholder="Boş bırakılırsa varsayılan synthwave sanatçıları taranır..." />
+                        <div class="default-artists-pills">
+                            <span class="artist-pill" th:each="art : ${defaultArtists}" th:text="${art}">The Midnight</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="limit">Sanatçı Başına Parça Limiti</label>
+                        <select id="limit" name="limit" class="form-control-neon">
+                            <option value="3" th:selected="${limitInput == 3}">3 Parça</option>
+                            <option value="5" th:selected="${limitInput == 5 or limitInput == null}">5 Parça (Önerilen)</option>
+                            <option value="10" th:selected="${limitInput == 10}">10 Parça</option>
+                            <option value="15" th:selected="${limitInput == 15}">15 Parça</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-neon-import">
+                    <span>⚡ Toplu İçe Aktarmayı Başlat & Kataloğu Senkronize Et</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Result Section (Rendered when importResult exists) -->
+        <div th:if="${importResult != null}">
+            
+            <!-- Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card artists">
+                    <div class="stat-val" th:text="${importResult.totalArtistsProcessed}">7</div>
+                    <div class="stat-label">İşlenen Sanatçı</div>
+                </div>
+                <div class="stat-card found">
+                    <div class="stat-val" th:text="${importResult.totalFound}">35</div>
+                    <div class="stat-label">Bulunan Parça</div>
+                </div>
+                <div class="stat-card imported">
+                    <div class="stat-val" th:text="${importResult.totalImported}">24</div>
+                    <div class="stat-label">İçe Aktarılan</div>
+                </div>
+                <div class="stat-card skipped">
+                    <div class="stat-val" th:text="${importResult.totalSkipped}">11</div>
+                    <div class="stat-label">Atlanan (Mükerrer)</div>
+                </div>
+            </div>
+
+            <!-- Imported Tracks Table -->
+            <div class="results-section" th:if="${!importResult.importedTracks.isEmpty()}">
+                <div class="section-title">
+                    <span>📻 Yeni Eklenen Parçalar Vitrini</span>
+                </div>
+                <div class="tracks-table-wrapper">
+                    <table class="tracks-table">
+                        <thead>
+                            <tr>
+                                <th>Parça Bilgisi</th>
+                                <th>Tür</th>
+                                <th>Paket Seviyesi</th>
+                                <th>Süre</th>
+                                <th>Önizleme</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="t : ${importResult.importedTracks}">
+                                <td>
+                                    <div class="track-cell-info">
+                                        <img class="track-cover-sm" th:src="${t.coverUrl}" th:alt="${t.title}" />
+                                        <div>
+                                            <span class="track-title-text" th:text="${t.title}">Sunset</span>
+                                            <span class="track-artist-text" th:text="${t.artist}">The Midnight</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="genre-tag" th:text="${t.genre}">Synthwave</span>
+                                </td>
+                                <td>
+                                    <span th:classappend="'tier-' + ${t.tier}" class="tier-badge" th:text="${t.tier}">Premium</span>
+                                </td>
+                                <td th:text="${t.duration}">05:26</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-info" style="border-radius: 20px; font-size: 0.75rem;"
+                                            th:data-title="${t.title}"
+                                            th:data-artist="${t.artist}"
+                                            th:data-cover="${t.coverUrl}"
+                                            th:data-audio="${t.previewUrl}"
+                                            th:data-tier="${t.tier}"
+                                            onclick="playTrackFromEl(this)">
+                                        ▶ Dinle
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Execution Logs -->
+            <div class="results-section" th:if="${!importResult.logs.isEmpty()}">
+                <div class="section-title">
+                    <span>📟 Senkronizasyon Konsol Günlüğü</span>
+                </div>
+                <div class="console-logs-box">
+                    <div class="log-entry" th:each="logLine : ${importResult.logs}" th:text="${logLine}">
+                        Log line
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script th:inline="javascript">
+        function playTrackFromEl(btn) {
+            const title = btn.getAttribute('data-title');
+            const artist = btn.getAttribute('data-artist');
+            const cover = btn.getAttribute('data-cover');
+            const audio = btn.getAttribute('data-audio');
+            const tier = btn.getAttribute('data-tier');
+            if (window.playTrack) {
+                window.playTrack({
+                    id: 9999,
+                    title: title,
+                    artist: artist,
+                    cover: cover,
+                    audio: audio,
+                    tier: tier
+                });
+            }
+        }
+    </script>
+</div>
+</body>
+</html>

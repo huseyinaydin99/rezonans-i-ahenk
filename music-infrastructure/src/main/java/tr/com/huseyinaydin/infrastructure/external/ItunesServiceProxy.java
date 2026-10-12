@@ -21,12 +21,13 @@ public class ItunesServiceProxy implements IItunesService {
     private final IItunesService realService;
     private final IMap<String, ItunesResponseDto> proxyCache;
 
+    @org.springframework.beans.factory.annotation.Autowired
     public ItunesServiceProxy(
             @Qualifier("realItunesService") IItunesService realService,
-            HazelcastInstance hazelcastInstance) {
+            @org.springframework.beans.factory.annotation.Autowired(required = false) HazelcastInstance hazelcastInstance) {
         
         this.realService = realService;
-        this.proxyCache = hazelcastInstance.getMap("itunes-proxy-cache");
+        this.proxyCache = hazelcastInstance != null ? hazelcastInstance.getMap("itunes-proxy-cache") : null;
     }
 
     /**
@@ -36,9 +37,9 @@ public class ItunesServiceProxy implements IItunesService {
     @Override
     @CircuitBreaker(name = "itunesApi", fallbackMethod = "itunesFallback")
     public ItunesResponseDto searchMusic(String term, int limit) {
-        String cacheKey = term.toLowerCase().trim() + "_" + limit;
+        String cacheKey = (term != null ? term.toLowerCase().trim() : "") + "_" + limit;
 
-        if (proxyCache.containsKey(cacheKey)) {
+        if (proxyCache != null && proxyCache.containsKey(cacheKey)) {
             log.info("[PROXY VEKİL] İstek Hazelcast önbelleğinden dönülüyor...");
             return proxyCache.get(cacheKey);
         }
@@ -46,7 +47,7 @@ public class ItunesServiceProxy implements IItunesService {
         log.info("[PROXY VEKİL] İstek gerçek iTunes API'sine delege ediliyor...");
         ItunesResponseDto response = realService.searchMusic(term, limit);
 
-        if (response != null && response.resultCount() > 0) {
+        if (proxyCache != null && response != null && response.resultCount() > 0) {
             proxyCache.put(cacheKey, response);
         }
 

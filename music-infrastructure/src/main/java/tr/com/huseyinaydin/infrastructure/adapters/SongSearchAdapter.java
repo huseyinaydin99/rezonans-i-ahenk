@@ -19,6 +19,7 @@ public class SongSearchAdapter implements ISongSearchService {
 
     // Resilient Enterprise Catalog: Şarkı, sanatçı ve tür (genre) bilgilerini içeren platform şarkı kataloğu.
     // Elasticsearch erişilemez veya indeks boş olsa dahi sistemin kesintisiz çalışmasını garanti eder.
+    private static final List<CatalogSong> DYNAMIC_CATALOG = Collections.synchronizedList(new ArrayList<>());
     private static final List<CatalogSong> CATALOG = List.of(
         // Depeche Mode (Elektronik / Rock / Synthwave)
         new CatalogSong(1L, "People Are People", "Depeche Mode", "Elektronik", "Premium", "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&q=80", "3:45"),
@@ -100,12 +101,22 @@ public class SongSearchAdapter implements ISongSearchService {
         this.elasticSongRepository = elasticSongRepository;
     }
 
+    private List<CatalogSong> getAllCatalogSongs() {
+        List<CatalogSong> all = new ArrayList<>(CATALOG);
+        synchronized (DYNAMIC_CATALOG) {
+            all.addAll(DYNAMIC_CATALOG);
+        }
+        return all;
+    }
+
     @Override
     public List<Map<String, Object>> searchSongs(String keyword) {
         List<Map<String, Object>> results = new ArrayList<>();
+        List<CatalogSong> allCatalog = getAllCatalogSongs();
+
         if (keyword == null || keyword.trim().isEmpty()) {
             // Arama terimi boşsa tüm kataloğu dön
-            for (CatalogSong cs : CATALOG) {
+            for (CatalogSong cs : allCatalog) {
                 results.add(toMap(cs));
             }
             return results;
@@ -131,7 +142,7 @@ public class SongSearchAdapter implements ISongSearchService {
                         map.put("artist", es.getArtist());
                         map.put("cover", es.getCoverUrl());
                         String g = "Pop";
-                        for (CatalogSong cs : CATALOG) {
+                        for (CatalogSong cs : allCatalog) {
                             if (String.valueOf(cs.id()).equals(String.valueOf(idVal))) {
                                 g = cs.genre();
                                 break;
@@ -150,7 +161,7 @@ public class SongSearchAdapter implements ISongSearchService {
         }
 
         // 2. İkincil / Tamamlayıcı: Genişletilmiş Katalog ve Tür (Genre) / Sanatçı / Şarkı Eşleşmesi
-        for (CatalogSong cs : CATALOG) {
+        for (CatalogSong cs : allCatalog) {
             if (seenIds.contains(String.valueOf(cs.id()))) {
                 continue;
             }
@@ -183,7 +194,7 @@ public class SongSearchAdapter implements ISongSearchService {
     @Override
     public Map<String, Object> getSongById(Long songId) {
         if (songId == null) return null;
-        for (CatalogSong cs : CATALOG) {
+        for (CatalogSong cs : getAllCatalogSongs()) {
             if (cs.id().equals(songId)) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("id", cs.id());
@@ -229,13 +240,33 @@ public class SongSearchAdapter implements ISongSearchService {
         counts.put("Elektronik", 0);
         counts.put("Synthwave", 0);
 
-        for (CatalogSong cs : CATALOG) {
+        for (CatalogSong cs : getAllCatalogSongs()) {
             String g = cs.genre();
             if (counts.containsKey(g)) {
                 counts.put(g, counts.get(g) + 1);
             }
         }
         return counts;
+    }
+
+    @Override
+    public void registerSong(Long id, String title, String artist, String genre, String tier, String coverUrl, String duration) {
+        if (id == null || title == null) return;
+        boolean exists = getAllCatalogSongs().stream().anyMatch(cs ->
+                cs.id().equals(id) || (cs.title().equalsIgnoreCase(title.trim()) && cs.artist().equalsIgnoreCase(artist != null ? artist.trim() : "")));
+        if (!exists) {
+            DYNAMIC_CATALOG.add(new CatalogSong(
+                    id,
+                    title.trim(),
+                    artist != null ? artist.trim() : "Bilinmeyen Sanatçı",
+                    genre != null ? genre : "Synthwave",
+                    tier != null ? tier : "Basic",
+                    coverUrl != null ? coverUrl : "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&q=80",
+                    duration != null ? duration : "3:30"
+            ));
+            log.info("🎵 [CATALOG SYNC] Yeni içe aktarılan şarkı arama kataloğuna eklendi: {} - {} (#{}), Tür: {}, Seviye: {}",
+                    artist, title, id, genre, tier);
+        }
     }
 
     private record CatalogSong(Long id, String title, String artist, String genre, String tier, String coverUrl, String duration) {}

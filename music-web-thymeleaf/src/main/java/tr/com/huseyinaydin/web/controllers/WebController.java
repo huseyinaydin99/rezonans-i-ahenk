@@ -423,4 +423,32 @@ public class WebController {
 
         return "search";
     }
+
+    @GetMapping({"/admin/itunes", "/admin/itunes.xhtml"})
+    public String adminItunes(Model model) {
+        model.addAttribute("defaultArtists", tr.com.huseyinaydin.application.itunes.commands.BatchImportSongsCommand.DEFAULT_ARTISTS);
+        return "admin-itunes";
+    }
+
+    @PostMapping({"/admin/itunes/import", "/admin/itunes/import.xhtml"})
+    public String executeBatchImport(@RequestParam(value = "artists", required = false) String artistsInput,
+                                     @RequestParam(value = "limit", defaultValue = "5") int limit,
+                                     Model model) {
+        List<String> artistsList = null;
+        if (artistsInput != null && !artistsInput.trim().isEmpty()) {
+            artistsList = java.util.Arrays.stream(artistsInput.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .toList();
+        }
+
+        tr.com.huseyinaydin.application.itunes.dtos.BatchImportResultDto result =
+                mediator.send(new tr.com.huseyinaydin.application.itunes.commands.BatchImportSongsCommand(artistsList, limit));
+
+        model.addAttribute("importResult", result);
+        model.addAttribute("artistsInput", artistsInput != null ? artistsInput : "");
+        model.addAttribute("limitInput", limit);
+        model.addAttribute("defaultArtists", tr.com.huseyinaydin.application.itunes.commands.BatchImportSongsCommand.DEFAULT_ARTISTS);
+        return "admin-itunes";
+    }
 }
