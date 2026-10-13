@@ -8,6 +8,8 @@ Bu satırları okuyan meslektaşım, karşında duran eser; bir müzik dinleme p
 
 ## Tanıtım Görselleridir;
 
+![10.png](screenshots/10.png)
+![8.png](screenshots/8.png)
 ![1.png](screenshots/1.png)
 ![2.png](screenshots/2.png)
 ![3.png](screenshots/3.png)
@@ -15,10 +17,9 @@ Bu satırları okuyan meslektaşım, karşında duran eser; bir müzik dinleme p
 ![5.png](screenshots/5.png)
 ![6.png](screenshots/6.png)
 ![7.png](screenshots/7.png)
-![8.png](screenshots/8.png)
-![9.png](screenshots/9.png)
-![10.png](screenshots/10.png)
 ![11.png](screenshots/11.png)
+![12.png](screenshots/12.png)
+![13.png](screenshots/13.png)
 
 ## 📑 İçindekiler
 
